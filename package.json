@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "proxy": "https://fim.benewake.top",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -14,6 +15,7 @@
     "axios": "^1.4.0",
     "echarts": "^5.4.2",
     "echarts-for-react": "^3.0.2",
+    "http-proxy-middleware": "^3.0.0",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-datepicker": "^4.16.0",

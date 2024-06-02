@@ -1610,3 +1610,14 @@ input[type=number] {
 .filter-popup label {
   flex-grow: 1;
 }
+.feishu-wrapper {
+  color: var(--blue40);
+  gap: .5rem;
+}
+
+.feishu-logo {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 1px solid var(--blue40);
+}

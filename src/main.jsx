@@ -13,19 +13,22 @@ import AlertProvider from './providers/AlertProvider';
 import adminChildren from './path/adminChildren';
 import analysisChildren from './path/analysisChildren';
 import Loader from './components/Loader';
-
 const App = lazy(() => import('./App'));
-
+import FeishuLogin from './routes/feishuLogin'; // 引入FeishuLogin组件
 const router = createHashRouter([
   {
     path: "/login",
     element: <Login />
   },
   {
+    path: "/callback/feishuLogin", // 为FeishuLogin组件配置路径
+    element: <FeishuLogin />
+  },
+  {
     path: "/",
     element: <Suspense fallback={<Loader />}>
-    <App />
-  </Suspense>,
+      <App />
+    </Suspense>,
     children: children
   },
   {
@@ -38,9 +41,9 @@ const router = createHashRouter([
   },
   {
     path: "/analysis",
-    element:  <Suspense fallback={<Loader />}>
-    <App />
-  </Suspense>,
+    element: <Suspense fallback={<Loader />}>
+      <App />
+    </Suspense>,
     children: analysisChildren
   }
 ]);
