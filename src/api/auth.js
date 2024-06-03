@@ -26,7 +26,7 @@ export async function createUser({ username, password, userType }) {
 
 export async function logout() {
     try {
-        const response = await axios.get('/logout')
+        const response = await axios.get('/home/logout')
         const cookies = document.cookie.split('; ').map(cookie => cookie.trim())
         const filteredCookies = cookies.filter(cookie => {
             return !cookie.startsWith("ticket=") &&
@@ -41,11 +41,33 @@ export async function logout() {
         filteredCookies.forEach(cookie => {
             document.cookie = cookie;
         });
+        window.history.replaceState({}, document.title, window.location.pathname);
         return response.data;
     }
     catch (err) {
         console.log(err);
     }
 }
+
+export async function getConfigParameters(url) {
+    try {
+        const response = await axios.get(`/get_config_parameters?url=${encodeURIComponent(url)}`);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+export async function checkUser(username) {
+    try {
+        const response = await axios.post('/check_user', {
+            username
+        });
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Table from '../components/table/Table';
+import Loader from '../components/Loader';
 import { useLoaderData } from 'react-router-dom'
 import { fetchAnalysisData } from '../api/analysis';
 import analysisDefs from '../constants/defs/AnalysisDefs';
@@ -45,7 +46,7 @@ const FilterPopup = ({ url, open, closePopup, setRows }) => {
                 是否显示:
                 {open && labels.map((label, i) => (
                     <label htmlFor={'analysis-filter' + i} key={i}>
-                        {label}: 
+                        {label}:
                         <select
                             id={'analysis-filter' + i}
                             value={params[keys[i]]}

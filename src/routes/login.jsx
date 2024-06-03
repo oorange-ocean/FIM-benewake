@@ -31,14 +31,35 @@ function AreCookiesValid(cookies) {
         return false
     }
 }
-export default function Login() {
 
+const feishuAutoLogin = async (navigate) => {
+    window.h5sdk.ready(() => {
+        // alert('111');
+        tt.requestAuthCode({
+            appId: "cli_a5e56060a07ad00c",
+            success: (info) => {
+                console.info(info.code);
+                // alert(info.code);
+                window.location.href = `/callback/feishuLogin?code=${info.code}`;
+            },
+            fail: (error) => {
+                console.error(error);
+                alert('shibai');
+            }
+        });
+    });
+};
+
+
+export default function Login() {
     const { alertError, alertWarning } = useAlertContext()
     const { setAuth } = useAuthContext();
     const navigate = useNavigate()
 
     useEffect(() => {
         const cookies = document.cookie.split('; ');
+        const searchParams = new URLSearchParams(window.location.search);
+        const code = searchParams.get('code');
         if (AreCookiesValid(cookies)) {
             setAuth({
                 username: cookies.find(item => item.startsWith("benewakeusername=")).split("=")[1],
@@ -46,12 +67,13 @@ export default function Login() {
             })
             navigate("/user")
         }
-        const searchParams = new URLSearchParams(window.location.search);
-        const code = searchParams.get('code');
-        if (code) {
+        else if (code) {
             // 重定向到 FeishuLogin 路由
             navigate(`/callback/feishuLogin?code=${code}`);
             return;
+        }
+        else if (window.h5sdk) {
+            feishuAutoLogin();
         }
     }, [])
 
