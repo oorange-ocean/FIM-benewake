@@ -45,7 +45,7 @@ export default function FeishuLogin() {
     const code = urlParams.get('code');
     console.log("Code:", code); // 打印获取到的 code 参数
     if (code) {
-      axios.get(`/api/benewake/home/codeLogin?code=${code}`)
+      axios.get(`/benewake/home/codeLogin?code=${code}`)
         .then(response => {
           const res = response.data;
           console.log(res);
@@ -71,10 +71,10 @@ export default function FeishuLogin() {
           }
         })
         .catch(error => {
-          alertError("网络错误，请稍后重试！");
+          alert("网络错误，请稍后重试！", code);
         });
     } else {
-      alertWarning("缺少登录码，请重新登录！");
+      // alertWarning("缺少登录码，请重新登录！");
       navigate('/login');
     }
   }, [alertError, alertWarning, navigate, setAuth]);
