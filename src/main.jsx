@@ -10,7 +10,7 @@ import children from './path/children';
 import Login from './routes/login';
 import AuthProvider from './providers/AuthProvider'
 import AlertProvider from './providers/AlertProvider';
-import adminChildren from './path/adminChildren';
+import { adminChildren, dataManageChildren } from './path/adminChildren';  // 确保正确导入from './path/adminChildren';
 import analysisChildren from './path/analysisChildren';
 import Loader from './components/Loader';
 const App = lazy(() => import('./App'));

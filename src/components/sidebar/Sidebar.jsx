@@ -3,7 +3,7 @@ import children from '../../path/children';
 import { useAuthContext, useUpdateTabContext } from '../../hooks/useCustomContext';
 import { ReactComponent as LogoutIcon } from '../../assets/icons/logout.svg'
 import { logout } from '../../api/auth';
-import adminChildren from '../../path/adminChildren';
+import { adminChildren, dataManageChildren } from '../../path/adminChildren';
 import { ADMIN_USER } from '../../constants/Global';
 import Dropdown from './Dropdown';
 import analysisChildren from '../../path/analysisChildren';
@@ -51,7 +51,14 @@ export default function Sidebar({ showSidebar }) {
                             {obj.name}
                         </NavLink>)
                 }
-
+                {
+                    auth?.userType == ADMIN_USER &&
+                    <Dropdown
+                        items={dataManageChildren}
+                        label="数据管理"
+                        type="admin"
+                    />
+                }
                 <Dropdown
                     items={analysisChildren}
                     label="数据分析"

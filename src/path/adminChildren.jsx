@@ -1,4 +1,3 @@
-
 import { findMessages } from '../api/message';
 import AdminTables from '../routes/AdminTables';
 import PostMessage from '../routes/PostMessage';
@@ -18,9 +17,9 @@ const adminChildren = [
             }
         }
     },
-    {
-        name: "数据管理", path: "tables", element: <AdminTables />, type: "admin", menu: true, inSidebar: true
-    },
+    // {
+    //     name: "数据管理", path: "tables", element: <AdminTables />, type: "admin", menu: true, inSidebar: true
+    // },
     ...Object.keys(adminSchema).map(key => ({
         name: adminSchema[key].cn,
         path: key,
@@ -38,6 +37,8 @@ const adminChildren = [
             }
         }
     }))
-]
+];
 
-export default adminChildren;
+const dataManageChildren = adminChildren.filter(child => !child.inSidebar);
+
+export { adminChildren, dataManageChildren };
