@@ -2,7 +2,7 @@ import axios from "./axios";
 
 export async function login({ username, password }) {
     try {
-        const response = await axios.post('/login', {
+        const response = await axios.post('/home/login', {
             username, password
         })
         return response.data;

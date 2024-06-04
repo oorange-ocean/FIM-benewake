@@ -1,6 +1,5 @@
 import { ReactComponent as LogoIcon } from '../assets/logos/logo+en.svg'
 import { ReactComponent as AppIcon } from '../assets/logos/App.svg'
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUser, login, logout } from '../api/auth';
@@ -10,7 +9,9 @@ function setCookie(name, value, days) {
     let expires = "";
     if (days) {
         const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        date.setTime(date.getTime(
+
+        ) + (days * 24 * 60 * 60 * 1000));
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = "benewake" + name + "=" + (value || "") + expires + "; path=/";
@@ -32,41 +33,34 @@ function AreCookiesValid(cookies) {
     }
 }
 
-const feishuAutoLogin = async (navigate) => {
-    if (!window.h5sdk) {
-        const currentUrl = window.location.href;
-        alertError(`h5sdk is not loaded. Current URL: ${currentUrl}`);
-        return;
+function detectBrowserInfo() {
+    const userAgent = navigator.userAgent.toLowerCase();
+
+    // 判断是否为微信浏览器
+    const isWechat = /micromessenger/i.test(userAgent);
+    // 判断是否为企业微信（即微信工作版）
+    const isWechatWork = /wxwork/i.test(userAgent);
+
+    // 判断是否为钉钉内置浏览器
+    const isDingTalk = /dingtalk/i.test(userAgent);
+
+    // 飞书内置浏览器可能包含 "lark" 关键字，但请核实最新版本 UA 以确保准确性
+    const isFeishu = /lark/i.test(userAgent);
+
+    // 如果是特定浏览器，触发警告
+    if (isWechat || isWechatWork || isDingTalk || isFeishu) {
+        console.log("您正在使用特定的浏览器，请注意！", isFeishu);
     }
 
-    window.h5sdk.ready(() => {
-        // alert("h5sdk is ready");
-
-        if (!tt) {
-            const currentUrl = window.location.href;
-            alertError(`tt is not defined. Current URL: ${currentUrl}`);
-            return;
-        }
-        // Log the current appId being used
-        const appId = "cli_a5e56060a07ad00c";
-
-        tt.requestAuthCode({
-            appId: appId,
-            success: (info) => {
-                // alert("Auth code received: " + info.code);
-                const targetUrl = `/#/callback/feishuLogin?code=${info.code}`;
-                alerterror("Navigating to: " + targetUrl);
-                window.location.href = targetUrl;
-            },
-            fail: (error) => {
-                const currentUrl = window.location.href;
-                alert(`Auth code request failed: ${error.errString} (Code: ${error.errno}). Current URL: ${currentUrl}`);
-            }
-        });
-    });
-};
-
+    return {
+        isWechat,
+        isWechatWork,
+        isDingTalk,
+        isFeishu
+    };
+}
 export default function Login() {
+
     const { alertError, alertWarning } = useAlertContext()
     const { setAuth } = useAuthContext();
     const navigate = useNavigate()
@@ -82,15 +76,15 @@ export default function Login() {
             })
             navigate("/user")
         }
+        const browserInfo = detectBrowserInfo();
+        if (browserInfo.isFeishu && (!AreCookiesValid(cookies)) && !code) {
+            // 如果是飞书浏览器，触发自动跳转到飞书登录
+            window.location.href = "https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=cli_a5e56060a07ad00c&amp;redirect_uri=https://fim.benewake.top/#/callback/feishuLogin";
+        }
         else if (code) {
             // 重定向到 FeishuLogin 路由
             navigate(`/callback/feishuLogin?code=${code}`);
             return;
-        }
-        else if (!window.h5sdk) {
-            alertError("h5sdk is not loaded")
-            alertWarning('h5sdk not loaded')
-            feishuAutoLogin();
         }
     }, [])
 
@@ -132,7 +126,13 @@ export default function Login() {
     const handleCreateUser = async () => {
         await createUser({ username, password, userType: 1 })
     }
+    // if (browserInfo === null) {
+    //     return <div>Loading...</div>;
+    // }
 
+    // if (browserInfo.isFeishu) {
+    //     return <div></div>;
+    // }
     return (
         <div id="login-page" className="container">
             <div className="logo-wrapper">
