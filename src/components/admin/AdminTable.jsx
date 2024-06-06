@@ -7,27 +7,62 @@ import AdminPopup from './AdminPopup';
 import moment from 'moment';
 import { useAlertContext } from '../../hooks/useCustomContext';
 import adminSchema from '../../constants/schemas/adminSchema';
+import { useEffect } from 'react';
+import { getCustomerTypes, updateCustomerType } from '../../api/admin';
+import { Button, Modal, Select, Space } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
+const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonClick }) => {
+    // // 检查 schema 是否符合特定结构
+    // const isSpecificSchema = schema.length === 3 &&
+    //     schema[0].eng === 'customerName' &&
+    //     schema[1].eng === 'itemCode' &&
+    //     schema[2].eng === 'customerType';
 
-const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected }) => {
     return (
         <div className="tr">
             <div className='td fixed checkbox'>
                 <Checkbox addRow={addRow} removeRow={removeRow} isSelected={isSelected} />
             </div>
-            {schema.map((cell, i) =>
+            {schema.map((cell, i) => (
                 <div
                     style={{ width: colWidths[i] }}
                     className='td'
                     key={i}>
-                    <span>{cell.eng === "startMonth" ? moment(data.startMonth).format('YYYY/MM/DD') : data[cell.eng]}</span>
+                    {cell.eng === "startMonth" ? (
+                        <span>{moment(data.startMonth).format('YYYY/MM/DD')}</span>
+                    ) : cell.eng === "customerType" ? (
+                        <span>{data[cell.eng]} <EditOutlined onClick={() => onButtonClick(data)} /></span>
+                    ) : (
+                        <span>{data[cell.eng]}</span>
+                    )}
                 </div>
-            )}
+            ))}
+
         </div>
     )
 }
 
 
+
 const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
+    const [customerTypes, setCustomerTypes] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentRowData, setCurrentRowData] = useState(null);
+    const [selectedCustomerType, setSelectedCustomerType] = useState(null);
+    useEffect(() => {
+        const fetchCustomerTypes = async () => {
+            try {
+                const data = await getCustomerTypes();
+                setCustomerTypes(data);
+                console.log(data)
+            } catch (error) {
+                console.error('Error fetching customer types:', error);
+            }
+        };
+
+        fetchCustomerTypes();
+    }, []);
+
     const { alertWarning, alertConfirm, alertSuccess, alertError } = useAlertContext()
     const [selectedRows, setSelectedRows] = useState([])
     const [pageNum, setPageNum] = useState(1);
@@ -108,6 +143,37 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
             return newWidths;
         });
     };
+    // // 检查 schema 是否符合特定结构
+    // const isSpecificSchema = schema.length === 3 &&
+    //     schema[0].eng === 'customerName' &&
+    //     schema[1].eng === 'itemCode' &&
+    //     schema[2].eng === 'customerType';
+
+    // 处理按钮点击事件
+    const handleButtonClick = (rowData) => {
+        setCurrentRowData(rowData);
+        setSelectedCustomerType(rowData.customerType);
+        setIsModalOpen(true);
+    };
+
+    const handleModalOk = async () => {
+        try {
+            await updateCustomerType(currentRowData.customerName, currentRowData.itemCode, selectedCustomerType);
+            alertSuccess('客户类型更新成功');
+            handleRefresh();
+        } catch (error) {
+            alertError('客户类型更新失败');
+        }
+        setIsModalOpen(false);
+    };
+
+
+    const handleModalCancel = () => {
+        setIsModalOpen(false);
+    };
+    const handleCustomerTypeChange = (value) => {
+        setSelectedCustomerType(value);
+    };
 
     return (
         <div className='col table-container'>
@@ -148,6 +214,17 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
                                     {item.cn}
                                 </ResizableHeader>)
                             }
+                            {/* {isSpecificSchema && (
+                                <ResizableHeader
+                                    key={'action'}
+                                    width={100}
+                                    onResize={handleResize}
+                                    index={schema.length}
+                                    type={'action'}
+                                >
+                                    修改客户类型
+                                </ResizableHeader>
+                            )} */}
                         </div>
                     </div>
                     <div className='tbody'>
@@ -161,11 +238,27 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
                                 isSelected={selectedRows.includes(i)}
                                 addRow={() => addSelectedRow(i)}
                                 removeRow={() => removeSelectedRow(i)}
+                                onButtonClick={handleButtonClick}
                             />)}
                     </div>
                 </div>
             </div>
             <AdminPaginate totalItems={rows.length} pageSize={pageSize} setPageSize={setPageSize} pageNum={pageNum} setPageNum={setPageNum} />
+            <Modal
+                title="修改客户类型"
+                open={isModalOpen}
+                onOk={handleModalOk}
+                onCancel={handleModalCancel}
+            >
+                <p>客户名称: {currentRowData?.customerName}</p>
+                <p>物料编码: {currentRowData?.itemCode}</p>
+                <Select
+                    value={selectedCustomerType}
+                    style={{ width: '100%' }}
+                    onChange={handleCustomerTypeChange}
+                    options={customerTypes.map(type => ({ value: type.customerType, label: type.customerType }))}
+                />
+            </Modal>
         </div >
     )
 }

@@ -40,7 +40,7 @@ const router = createHashRouter([
     children: adminChildren
   },
   {
-    path: "/analysis",
+    path: "/past-analysis",
     element: <Suspense fallback={<Loader />}>
       <App />
     </Suspense>,

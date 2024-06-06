@@ -9,7 +9,7 @@ const Manage = ({ type }) => {
     const data = useLoaderData();
     const [rows, setRows] = useState(data)
     const schema = Object.keys(rows[0]).flatMap(key => adminDefs.filter((item) => item.eng === key))
-
+    console.log(schema)
     const handleRefresh = async () => {
         const fetchUrl = adminSchema[type].select
         const res = await fetchAdminData(fetchUrl)

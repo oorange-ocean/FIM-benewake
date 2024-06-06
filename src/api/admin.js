@@ -35,3 +35,25 @@ export async function deleteAdminData(type, payload) {
         console.log(err);
     }
 }
+
+export async function getCustomerTypes() {
+    try {
+        const response = await axios.get('/admin/getCustomerTypes');
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+export async function updateCustomerType(customerName, itemCode, customerType) {
+    try {
+        const response = await axios.post('/admin/updateFimCustomerTypeTable', {
+            customerName: customerName,
+            itemCode: itemCode,
+            customerType: customerType
+        });
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}

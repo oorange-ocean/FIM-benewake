@@ -16,7 +16,6 @@ const analysisSchema = {
     allCustomerTypeOrdersBack: createSchemaEntry("客户类型分类-订单版（已还原）", "getAllCustomerTypeOrdersBack"),
     allCustomerTypeordersMonthlyReplaced: createSchemaEntry("客户类型分类-月份版（替换后）", "getAllCustomerTypeordersMonthlyReplaced"),
     allCustomerTypeordersMonthlyBack: createSchemaEntry("客户类型分类-月份版（已还原）", "getAllCustomerTypeordersMonthlyBack"),
-
 };
 
 export default analysisSchema;

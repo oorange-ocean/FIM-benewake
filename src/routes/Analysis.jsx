@@ -30,7 +30,7 @@ const FilterPopup = ({ url, open, closePopup, setRows }) => {
         const res = await fetchAnalysisData(url, params);
         switch (res.code) {
             case 200:
-                setRows(res.data)
+                setRows(res.data.records)
                 break;
             case 1:
             case 400:
@@ -69,14 +69,18 @@ const Analysis = ({ schema }) => {
     const [rows, setRows] = useState([])
     const { alertConfirm } = useAlertContext()
     const [openPopup, setOpenPopup] = useState(true)
-
-    console.log(schema);
-    useEffect(() => { setRows(res.data) }, [res])
+    const [defs, setDefs] = useState([])
+    // console.log(schema);
+    useEffect(() => {
+        setRows(res.data.records)
+        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)))
+    }, [res])
 
     const handleRefresh = async () => {
         setRows([])
         const res = await fetchAnalysisData(schema.select)
-        setRows(res.data)
+        setRows(res.data.records)
+        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)))
     }
 
     const handleExport = () => {
@@ -100,7 +104,7 @@ const Analysis = ({ schema }) => {
 
     }
 
-    const defs = rows.length === 0 ? undefined : analysisDefs.filter((def) => Object.keys(rows[0]).includes(def.id))
+    // const defs = rows.length === 0 ? undefined : analysisDefs.filter((def) => Object.keys(rows[0]).includes(def.id))
 
     return (
         <div className='col full-screen analysis'>
