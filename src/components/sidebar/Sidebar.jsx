@@ -1,27 +1,74 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import children from '../../path/children';
 import { useAuthContext, useUpdateTabContext } from '../../hooks/useCustomContext';
-import { ReactComponent as LogoutIcon } from '../../assets/icons/logout.svg'
-import { logout } from '../../api/auth';
+import { ReactComponent as LogoutIcon } from '../../assets/icons/logout.svg';
+import { logout, updatePwd } from '../../api/auth';
 import { adminChildren, dataManageChildren } from '../../path/adminChildren';
 import { ADMIN_USER } from '../../constants/Global';
-import Dropdown from './Dropdown';
+import CustomDropdown from './Dropdown';
 import analysisChildren from '../../path/analysisChildren';
+import { DownOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Menu, Space, Modal, Input, Form } from 'antd';
+import { useState } from 'react';
 
 export default function Sidebar({ showSidebar }) {
-    const updateTabs = useUpdateTabContext()
-    const navigate = useNavigate()
-    const { auth } = useAuthContext()
+    const updateTabs = useUpdateTabContext();
+    const navigate = useNavigate();
+    const { auth } = useAuthContext();
+    const [modalOpen, setModalOpen] = useState(false);
+    const [form] = Form.useForm();
+
+    console.log(auth);
 
     const handleClick = (newTab, event) => {
         event.stopPropagation();
-        updateTabs({ type: "ADD_TAB", tab: newTab })
-    }
+        updateTabs({ type: "ADD_TAB", tab: newTab });
+    };
 
     const handleLogout = async () => {
-        await logout()
-        navigate("/login")
-    }
+        await logout();
+        navigate("/login");
+    };
+
+    const handleOpenModal = () => {
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        form.resetFields();
+    };
+
+    const handleUpdatePwd = async (values) => {
+        const { oldPassword, newPassword, rePassword } = values;
+        const userId = auth.userId; // 从 auth 获取 userId
+
+        try {
+            await updatePwd({ oldPassword, newPassword, rePassword, userId });
+            handleCloseModal();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const items = [
+        {
+            key: '1',
+            label: (
+                <button onClick={handleLogout} >
+                    退出登录&nbsp;<LogoutIcon />
+                </button>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <button onClick={handleOpenModal} >
+                    修改密码
+                </button >
+            ),
+        }
+    ];
 
     return (
         <div className={`sidebar col ${showSidebar ? "" : "hidden"}`}>
@@ -38,7 +85,8 @@ export default function Sidebar({ showSidebar }) {
                         onClick={(e) => handleClick(obj, e)}
                     >
                         {obj.name}
-                    </NavLink>)}
+                    </NavLink>
+                )}
                 {
                     auth?.userType == ADMIN_USER &&
                     adminChildren.map((obj, i) =>
@@ -49,30 +97,70 @@ export default function Sidebar({ showSidebar }) {
                             onClick={!obj.menu && ((e) => handleClick(obj, e))}
                         >
                             {obj.name}
-                        </NavLink>)
+                        </NavLink>
+                    )
                 }
                 {
                     auth?.userType == ADMIN_USER &&
-                    <Dropdown
+                    <CustomDropdown
                         items={dataManageChildren}
                         label="数据管理"
                         type="admin"
                     />
                 }
-                <Dropdown
+                <CustomDropdown
                     items={analysisChildren}
                     label="数据分析"
                     type="past-analysis"
                 />
-
-
-            </nav >
-            <div className='row flex-center mb1 user-info-container'>
-                <h1>用户：{auth?.username ?? ""}</h1>
-                <button onClick={handleLogout} >
-                    <LogoutIcon />
-                </button>
-            </div>
+            </nav>
+            <Dropdown menu={{ items }} placement="top">
+                <Button>用户：{auth?.username ?? ""}</Button>
+            </Dropdown>
+            <Modal
+                title="修改密码"
+                open={modalOpen}
+                onCancel={handleCloseModal}
+                footer={null}
+            >
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={handleUpdatePwd}
+                >
+                    <Form.Item
+                        name="oldPassword"
+                        label="旧密码"
+                        rules={[{ required: true, message: '请输入旧密码' }]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        name="newPassword"
+                        label="新密码"
+                        rules={[{ required: true, message: '请输入新密码' }]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        name="rePassword"
+                        label="确认新密码"
+                        rules={[{ required: true, message: '请确认新密码' }]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item>
+                        <Space>
+                            <Button type="primary" htmlType="submit">
+                                提交
+                            </Button>
+                            <Button onClick={handleCloseModal}>
+                                取消
+                            </Button>
+                        </Space>
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
-    )
+    );
 }

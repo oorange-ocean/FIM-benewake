@@ -69,5 +69,18 @@ export async function checkUser(username) {
     }
 }
 
+export async function updatePwd({ oldPassword, newPassword, rePassword, userId }) {
+    try {
+        const response = await axios.post('/user/updatePwd', {
+            oldPassword,
+            newPassword,
+            rePassword,
+            userId
+        });
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 
