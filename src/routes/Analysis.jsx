@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Modal, Button, Select } from 'antd';
+import { Modal, Button, Select, Pagination } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import Table from '../components/table/Table';
 import Loader from '../components/Loader';
@@ -16,7 +16,7 @@ function EngToCn(col_name_ENG) {
     return analysisDefs.find(col => col.id === col_name_ENG)?.header;
 }
 
-const FilterPopup = ({ url, open, closePopup, setRows }) => {
+const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, setTotal }) => {
     const { alertError } = useAlertContext();
     const [params, setParams] = useState({
         yearly: 1,
@@ -24,17 +24,21 @@ const FilterPopup = ({ url, open, closePopup, setRows }) => {
         agent: 1,
         newCustomer: 1,
         temporaryCustomer: 1,
-        daily: 1
+        daily: 1,
+
     });
 
     const labels = ['年度客户', '月度客户', '代理商', '新增客户', '临时客户', '日常客户'];
-    const keys = Object.keys(params);
+    const keys = Object.keys(params).slice(0, 6);
 
     const handleClick = async () => {
         const res = await fetchAnalysisData(url, params);
         switch (res.code) {
             case 200:
                 setRows(res.data.records);
+                setCurrent(res.data.current);
+                setPageSize(res.data.size);
+                setTotal(res.data.total);
                 break;
             case 1:
             case 400:
@@ -78,17 +82,28 @@ const Analysis = ({ schema }) => {
     const { alertConfirm } = useAlertContext();
     const [openPopup, setOpenPopup] = useState(false);
     const [defs, setDefs] = useState([]);
-
+    const [current, setCurrent] = useState(res.data.current || 1);
+    const [pageSize, setPageSize] = useState(res.data.size || 20);
+    const [total, setTotal] = useState(res.data.total || 0);
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         setRows(res.data.records);
         setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
     }, [res]);
 
-    const handleRefresh = async () => {
-        setRows([]);
-        const res = await fetchAnalysisData(schema.select);
+    const handleRefresh = async (page = current, size = pageSize) => {
+        setLoading(true);
+        const res = await fetchAnalysisData(schema.select, { pageNum: page, pageSize: size });
         setRows(res.data.records);
         setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
+        setTotal(res.data.total);
+        setCurrent(page);
+        setPageSize(size);
+        setLoading(false);
+    };
+
+    const handlePageChange = (page, size) => {
+        handleRefresh(page, size);
     };
 
     const handleExport = () => {
@@ -119,22 +134,38 @@ const Analysis = ({ schema }) => {
                     <Button type="text" onClick={handleExport}>导出</Button>
                 </div>
             </div>
-            <div className='row' style={{ marginBottom: '10px' }}>
-                <Button icon={<FilterOutlined />} onClick={() => setOpenPopup(true)}>
-                    客户类型筛选
-                </Button>
-            </div>
+            {rows?.length > 0 && rows[0].hasOwnProperty('customerType') && (
+                <div className='row' style={{ marginBottom: '10px' }}>
+                    <Button icon={<FilterOutlined />} onClick={() => setOpenPopup(true)}>
+                        客户类型筛选
+                    </Button>
+                </div>
+            )}
             <FilterPopup
                 open={openPopup}
                 closePopup={() => setOpenPopup(false)}
                 url={schema.select}
                 setRows={setRows}
+                setCurrent={setCurrent}
+                setPageSize={setPageSize}
+                setTotal={setTotal}
             />
             {rows?.length > 0 ? (
-                <Table
-                    data={rows}
-                    columns={defs}
-                />
+                <>
+                    <Table
+                        data={rows}
+                        columns={defs}
+                    />
+                    <Pagination
+                        current={current}
+                        pageSize={pageSize}
+                        total={total}
+                        showSizeChanger
+                        onChange={handlePageChange}
+                        onShowSizeChange={handlePageChange}
+                        style={{ marginTop: '10px', marginBottom: '20px', textAlign: 'left' }}
+                    />
+                </>
             ) : (
                 <Loader />
             )}

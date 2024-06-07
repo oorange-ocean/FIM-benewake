@@ -191,7 +191,7 @@ export default function Table({ data, columns, setNewInquiryData }) {
                         </div>
                     </div>
                 </div>
-                <Paginate table={table} />
+                {/* <Paginate table={table} /> */}
             </div>
 
         </DndProvider >
