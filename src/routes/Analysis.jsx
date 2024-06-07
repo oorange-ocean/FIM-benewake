@@ -1,19 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import { Modal, Button, Select } from 'antd';
+import { FilterOutlined } from '@ant-design/icons';
 import Table from '../components/table/Table';
 import Loader from '../components/Loader';
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData } from 'react-router-dom';
 import { fetchAnalysisData } from '../api/analysis';
 import analysisDefs from '../constants/defs/AnalysisDefs';
 import * as XLSX from 'xlsx';
 import { useAlertContext } from '../hooks/useCustomContext';
 import moment from 'moment';
 
+const { Option } = Select;
+
 function EngToCn(col_name_ENG) {
-    return analysisDefs.find(col => col.id === col_name_ENG)?.header
+    return analysisDefs.find(col => col.id === col_name_ENG)?.header;
 }
 
 const FilterPopup = ({ url, open, closePopup, setRows }) => {
-    const { alertError } = useAlertContext()
+    const { alertError } = useAlertContext();
     const [params, setParams] = useState({
         yearly: 1,
         monthly: 1,
@@ -30,108 +34,112 @@ const FilterPopup = ({ url, open, closePopup, setRows }) => {
         const res = await fetchAnalysisData(url, params);
         switch (res.code) {
             case 200:
-                setRows(res.data.records)
+                setRows(res.data.records);
                 break;
             case 1:
             case 400:
-                alertError(res.message)
-                break
+                alertError(res.message);
+                break;
         }
-        // closePopup(); 
+        closePopup();
     };
 
     return (
-        <div className='popup-container'>
-            <div className="popup-wrapper filter-popup g1">
-                是否显示:
-                {open && labels.map((label, i) => (
-                    <label htmlFor={'analysis-filter' + i} key={i}>
-                        {label}:
-                        <select
-                            id={'analysis-filter' + i}
-                            value={params[keys[i]]}
-                            onChange={(e) => setParams(prev => ({
-                                ...prev, [keys[i]]: e.target.value
-                            }))}>
-                            <option value={1}>是</option>
-                            <option value={0}>否</option>
-                        </select>
-                    </label>
-                ))}
-                <button onClick={handleClick} className='small blue40'>确认</button>
-            </div>
-        </div>
+        <Modal
+            title="客户类型筛选"
+            open={open}
+            onCancel={closePopup}
+            onOk={handleClick}
+            okText="确认"
+            cancelText="取消"
+        >
+            {labels.map((label, i) => (
+                <div key={i} style={{ marginBottom: '10px' }}>
+                    <span>{label}:</span>
+                    <Select
+                        value={params[keys[i]]}
+                        onChange={(value) => setParams(prev => ({
+                            ...prev, [keys[i]]: value
+                        }))}
+                        style={{ width: '100px', marginLeft: '10px' }}
+                    >
+                        <Option value={1}>是</Option>
+                        <Option value={0}>否</Option>
+                    </Select>
+                </div>
+            ))}
+        </Modal>
     );
 };
 
 const Analysis = ({ schema }) => {
     const res = useLoaderData();
-    const [rows, setRows] = useState([])
-    const { alertConfirm } = useAlertContext()
-    const [openPopup, setOpenPopup] = useState(true)
-    const [defs, setDefs] = useState([])
-    // console.log(schema);
+    const [rows, setRows] = useState([]);
+    const { alertConfirm } = useAlertContext();
+    const [openPopup, setOpenPopup] = useState(false);
+    const [defs, setDefs] = useState([]);
+
     useEffect(() => {
-        setRows(res.data.records)
-        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)))
-    }, [res])
+        setRows(res.data.records);
+        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
+    }, [res]);
 
     const handleRefresh = async () => {
-        setRows([])
-        const res = await fetchAnalysisData(schema.select)
-        setRows(res.data.records)
-        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)))
-    }
+        setRows([]);
+        const res = await fetchAnalysisData(schema.select);
+        setRows(res.data.records);
+        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
+    };
 
     const handleExport = () => {
         alertConfirm("确定导出该表单？", () => {
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet([]);
 
-            const headers_ENG = Object.keys(rows[0])
+            const headers_ENG = Object.keys(rows[0]);
 
-            let headers_CN = headers_ENG.map((name) => EngToCn(name)).filter((value) => value !== undefined)
+            let headers_CN = headers_ENG.map((name) => EngToCn(name)).filter((value) => value !== undefined);
 
             XLSX.utils.sheet_add_aoa(ws, [headers_CN]);
             XLSX.utils.sheet_add_json(ws, rows, { origin: 'A2', skipHeader: true });
             XLSX.utils.book_append_sheet(wb, ws);
 
-            const timestamp = moment(new Date()).format('YYMMDDHHmmss')
-            const filename = "销售员销售现况表"
+            const timestamp = moment(new Date()).format('YYMMDDHHmmss');
+            const filename = "销售员销售现况表";
 
             XLSX.writeFileXLSX(wb, filename + timestamp + ".xlsx");
-        })
-
-    }
-
-    // const defs = rows.length === 0 ? undefined : analysisDefs.filter((def) => Object.keys(rows[0]).includes(def.id))
+        });
+    };
 
     return (
         <div className='col full-screen analysis'>
-            <div className='row toolbar' >
+            <div className='row toolbar'>
                 <div className='row flex-center'>
-                    <button onClick={handleRefresh}>刷新</button>
-                    <button onClick={handleExport}>导出</button>
+                    <Button type="text" onClick={handleRefresh}>刷新</Button>
+                    <Button type="text" onClick={handleExport}>导出</Button>
                 </div>
             </div>
-            {
-                schema.cn.includes("客户类型分类-订单版") &&
-                < FilterPopup
-                    open={openPopup}
-                    closePopup={() => setOpenPopup(false)}
-                    url={schema.select}
-                    setRows={setRows}
-                />
-            }
-            {rows?.length > 0 ?
+            <div className='row' style={{ marginBottom: '10px' }}>
+                <Button icon={<FilterOutlined />} onClick={() => setOpenPopup(true)}>
+                    客户类型筛选
+                </Button>
+            </div>
+            <FilterPopup
+                open={openPopup}
+                closePopup={() => setOpenPopup(false)}
+                url={schema.select}
+                setRows={setRows}
+            />
+            {rows?.length > 0 ? (
                 <Table
                     data={rows}
                     columns={defs}
-                /> :
+                />
+            ) : (
                 <Loader />
-            }
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default Analysis;
