@@ -78,6 +78,7 @@ const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, 
 
 const Analysis = ({ schema }) => {
     const res = useLoaderData();
+    console.log(res)
     const [rows, setRows] = useState([]);
     const { alertConfirm } = useAlertContext();
     const [openPopup, setOpenPopup] = useState(false);
@@ -89,6 +90,9 @@ const Analysis = ({ schema }) => {
     useEffect(() => {
         setRows(res.data.records);
         setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
+        setTotal(res.data.total);
+        setCurrent(res.data.current);
+        setPageSize(res.data.size);
     }, [res]);
 
     const handleRefresh = async (page = current, size = pageSize) => {
@@ -163,7 +167,7 @@ const Analysis = ({ schema }) => {
                         showSizeChanger
                         onChange={handlePageChange}
                         onShowSizeChange={handlePageChange}
-                        style={{ marginTop: '10px', marginBottom: '20px', textAlign: 'left' }}
+                        style={{ marginTop: '30px', marginBottom: '20px', textAlign: 'left' }}
                     />
                 </>
             ) : (
