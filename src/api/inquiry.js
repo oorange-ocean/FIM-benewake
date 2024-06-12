@@ -53,3 +53,17 @@ export async function allowInquiry(ids) {
         console.log(err);
     }
 }
+
+
+export async function saveDivideList({ inquiries, inquiryCode }) {
+    try {
+        const response = await api.post('/order/saveDivideList', {
+            inquiries,
+            inquiryCode
+        });
+        return response.data;
+    }
+    catch (err) {
+        console.log(err);
+    }
+}

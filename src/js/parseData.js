@@ -126,33 +126,37 @@ export async function rowToInquiry(row, inquiryType) {
 
     //new inquiry
     if (inquiryType) {
+        console.log('查询销售员id')
         let salesmanId = null;
-        if (!row?.salesmanId) {
-            const res = await fetchUser(row.salesmanName, "2")
-            salesmanId = res?.[0]?.id?.toString()
-        }
-        else {
-            salesmanId = row.salesmanId.toString()
-        }
 
-        const { itemId, customerId, saleNum, expectedTime, remark, inquiryId, inquiryCode } = row
+        const res = await fetchUser(row.salesmanName, "2")
+        console.log("res", res)
+        salesmanId = res.toString()
+        console.log("salesmanid", salesmanId)
+
+        const { itemId, customerId, saleNum, expectedTime, remark, inquiryId, inquiryCode, state } = row
 
         param = {
             salesmanId,
-            inquiryId,
+            // inquiryId,
             inquiryCode,
             itemId: itemId?.toString(),
             customerId: customerId?.toString(),
             saleNum: saleNum?.toString(),
             expectedTime: expectedTime ? moment(expectedTime).format("YYYY/MM/DD") : null,
             inquiryType: inquiryType?.toString(),
-            remark
+            remark: remark?.toString(),
+            state: getStateNum(state),
         }
     }
 
     //edit inquiry
     else {
-        const { inquiryId, inquiryCode, inquiryType, salesmanId, itemId, customerId, saleNum, expectedTime, remark, arrangedTime, state } = row
+        const { inquiryId, inquiryCode, inquiryType, itemId, customerId, saleNum, expectedTime, remark, arrangedTime, state, salesmanName } = row
+        let salesmanId = null;
+        const res = await fetchUser(row.salesmanName, "2")
+        console.log("res", res)
+        salesmanId = res.toString()
         param = {
             inquiryId: inquiryId?.toString(),
             inquiryCode,

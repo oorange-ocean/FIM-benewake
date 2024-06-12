@@ -158,7 +158,9 @@ export default function Toolbar({ features }) {
                 updateTabs({ type: "ADD_TAB", tab: newTab })
                 const selectedIndex = Number(Object.keys(rowSelection)[0])
                 const selectedData = tableData[selectedIndex]
+                console.log("selectedDate", selectedData)
                 const initialData = await (parseInquiryObj(selectedData))
+                console.log("initialDAta", initialData)
                 Object.entries(selectedData).forEach(([key, value]) => {
                     const camelCaseKey = snakeToCamelCase(key)
                     initialData[camelCaseKey] = value
@@ -210,7 +212,7 @@ export default function Toolbar({ features }) {
                 <ToolbarButton feature="pin" handler={handlePin} text="置顶" />
                 <ToolbarButton feature="unpin" handler={handleUnpin} text="取消置顶" />
                 <ToolbarButton feature="refresh" handler={handleRefresh} text="刷新" />
-                <ToolbarButton feature="import" handler={toggleImportPopup} text="导入" additionalCondition={auth.userType != "3"}/>
+                <ToolbarButton feature="import" handler={toggleImportPopup} text="导入" additionalCondition={auth.userType != "3"} />
                 {openImportPopup && importPopup}
                 <ToolbarButton feature="export" handler={handleExport} text="导出" />
                 <ToolbarButton feature="edit" handler={handleEdit} text="修改" additionalCondition={auth.userType != "3"} />
