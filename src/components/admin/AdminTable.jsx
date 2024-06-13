@@ -54,7 +54,6 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
             try {
                 const data = await getCustomerTypes();
                 setCustomerTypes(data);
-                console.log(data)
             } catch (error) {
                 console.error('Error fetching customer types:', error);
             }

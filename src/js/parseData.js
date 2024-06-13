@@ -126,7 +126,6 @@ export async function rowToInquiry(row, inquiryType) {
 
     //new inquiry
     if (inquiryType) {
-        console.log('查询销售员id')
         let salesmanId = null;
 
         const res = await fetchUser(row.salesmanName, "2")

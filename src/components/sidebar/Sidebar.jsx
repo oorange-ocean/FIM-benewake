@@ -18,7 +18,6 @@ export default function Sidebar({ showSidebar }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [form] = Form.useForm();
 
-    console.log(auth);
 
     const handleClick = (newTab, event) => {
         event.stopPropagation();
