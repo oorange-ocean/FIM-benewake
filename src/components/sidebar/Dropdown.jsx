@@ -25,6 +25,7 @@ export default function Dropdown({ items, label, type }) {
                     {items.map(
                         (item, i) =>
                             <NavLink
+                                // activeClassName="active"
                                 className="sidebar-item"
                                 key={i}
                                 onClick={() => handleItemClick(item)}
