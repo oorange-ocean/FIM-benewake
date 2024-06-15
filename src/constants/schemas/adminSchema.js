@@ -50,6 +50,10 @@ const adminSchema = {
         "update": {
             url: "updateCustomerName",
             bodyKeys: ["oldCustomerName", "newCustomerName"]
+        },
+        // Added multi-condition filtering URL
+        "filter": {
+            url: "/customer/filter/customer"
         }
     },
     customerItem: {
@@ -62,6 +66,10 @@ const adminSchema = {
         "add": {
             url: "insertCustomerItem",
             bodyKeys: ["customerType", "customerName", "itemCode"]
+        },
+        // Added multi-condition filtering URL
+        "filter": {
+            url: "/customer/filter/customerType"
         }
     },
     customerRename: {
@@ -78,6 +86,10 @@ const adminSchema = {
         "update": {
             url: "updateCustomerRename",
             bodyKeys: ["customerNameOld", "customerNameNew"]
+        },
+        // Added multi-condition filtering URL
+        "filter": {
+            url: "/customer/filter/customerRename"
         }
     },
     itemChange: {
@@ -87,30 +99,38 @@ const adminSchema = {
             bodyKeys: ["itemCodeOld", "itemCodeNew"]
         },
         "delete": {
-            url:"deleteItemChangeByOldCode",
+            url: "deleteItemChangeByOldCode",
             bodyKeys: ["itemCodeOld"]
         },
         "update": {
             url: "updateItemChange",
             bodyKeys: ["itemCodeOld", "itemCodeNew"]
         },
-        "select": "selectFimPastItemChangeTable"
+        "select": "selectFimPastItemChangeTable",
+        // Added multi-condition filtering URL
+        "filter": {
+            url: "/item/filter/itemChange"
+        }
     },
-    salesmanChange : {
+    salesmanChange: {
         "cn": "销售员替换表",
         "add": {
             url: "addSalesmanChange",
             bodyKeys: ["salesmanNameOld", "salesmanNameNew"]
         },
         "delete": {
-            url:"deleteSalesmanChangeByOldName",
+            url: "deleteSalesmanChangeByOldName",
             bodyKeys: ["salesmanNameOld"]
         },
         "update": {
             url: "updateSalesmanChange",
             bodyKeys: ["salesmanNameOld", "salesmanNameNew"]
         },
-        "select": "selectFimPastSalesmanChangingTable"
+        "select": "selectFimPastSalesmanChangingTable",
+        // Added multi-condition filtering URL
+        "filter": {
+            url: "/admin/filter/salesmanChanging"
+        }
     },
     customizedItemChange: {
         "cn": "定制物料替换表",
@@ -119,7 +139,7 @@ const adminSchema = {
             bodyKeys: ["customerName", "itemNameOld", "itemNameNew"]
         },
         "delete": {
-            url:"deleteCustomizedItemChange",
+            url: "deleteCustomizedItemChange",
             bodyKeys: ["customerName", "itemNameOld", "itemNameNew"]
         },
         "select": "selectFimPastCustomizedItemChangingTable"
@@ -134,7 +154,11 @@ const adminSchema = {
             url: "deletePastChooseItemByItemCode",
             bodyKeys: ["itemCode", "itemName", "startMonth"]
         },
-        "select": "selectFimPastChooseItemTable"
+        "select": "selectFimPastChooseItemTable",
+        // Added multi-condition filtering URL
+        "filter": {
+            url: "/item/filter/chooseItem"
+        }
     }
 }
 
