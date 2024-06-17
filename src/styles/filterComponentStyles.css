@@ -4,16 +4,16 @@
   background-color: var(--blue5);
   width: 100%;
   border: 1px solid var(--blue30);
-  padding: 1rem;
-  display: flex;
-  flex-wrap: wrap;
+  padding: 1rem 1rem; /* Adjust padding to create more space around the container */
   font-size: 12px; /* Set font size to 12px */
 }
 
 .filter-row {
   display: flex;
-  align-items: flex-start;
-  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-bottom: 1rem; /* Add padding to create space below the row */
 }
 
 .filter-wrapper {
@@ -21,6 +21,7 @@
   grid-template-columns: repeat(3, 1fr);  /* Ensure only 3 filters per row */
   gap: 10px;
   flex: 1;
+  /* margin-bottom: 1rem; Add margin below filters */
 }
 
 .filter-item {
@@ -33,13 +34,14 @@
   margin-right: 8px;
 }
 
-.filter-buttons {
-  padding: 12px 0;
+.filter-buttons-left {
   display: flex;
-  flex-direction: column;
-  justify-content: center;  /* Center buttons vertically */
-  margin-left: 8px;
-  font-size: 12px; /* Set font size to 12px */
+  align-items: center;
+}
+
+.filter-buttons-right {
+  display: flex;
+  align-items: center;
 }
 
 .filter-button {
@@ -47,18 +49,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  margin-left: 8px;
+}
+
+.toggle-filter-button {
+  /* margin-top: 8px; */
+  display: flex;
+  justify-content: center; /* Center the button */
+  width: 100%; /* Ensure the button container takes the full width */
+}
+
+.filters-collapsed .filter-wrapper {
+  display: none; /* Hide filters when collapsed */
+}
+
+.filters-collapsed .filter-container {
+  padding: 0.5rem; /* Reduce padding when filters are collapsed */
 }
 
 @media (min-width: 600px) {
-  .filter-buttons {
-    flex-direction: row;
-    align-items: center;
-    margin-left: 16px;
-  }
-
   .filter-button {
-    margin-bottom: 0;
     margin-left: 8px;
   }
 }

@@ -650,7 +650,22 @@ button svg {
   border-color: var(--blue30);
 
 }
+.filter-container .ant-select .ant-select-selector {
+  font-size: 12px;
+  font-family: 'Microsoft Yahei', sans-serif; /* Set font family to Yahei */
 
+}
+
+.filter-container .ant-input {
+  font-size: 12px;
+  font-family: 'Microsoft Yahei', sans-serif; /* Set font family to Yahei */
+
+}
+
+.filter-container .ant-btn {
+  font-size: 12px;
+  font-family: 'Microsoft Yahei', sans-serif; /* Set font family to Yahei */
+}
 .arrow-icon {
   color: var(--blue30);
 }

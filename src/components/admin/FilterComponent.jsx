@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Select, Input, Button } from 'antd';
-import { SearchOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined, CloseOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import '../../styles/FilterComponentStyles.css';  // Import the new CSS file
 import { useAlertContext } from '../../hooks/useCustomContext';
 
@@ -12,7 +12,9 @@ const camelToSnake = (str) => {
 };
 
 const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
   const { alertWarning, alertSuccess } = useAlertContext();
+
   const handleAddFilter = () => {
     if (filters.length < schema.length) {
       const availableKeys = schema.map(item => item.eng).filter(key => !filters.some(filter => filter.key === key));
@@ -46,12 +48,15 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
       }));
 
     if (filterCriteriaList.length === 0) {
-      alertWarning("未选择筛选条件！")
+      alertWarning("筛选值为空！");
       return;
     }
 
-    console.log(filterCriteriaList);
     onFilter({ filterCriteriaList });
+  };
+
+  const handleResetFilters = () => {
+    setFilters([]);
   };
 
   const availableKeys = schema.map(item => item.eng).filter(key => !filters.some(filter => filter.key === key));
@@ -59,6 +64,15 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
   return (
     <div className="filter-container">
       <div className="filter-row">
+        <div className="filter-buttons-left">
+          <Button onClick={handleResetFilters} className="filter-button" type="primary">默认</Button>
+        </div>
+        <div className="filter-buttons-right">
+          <Button type="primary" onClick={handleSearch} className="filter-button filter-button-search" icon={<SearchOutlined />} >搜索</Button>
+          <Button onClick={handleAddFilter} className="filter-button filter-button-add" icon={<PlusOutlined />} disabled={filters.length >= schema.length}>新增筛选</Button>
+        </div>
+      </div>
+      {filtersExpanded && (
         <div className="filter-wrapper">
           {filters.map((filter, index) => (
             <div key={index} className="filter-item">
@@ -103,17 +117,22 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
               <Button
                 type='text'
                 className="filter-delete-button"
-                icon={<DeleteOutlined />}
+                icon={<CloseOutlined />}
                 onClick={() => handleDeleteFilter(index)}
               />
             </div>
           ))}
         </div>
-        <div className="filter-buttons">
-          <Button type="primary" onClick={handleSearch} className="filter-button filter-button-search" icon={<SearchOutlined />} />
-          <Button onClick={handleAddFilter} className="filter-button filter-button-add" icon={<PlusOutlined />} disabled={filters.length >= schema.length}>添加筛选</Button>
-        </div>
-      </div>
+      )}
+      <Button
+        type="link"
+        className="toggle-filter-button"
+        onClick={() => setFiltersExpanded(!filtersExpanded)}
+        icon={filtersExpanded ? <UpOutlined /> : <DownOutlined />}
+      >
+        {filtersExpanded ? '收起筛选' : '展开筛选'}
+      </Button>
+
     </div>
   );
 };
