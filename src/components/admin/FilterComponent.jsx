@@ -65,7 +65,7 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
     <div className="filter-container">
       <div className="filter-row">
         <div className="filter-buttons-left">
-          <Button onClick={handleResetFilters} className="filter-button" type="primary">默认</Button>
+          <Button onClick={handleResetFilters} className="filter-button" type="default">重置</Button>
         </div>
         <div className="filter-buttons-right">
           <Button type="primary" onClick={handleSearch} className="filter-button filter-button-search" icon={<SearchOutlined />} >搜索</Button>

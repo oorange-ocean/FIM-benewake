@@ -4,7 +4,7 @@
   background-color: var(--blue5);
   width: 100%;
   border: 1px solid var(--blue30);
-  padding: 1rem 1rem; /* Adjust padding to create more space around the container */
+  padding: 1rem 1rem .01rem 1rem; /* Adjust padding to create more space around the container */
   font-size: 12px; /* Set font size to 12px */
 }
 
@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  padding-bottom: 1rem; /* Add padding to create space below the row */
+  padding-bottom: 0rem; /* Add padding to create space below the row */
 }
 
 .filter-wrapper {
@@ -21,7 +21,9 @@
   grid-template-columns: repeat(3, 1fr);  /* Ensure only 3 filters per row */
   gap: 10px;
   flex: 1;
-  /* margin-bottom: 1rem; Add margin below filters */
+  padding-left:10px
+  margin-left:8px
+
 }
 
 .filter-item {
