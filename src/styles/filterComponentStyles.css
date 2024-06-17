@@ -1,0 +1,64 @@
+/* New filter component styles */
+
+.filter-container {
+  background-color: var(--blue5);
+  width: 100%;
+  border: 1px solid var(--blue30);
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px; /* Set font size to 12px */
+}
+
+.filter-row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+.filter-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  /* Ensure only 3 filters per row */
+  gap: 10px;
+  flex: 1;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
+.filter-select, .filter-input {
+  margin-right: 8px;
+}
+
+.filter-buttons {
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* Center buttons vertically */
+  margin-left: 8px;
+  font-size: 12px; /* Set font size to 12px */
+}
+
+.filter-button {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+@media (min-width: 600px) {
+  .filter-buttons {
+    flex-direction: row;
+    align-items: center;
+    margin-left: 16px;
+  }
+
+  .filter-button {
+    margin-bottom: 0;
+    margin-left: 8px;
+  }
+}

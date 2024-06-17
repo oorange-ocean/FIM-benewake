@@ -129,9 +129,7 @@ export async function rowToInquiry(row, inquiryType) {
         let salesmanId = null;
 
         const res = await fetchUser(row.salesmanName, "2")
-        console.log("res", res)
         salesmanId = res.toString()
-        console.log("salesmanid", salesmanId)
 
         const { itemId, customerId, saleNum, expectedTime, remark, inquiryId, inquiryCode, state } = row
 
@@ -154,7 +152,6 @@ export async function rowToInquiry(row, inquiryType) {
         const { inquiryId, inquiryCode, inquiryType, itemId, customerId, saleNum, expectedTime, remark, arrangedTime, state, salesmanName } = row
         let salesmanId = null;
         const res = await fetchUser(row.salesmanName, "2")
-        console.log("res", res)
         salesmanId = res.toString()
         param = {
             inquiryId: inquiryId?.toString(),

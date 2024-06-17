@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Select, Input, Button } from 'antd';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import '../../styles/FilterComponentStyles.css';  // Import the new CSS file
 
 const { Option } = Select;
 
@@ -35,47 +37,56 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
   const availableKeys = schema.map(item => item.eng).filter(key => !filters.some(filter => filter.key === key));
 
   return (
-    <div>
-      {filters.map((filter, index) => (
-        <div key={index} style={{ marginBottom: 8, display: 'flex', alignItems: 'center' }}>
-          <Select
-            style={{ width: 150, marginRight: 8 }}
-            value={filter.key}
-            onChange={(value) => handleFilterChange(index, 'key', value)}
-          >
-            {schema.map((item) => (
-              <Option key={item.eng} value={item.eng} disabled={filters.some(f => f.key === item.eng && f.key !== filter.key)}>
-                {item.cn}
-              </Option>
-            ))}
-          </Select>
-          <Select
-            style={{ width: 100, marginRight: 8 }}
-            value={filter.condition}
-            onChange={(value) => handleFilterChange(index, 'condition', value)}
-          >
-            <Option value="like">like</Option>
-            <Option value="=">=</Option>
-            <Option value="<>">{'<>'}</Option>
-            <Option value=">">{'>'}</Option>
-            <Option value="<">{'<'}</Option>
-            <Option value=">=">{'>='}</Option>
-            <Option value="<=">{'<='}</Option>
-            <Option value="is">is</Option>
-            <Option value="is not">is not</Option>
-            <Option value="in">in</Option>
-            <Option value="not in">not in</Option>
-            <Option value="!=">!=</Option>
-          </Select>
-          <Input
-            style={{ width: 150, marginRight: 8 }}
-            value={filter.value}
-            onChange={(e) => handleFilterChange(index, 'value', e.target.value)}
-          />
+    <div className="filter-container">
+      <div className="filter-row">
+        <div className="filter-wrapper">
+          {filters.map((filter, index) => (
+            <div key={index} className="filter-item">
+              <Select
+                className="filter-select"
+                value={filter.key}
+                onChange={(value) => handleFilterChange(index, 'key', value)}
+                popupMatchSelectWidth={false}
+
+              >
+                {schema.map((item) => (
+                  <Option key={item.eng} value={item.eng} disabled={filters.some(f => f.key === item.eng && f.key !== filter.key)}>
+                    {item.cn}
+                  </Option>
+                ))}
+              </Select>
+              <Select
+                className="filter-select"
+                value={filter.condition}
+                onChange={(value) => handleFilterChange(index, 'condition', value)}
+                popupMatchSelectWidth={false}
+              >
+                <Option value="like">包含</Option>
+                <Option value="=">等于</Option>
+                <Option value="<>">不等于</Option>
+                <Option value=">">大于</Option>
+                <Option value="<">小于</Option>
+                <Option value=">=">大于等于</Option>
+                <Option value="<=">小于等于</Option>
+                <Option value="is">是</Option>
+                <Option value="is not">不是</Option>
+                <Option value="in">包含于</Option>
+                <Option value="not in">不包含于</Option>
+                <Option value="!=">不等于</Option>
+              </Select>
+              <Input
+                className="filter-input"
+                value={filter.value}
+                onChange={(e) => handleFilterChange(index, 'value', e.target.value)}
+              />
+            </div>
+          ))}
         </div>
-      ))}
-      <Button onClick={handleAddFilter} style={{ marginRight: 8 }} disabled={filters.length >= schema.length}>Add Filter</Button>
-      <Button type="primary" onClick={handleSearch}>Search</Button>
+        <div className="filter-buttons">
+          <Button type="primary" onClick={handleSearch} className="filter-button filter-button-search" icon={<SearchOutlined />} />
+          <Button onClick={handleAddFilter} className="filter-button filter-button-add" icon={<PlusOutlined />} disabled={filters.length >= schema.length}>添加筛选</Button>
+        </div>
+      </div>
     </div>
   );
 };

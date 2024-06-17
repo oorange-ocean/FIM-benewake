@@ -78,7 +78,6 @@ const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, 
 
 const Analysis = ({ schema }) => {
     const res = useLoaderData();
-    console.log(res)
     const [rows, setRows] = useState([]);
     const { alertConfirm } = useAlertContext();
     const [openPopup, setOpenPopup] = useState(false);

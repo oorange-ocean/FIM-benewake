@@ -12,7 +12,6 @@ const Tabs = ({ navigate }) => {
     const tabRefs = useRef([]);
     const location = useLocation();  // 获取当前路径
     useEffect(() => {
-        console.log(location.pathname)
         const lastIndex = tabs.length - 1;
         if (tabRefs.current[lastIndex]) {
             tabRefs.current[lastIndex].scrollIntoView({ behavior: 'smooth', inline: 'end' });

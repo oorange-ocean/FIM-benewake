@@ -45,12 +45,10 @@ export default function FeishuLogin() {
     const queryParams = hash.split('?')[1];
     const urlParams = new URLSearchParams(queryParams);
     const code = urlParams.get('code');
-    console.log("Code:", code);
     if (code) {
       axios.get(`/benewake/home/codeLogin?code=${code}`)
         .then(response => {
           const res = response.data;
-          console.log(res);
           switch (res.code) {
             case 200:
               setAuth(res.data);

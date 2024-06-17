@@ -158,9 +158,7 @@ export default function Toolbar({ features }) {
                 updateTabs({ type: "ADD_TAB", tab: newTab })
                 const selectedIndex = Number(Object.keys(rowSelection)[0])
                 const selectedData = tableData[selectedIndex]
-                console.log("selectedDate", selectedData)
                 const initialData = await (parseInquiryObj(selectedData))
-                console.log("initialDAta", initialData)
                 Object.entries(selectedData).forEach(([key, value]) => {
                     const camelCaseKey = snakeToCamelCase(key)
                     initialData[camelCaseKey] = value

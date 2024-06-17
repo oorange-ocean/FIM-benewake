@@ -92,7 +92,6 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
         }
         console.log("ok");
         let splitRows = [];
-        console.log("original rows", originalRows)
         originalRows.forEach(row => {
             for (let i = 0; i < splitCount; i++) {
                 const newRow = { ...row, saleNum: null };
@@ -101,7 +100,6 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
         });
 
         setNewRows(splitRows);
-        console.log(splitRows);
         setRows(splitRows);
     };
 
