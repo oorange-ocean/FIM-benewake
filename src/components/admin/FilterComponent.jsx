@@ -1,7 +1,8 @@
 import React from 'react';
 import { Select, Input, Button } from 'antd';
-import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import '../../styles/FilterComponentStyles.css';  // Import the new CSS file
+import { useAlertContext } from '../../hooks/useCustomContext';
 
 const { Option } = Select;
 
@@ -11,7 +12,7 @@ const camelToSnake = (str) => {
 };
 
 const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
-
+  const { alertWarning, alertSuccess } = useAlertContext();
   const handleAddFilter = () => {
     if (filters.length < schema.length) {
       const availableKeys = schema.map(item => item.eng).filter(key => !filters.some(filter => filter.key === key));
@@ -22,15 +23,34 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
   const handleFilterChange = (index, field, value) => {
     const newFilters = [...filters];
     newFilters[index][field] = value;
+
+    if (field === 'condition' && (value === 'is' || value === 'is not')) {
+      newFilters[index].value = 'null';  // 禁止输入数据，并将value设为null
+    }
+    setFilters(newFilters);
+  };
+
+  const handleDeleteFilter = (index) => {
+    const newFilters = [...filters];
+    newFilters.splice(index, 1);
     setFilters(newFilters);
   };
 
   const handleSearch = () => {
-    const filterCriteriaList = filters.map((filter) => ({
-      colName: camelToSnake(filter.key),
-      condition: filter.condition,
-      value: filter.value,
-    }));
+    const filterCriteriaList = filters
+      .filter(filter => filter.value !== '' && !/^\s*$/.test(filter.value))  // 非空校验
+      .map((filter) => ({
+        colName: camelToSnake(filter.key),
+        condition: filter.condition,
+        value: filter.value,
+      }));
+
+    if (filterCriteriaList.length === 0) {
+      alertWarning("未选择筛选条件！")
+      return;
+    }
+
+    console.log(filterCriteriaList);
     onFilter({ filterCriteriaList });
   };
 
@@ -47,7 +67,6 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
                 value={filter.key}
                 onChange={(value) => handleFilterChange(index, 'key', value)}
                 popupMatchSelectWidth={false}
-
               >
                 {schema.map((item) => (
                   <Option key={item.eng} value={item.eng} disabled={filters.some(f => f.key === item.eng && f.key !== filter.key)}>
@@ -68,16 +87,24 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
                 <Option value="<">小于</Option>
                 <Option value=">=">大于等于</Option>
                 <Option value="<=">小于等于</Option>
-                <Option value="is">是</Option>
-                <Option value="is not">不是</Option>
+                <Option value="is">空</Option>
+                <Option value="is not">非空</Option>
                 <Option value="in">包含于</Option>
                 <Option value="not in">不包含于</Option>
                 <Option value="!=">不等于</Option>
               </Select>
-              <Input
-                className="filter-input"
-                value={filter.value}
-                onChange={(e) => handleFilterChange(index, 'value', e.target.value)}
+              {filter.condition === 'is' || filter.condition === 'is not' ? null : (
+                <Input
+                  className="filter-input"
+                  value={filter.value}
+                  onChange={(e) => handleFilterChange(index, 'value', e.target.value)}
+                />
+              )}
+              <Button
+                type='text'
+                className="filter-delete-button"
+                icon={<DeleteOutlined />}
+                onClick={() => handleDeleteFilter(index)}
               />
             </div>
           ))}
