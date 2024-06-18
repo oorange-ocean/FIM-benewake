@@ -1607,8 +1607,12 @@ input[type=number] {
 }
 
 .dropdown-menu {
-  background-color: white;
+  /* background-color: white; */
 }
+.dropdown-menu .dropdown-menu-item {
+  padding-left: 3.5em; /* 半个字符的缩进 */
+}
+
 
 .sidebar-item .arrow-icon {
   width: 1rem;

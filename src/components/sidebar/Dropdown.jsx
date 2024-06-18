@@ -12,7 +12,7 @@ export default function Dropdown({ items, label, type }) {
     }
 
     return (
-        <div className="dropdown" >
+        <div className="dropdown">
             <div
                 className='sidebar-item'
                 onClick={() => setIsOpen(!isOpen)}>
@@ -25,8 +25,7 @@ export default function Dropdown({ items, label, type }) {
                     {items.map(
                         (item, i) =>
                             <NavLink
-                                // activeClassName="active"
-                                className="sidebar-item"
+                                className="sidebar-item dropdown-menu-item"  // 添加了新的类名
                                 key={i}
                                 onClick={() => handleItemClick(item)}
                                 to={`/${type}/${item.path}`}>
