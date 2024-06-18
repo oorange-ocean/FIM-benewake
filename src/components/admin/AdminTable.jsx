@@ -242,7 +242,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
                     </div>
                 </div>
             </div>
-            <AdminPaginate totalItems={rows.length} pageSize={pageSize} setPageSize={setPageSize} pageNum={pageNum} setPageNum={setPageNum} />
+            {/* <AdminPaginate totalItems={rows.length} pageSize={pageSize} setPageSize={setPageSize} pageNum={pageNum} setPageNum={setPageNum} /> */}
             <Modal
                 title="修改客户类型"
                 open={isModalOpen}

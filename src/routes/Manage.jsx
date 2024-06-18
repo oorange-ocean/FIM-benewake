@@ -5,9 +5,11 @@ import { fetchAdminData } from '../api/admin';
 import adminSchema from '../constants/schemas/adminSchema';
 import adminDefs from '../constants/defs/AdminDefs';
 import FilterComponent from '../components/admin/FilterComponent';
+import { useAlertContext } from '../hooks/useCustomContext';
 
 const Manage = ({ type }) => {
     const data = useLoaderData();
+    const { alertWarning } = useAlertContext(); // 使用 useAlertContext 获取 alertWarning
     const [rows, setRows] = useState(data);
 
     // 使用 useMemo 只在 rows 变化时重新计算 schema
@@ -26,13 +28,23 @@ const Manage = ({ type }) => {
     const handleRefresh = async () => {
         const fetchUrl = adminSchema[type].select;
         const res = await fetchAdminData(fetchUrl);
-        setRows(res ?? []);
+        if (res.data.records.length === 0) {
+            alertWarning('查询结果为空');
+            setRows(data); // 重置为原始数据
+        } else {
+            setRows(res.data.records ?? []);
+        }
     };
 
     const handleFilter = async (filters) => {
         const fetchUrl = adminSchema[type].filter.url;
         const res = await fetchAdminData(fetchUrl, filters); // 假设 fetchAdminData 支持第二个参数作为查询参数
-        setRows(res.data.records ?? []);
+        if (res.data.records.length === 0) {
+            alertWarning('查询结果为空');
+            setRows(data); // 重置为原始数据
+        } else {
+            setRows(res.data.records ?? []);
+        }
     };
 
     useEffect(() => {
@@ -45,7 +57,7 @@ const Manage = ({ type }) => {
 
     return (
         <div className='col full-screen'>
-            {rows?.length > 0 && (
+            {rows?.length > 0 ? (
                 <>
                     {hasFilter && (
                         <FilterComponent schema={schema} filters={filters} setFilters={setFilters} onFilter={handleFilter} />
@@ -58,6 +70,8 @@ const Manage = ({ type }) => {
                         handleRefresh={handleRefresh}
                     />
                 </>
+            ) : (
+                <p>No data available</p>
             )}
         </div>
     );
