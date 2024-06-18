@@ -25,7 +25,6 @@ const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, 
         newCustomer: 1,
         temporaryCustomer: 1,
         daily: 1,
-
     });
 
     const labels = ['年度客户', '月度客户', '代理商', '新增客户', '临时客户', '日常客户'];
@@ -86,6 +85,7 @@ const Analysis = ({ schema }) => {
     const [pageSize, setPageSize] = useState(res.data.size || 20);
     const [total, setTotal] = useState(res.data.total || 0);
     const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         setRows(res.data.records);
         setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
@@ -95,14 +95,14 @@ const Analysis = ({ schema }) => {
     }, [res]);
 
     const handleRefresh = async (page = current, size = pageSize) => {
-        setLoading(true);
+        setLoading(true);  // 开始加载
         const res = await fetchAnalysisData(schema.select, { pageNum: page, pageSize: size });
         setRows(res.data.records);
         setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
         setTotal(res.data.total);
         setCurrent(page);
         setPageSize(size);
-        setLoading(false);
+        setLoading(false);  // 加载完成
     };
 
     const handlePageChange = (page, size) => {
@@ -133,7 +133,7 @@ const Analysis = ({ schema }) => {
         <div className='col full-screen analysis'>
             <div className='row toolbar'>
                 <div className='row flex-center'>
-                    <Button type="text" onClick={handleRefresh}>刷新</Button>
+                    <Button type="text" onClick={() => handleRefresh(current, pageSize)}>刷新</Button>
                     <Button type="text" onClick={handleExport}>导出</Button>
                 </div>
             </div>
@@ -153,24 +153,27 @@ const Analysis = ({ schema }) => {
                 setPageSize={setPageSize}
                 setTotal={setTotal}
             />
-            {rows?.length > 0 ? (
-                <>
-                    <Table
-                        data={rows}
-                        columns={defs}
-                    />
-                    <Pagination
-                        current={current}
-                        pageSize={pageSize}
-                        total={total}
-                        showSizeChanger
-                        onChange={handlePageChange}
-                        onShowSizeChange={handlePageChange}
-                        style={{ marginTop: '30px', marginBottom: '20px', textAlign: 'left' }}
-                    />
-                </>
-            ) : (
+            {loading ? (
                 <Loader />
+            ) : (
+                <>
+                    {rows?.length > 0 ? (
+                        <>
+                            <Table data={rows} columns={defs} />
+                            <Pagination
+                                current={current}
+                                pageSize={pageSize}
+                                total={total}
+                                showSizeChanger
+                                onChange={handlePageChange}
+                                onShowSizeChange={handlePageChange}
+                                style={{ marginTop: '30px', marginBottom: '20px', textAlign: 'left' }}
+                            />
+                        </>
+                    ) : (
+                        <Loader />
+                    )}
+                </>
             )}
         </div>
     );

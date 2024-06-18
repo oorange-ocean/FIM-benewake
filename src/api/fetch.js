@@ -110,15 +110,19 @@ const deliveryProgressMapping = {
     "-4": [deliveryProgressObject("海外订单")]
 };
 
+import axios from 'axios';
+
 export async function fetchData({ tableId, viewId, filterCriterias, secTab }) {
     let newCriterias = filterCriterias;
-    let newViewId = tableId > 1 && viewId > 0 ? -1 : viewId
+    let newViewId = tableId > 1 && viewId > 0 ? -1 : viewId;
+
     if (secTab) {
         const additionalCriterias = secTabMapping[secTab];
         if (additionalCriterias) {
             newCriterias = [...newCriterias, ...additionalCriterias];
         }
     }
+
     if (tableId === 2) {
         const additionalCriterias = orderMapping[viewId];
         if (additionalCriterias) {
@@ -155,21 +159,29 @@ export async function fetchData({ tableId, viewId, filterCriterias, secTab }) {
     }
 
     try {
-        const res = await api.post('/order/Lists',
-            { tableId, viewId: newViewId, filterCriterias: newCriterias }
-        )
+        // 如果 tableId 是 1 或 6，先请求 /delivery/update
+        if (tableId === 1 || tableId === 6) {
+            await api.get('/delivery/update');
+        }
+
+        // 然后请求 /order/Lists
+        const res = await api.post('/order/Lists', {
+            tableId,
+            viewId: newViewId,
+            filterCriterias: newCriterias,
+        });
 
         const { lists, cols } = res?.data?.data || {};
 
-        let columnVisibility = { ...VISIBILITY_ALL_FALSE }
-        cols.forEach(col => columnVisibility[col.col_name_ENG] = true);
+        let columnVisibility = { ...VISIBILITY_ALL_FALSE };
+        cols.forEach(col => (columnVisibility[col.col_name_ENG] = true));
 
-        return { lists: lists, columnVisibility: columnVisibility, cols: cols }
-    }
-    catch (err) {
+        return { lists: lists, columnVisibility: columnVisibility, cols: cols };
+    } catch (err) {
         console.log(err);
     }
 }
+
 
 
 
