@@ -19,6 +19,7 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
 
         if (rows.length === 1) {
             // 处理只有一条数据的情况
+            console.log('zhiyou1')
             const newInquiry = await rowToInquiry(rows[0]);
             const res = await updateInquiry(newInquiry);
             switch (res.code) {
@@ -36,6 +37,7 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
             }
         } else {
             // 处理多条数据的情况
+            console.log('duotiao')
             const newInquiries = await Promise.all(rows.map(row => rowToInquiry(row, 1)));
             const res = await saveDivideList({ inquiries: newInquiries, inquiryCode: rows[0].inquiryCode });
             if (res) {
@@ -90,7 +92,6 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
             alertWarning("拆分数量必须大于1，请重新输入");
             return;
         }
-        console.log("ok");
         let splitRows = [];
         originalRows.forEach(row => {
             for (let i = 0; i < splitCount; i++) {

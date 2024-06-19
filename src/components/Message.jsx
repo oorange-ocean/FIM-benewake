@@ -1,6 +1,6 @@
 import React from 'react'
 import { ReactComponent as CloseIcon } from '../assets/icons/cross.svg'
-import { useAlertContext } from '../hooks/useCustomContext'
+import { useAlertContext, useAuthContext } from '../hooks/useCustomContext'
 import { deleteMessages, findMessages } from '../api/message'
 import moment from 'moment'
 

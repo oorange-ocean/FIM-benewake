@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { findMessages, postMessage } from '../api/message'
 import { useLoaderData } from 'react-router-dom'
-import { useAlertContext } from '../hooks/useCustomContext'
+import { useAlertContext, useAuthContext } from '../hooks/useCustomContext'
 import Message from '../components/Message'
 
 const PostMessage = () => {
     const [value, setValue] = useState("")
     const [messageType, setMessageType] = useState("0")
     const [pastMessages, setPastMessages] = useState(useLoaderData()?.data ?? [])
+    const { auth } = useAuthContext()
 
     const { alertSuccess, alertConfirm, alertError } = useAlertContext()
 

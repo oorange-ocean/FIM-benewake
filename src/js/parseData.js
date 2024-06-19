@@ -1,5 +1,63 @@
 import moment from 'moment';
 import { fetchOptions, fetchUser } from '../api/fetch';
+import api from '../api/axios'
+
+export async function rowToInquiry(row, inquiryType) {
+    let param;
+    let customerId = null;
+    // 获取customerId
+    if (row.customerName) {
+        const customerRes = await api.get(`/customer/getByCustomerName`, {
+            params: { customerName: row.customerName }
+        });
+        customerId = customerRes?.data.customerId.toString();
+    }
+    // new inquiry
+    if (inquiryType) {
+        let salesmanId = null;
+        const res = await fetchUser(row.salesmanName, "2");
+        salesmanId = res.toString();
+
+        const { itemId, customerName, saleNum, expectedTime, remark, inquiryId, inquiryCode, state } = row;
+
+        param = {
+            salesmanId,
+            // inquiryId,
+            inquiryCode,
+            itemId: itemId?.toString(),
+            customerId: customerId, // 已获取customerId
+            saleNum: saleNum?.toString(),
+            expectedTime: expectedTime ? moment(expectedTime).format("YYYY/MM/DD") : null,
+            inquiryType: inquiryType?.toString(),
+            remark: remark?.toString(),
+            state: getStateNum(state),
+        };
+    }
+    // edit inquiry
+    else {
+        const { inquiryId, inquiryCode, inquiryType, itemId, customerId, saleNum, expectedTime, remark, arrangedTime, state, salesmanName } = row;
+        let salesmanId = null;
+        const res = await fetchUser(row.salesmanName, "2");
+        salesmanId = res.toString();
+
+        param = {
+            inquiryId: inquiryId?.toString(),
+            inquiryCode,
+            salesmanId: salesmanId?.toString(),
+            itemId: itemId?.toString(),
+            customerId: customerId, // 已获取customerId
+            saleNum: saleNum?.toString(),
+            expectedTime: expectedTime ? moment(expectedTime).format("YYYY/MM/DD") : null,
+            inquiryType: getInquiryTypeInt(inquiryType)?.toString(),
+            arrangedTime: arrangedTime ? moment(arrangedTime).format("YYYY/MM/DD") : null,
+            state: getStateNum(state),
+            customerId: customerId,
+            remark
+        };
+    }
+    return param;
+}
+
 
 export function getInquiryTypeInt(str) {
     switch (str) {
@@ -121,54 +179,7 @@ export async function parseInquiryObj(source) {
     return result;
 }
 
-export async function rowToInquiry(row, inquiryType) {
-    let param;
 
-    //new inquiry
-    if (inquiryType) {
-        let salesmanId = null;
-
-        const res = await fetchUser(row.salesmanName, "2")
-        salesmanId = res.toString()
-
-        const { itemId, customerId, saleNum, expectedTime, remark, inquiryId, inquiryCode, state } = row
-
-        param = {
-            salesmanId,
-            // inquiryId,
-            inquiryCode,
-            itemId: itemId?.toString(),
-            customerId: customerId?.toString(),
-            saleNum: saleNum?.toString(),
-            expectedTime: expectedTime ? moment(expectedTime).format("YYYY/MM/DD") : null,
-            inquiryType: inquiryType?.toString(),
-            remark: remark?.toString(),
-            state: getStateNum(state),
-        }
-    }
-
-    //edit inquiry
-    else {
-        const { inquiryId, inquiryCode, inquiryType, itemId, customerId, saleNum, expectedTime, remark, arrangedTime, state, salesmanName } = row
-        let salesmanId = null;
-        const res = await fetchUser(row.salesmanName, "2")
-        salesmanId = res.toString()
-        param = {
-            inquiryId: inquiryId?.toString(),
-            inquiryCode,
-            salesmanId: salesmanId?.toString(),
-            itemId: itemId?.toString(),
-            customerId: customerId?.toString(),
-            saleNum: saleNum?.toString(),
-            expectedTime: expectedTime ? moment(expectedTime).format("YYYY/MM/DD") : null,
-            inquiryType: getInquiryTypeInt(inquiryType)?.toString(),
-            arrangedTime: arrangedTime ? moment(arrangedTime).format("YYYY/MM/DD") : null,
-            state: getStateNum(state),
-            remark
-        }
-    }
-    return param
-}
 
 export function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
