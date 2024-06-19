@@ -10,6 +10,7 @@ import children from './path/children';
 import Login from './routes/login';
 import AuthProvider from './providers/AuthProvider'
 import AlertProvider from './providers/AlertProvider';
+import PaginationProvider from './providers/PaginationProvider';
 import { adminChildren, dataManageChildren } from './path/adminChildren';  // 确保正确导入from './path/adminChildren';
 import analysisChildren from './path/analysisChildren';
 import Loader from './components/Loader';
@@ -52,9 +53,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
       <AlertProvider>
-        <Suspense fallback={<Loader />}>
-          <RouterProvider router={router} />
-        </Suspense>
+        <PaginationProvider>
+          <Suspense fallback={<Loader />}>
+            <RouterProvider router={router} />
+          </Suspense>
+        </PaginationProvider>
       </AlertProvider>
     </AuthProvider>
   </React.StrictMode>

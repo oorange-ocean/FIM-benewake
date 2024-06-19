@@ -7,7 +7,7 @@ import { useLoaderData } from 'react-router-dom';
 import { fetchAnalysisData } from '../api/analysis';
 import analysisDefs from '../constants/defs/AnalysisDefs';
 import * as XLSX from 'xlsx';
-import { useAlertContext } from '../hooks/useCustomContext';
+import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import moment from 'moment';
 
 const { Option } = Select;
@@ -17,7 +17,7 @@ function EngToCn(col_name_ENG) {
 }
 
 const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, setTotal }) => {
-    const { alertError } = useAlertContext();
+    const { alertWarning } = useAlertContext();
     const [params, setParams] = useState({
         yearly: 1,
         monthly: 1,
@@ -77,31 +77,43 @@ const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, 
 
 const Analysis = ({ schema }) => {
     const res = useLoaderData();
-    const [rows, setRows] = useState([]);
     const { alertConfirm } = useAlertContext();
+    const [rows, setRows] = useState([]);
+    const { alertError, alertWarning } = useAlertContext();
+    const { pagination, setPagination } = usePagination();
     const [openPopup, setOpenPopup] = useState(false);
     const [defs, setDefs] = useState([]);
-    const [current, setCurrent] = useState(res.data.current || 1);
-    const [pageSize, setPageSize] = useState(res.data.size || 20);
-    const [total, setTotal] = useState(res.data.total || 0);
     const [loading, setLoading] = useState(false);
 
+    const { current, pageSize, total } = pagination;
+
     useEffect(() => {
+        if (!res || !res.data || !res.data.records) {
+            alertWarning("数据加载失败，请刷新页面重试");
+            return;
+        }
+
         setRows(res.data.records);
         setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
-        setTotal(res.data.total);
-        setCurrent(res.data.current);
-        setPageSize(res.data.size);
-    }, [res]);
+        setPagination(prev => ({
+            ...prev,
+            total: res.data.total,
+            current: res.data.current,
+            pageSize: res.data.size
+        }));
+    }, [res, setPagination]);
 
     const handleRefresh = async (page = current, size = pageSize) => {
         setLoading(true);  // 开始加载
         const res = await fetchAnalysisData(schema.select, { pageNum: page, pageSize: size });
         setRows(res.data.records);
         setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
-        setTotal(res.data.total);
-        setCurrent(page);
-        setPageSize(size);
+        setPagination(prev => ({
+            ...prev,
+            total: res.data.total,
+            current: page,
+            pageSize: size
+        }));
         setLoading(false);  // 加载完成
     };
 
@@ -149,9 +161,9 @@ const Analysis = ({ schema }) => {
                 closePopup={() => setOpenPopup(false)}
                 url={schema.select}
                 setRows={setRows}
-                setCurrent={setCurrent}
-                setPageSize={setPageSize}
-                setTotal={setTotal}
+                setCurrent={(current) => setPagination(prev => ({ ...prev, current }))}
+                setPageSize={(pageSize) => setPagination(prev => ({ ...prev, pageSize }))}
+                setTotal={(total) => setPagination(prev => ({ ...prev, total }))}
             />
             {loading ? (
                 <Loader />
@@ -168,6 +180,7 @@ const Analysis = ({ schema }) => {
                                 onChange={handlePageChange}
                                 onShowSizeChange={handlePageChange}
                                 style={{ marginTop: '30px', marginBottom: '20px', textAlign: 'left' }}
+                                pageSizeOptions={[100, 500, 1500]}
                             />
                         </>
                     ) : (

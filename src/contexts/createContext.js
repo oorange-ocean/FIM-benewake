@@ -13,5 +13,7 @@ export const TableStatesContext = createContext(null)
 export const UpdateTableStatesContext = createContext(null)
 
 export const SelectedDataContext = createContext(null)
+export const PaginationContext = createContext(null)
+
 
 

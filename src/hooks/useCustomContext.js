@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AlertContext, AuthContext, TabContext, UpdateTabContext, TableDataContext, UpdateTableDataContext, TableStatesContext, UpdateTableStatesContext, SelectedDataContext } from "../contexts/createContext";
+import { AlertContext, AuthContext, TabContext, UpdateTabContext, TableDataContext, UpdateTableDataContext, TableStatesContext, UpdateTableStatesContext, SelectedDataContext, PaginationContext } from "../contexts/createContext";
 
 export const useAlertContext = () => { return useContext(AlertContext); }
 
@@ -15,3 +15,5 @@ export const useUpdateTableDataContext = () => { return useContext(UpdateTableDa
 export const useTableStatesContext = () => { return useContext(TableStatesContext); }
 export const useUpdateTableStatesContext = () => { return useContext(UpdateTableStatesContext); }
 export const useSelectedDataContext = () => { return useContext(SelectedDataContext); }
+
+export const usePagination = () => useContext(PaginationContext);
