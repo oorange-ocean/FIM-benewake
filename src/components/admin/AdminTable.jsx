@@ -44,7 +44,7 @@ const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonC
 
 
 
-const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
+const AdminTable = ({ schema, type, rows, setRows, handleRefresh, isFiltered }) => {
     const [customerTypes, setCustomerTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRowData, setCurrentRowData] = useState(null);
@@ -227,18 +227,21 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh }) => {
                         </div>
                     </div>
                     <div className='tbody'>
-                        {rows.slice((pageNum - 1) * pageSize, pageNum * pageSize).map((row, i) =>
-                            <Row
-                                key={i}
-                                rowIndex={i}
-                                data={row}
-                                colWidths={colWidths}
-                                schema={schema}
-                                isSelected={selectedRows.includes(i)}
-                                addRow={() => addSelectedRow(i)}
-                                removeRow={() => removeSelectedRow(i)}
-                                onButtonClick={handleButtonClick}
-                            />)}
+                        {
+                            rows.map((row, i) => (
+                                <Row
+                                    key={i}
+                                    rowIndex={i}
+                                    data={row}
+                                    colWidths={colWidths}
+                                    schema={schema}
+                                    isSelected={selectedRows.includes(i)}
+                                    addRow={() => addSelectedRow(i)}
+                                    removeRow={() => removeSelectedRow(i)}
+                                    onButtonClick={handleButtonClick}
+                                />
+                            )
+                            )}
                     </div>
                 </div>
             </div>

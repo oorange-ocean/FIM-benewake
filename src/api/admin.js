@@ -4,6 +4,7 @@ import adminSchema from '../constants/schemas/adminSchema'
 export async function fetchAdminData(url, filters = null) {
     try {
         let response;
+        console.log(filters)
         if (filters && filters.filterCriteriaList && filters.filterCriteriaList.length > 0) {
             // Use POST method for filtering
             response = await axios.post(url, filters);

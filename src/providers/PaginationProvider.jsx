@@ -5,7 +5,7 @@ export const PaginationProvider = ({ children }) => {
   // 从 localStorage 中读取分页设置
   const savedPagination = JSON.parse(localStorage.getItem('pagination')) || {
     current: 1,
-    pageSize: 100,
+    pageSize: 500,
     total: 0
   };
 

@@ -5,7 +5,7 @@ export async function fetchAnalysisData(url, params = {}) {
         // 从 localStorage 获取分页参数
         const savedPagination = JSON.parse(localStorage.getItem('pagination')) || {
             current: 1,
-            pageSize: 100
+            pageSize: 500
         };
 
         // 特定 URL 的默认参数

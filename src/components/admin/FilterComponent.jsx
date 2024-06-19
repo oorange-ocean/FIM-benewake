@@ -6,14 +6,9 @@ import { useAlertContext } from '../../hooks/useCustomContext';
 
 const { Option } = Select;
 
-// Utility function to convert camelCase to snake_case
-const camelToSnake = (str) => {
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-};
-
-const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
+const FilterComponent = ({ filters, setFilters, schema, onSearch }) => {
   const [filtersExpanded, setFiltersExpanded] = useState(false);
-  const { alertWarning, alertSuccess } = useAlertContext();
+  const { alertWarning } = useAlertContext();
 
   const handleAddFilter = () => {
     if (filters.length < schema.length) {
@@ -39,27 +34,17 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
   };
 
   const handleSearch = () => {
-    const filterCriteriaList = filters
-      .filter(filter => filter.value !== '' && !/^\s*$/.test(filter.value))  // 非空校验
-      .map((filter) => ({
-        colName: camelToSnake(filter.key),
-        condition: filter.condition,
-        value: filter.value,
-      }));
-
-    if (filterCriteriaList.length === 0) {
+    if (filters.filter(filter => filter.value !== '' && !/^\s*$/.test(filter.value)).length === 0) {
       alertWarning("筛选值为空！");
       return;
     }
 
-    onFilter({ filterCriteriaList });
+    onSearch(filters);
   };
 
   const handleResetFilters = () => {
     setFilters([]);
   };
-
-  const availableKeys = schema.map(item => item.eng).filter(key => !filters.some(filter => filter.key === key));
 
   return (
     <div className="filter-container">
@@ -68,7 +53,7 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
           <Button onClick={handleResetFilters} className="filter-button" type="default">重置</Button>
         </div>
         <div className="filter-buttons-right">
-          <Button type="primary" onClick={handleSearch} className="filter-button filter-button-search" icon={<SearchOutlined />} >搜索</Button>
+          <Button type="primary" onClick={handleSearch} className="filter-button filter-button-search" icon={<SearchOutlined />}>搜索</Button>
           <Button onClick={handleAddFilter} className="filter-button filter-button-add" icon={<PlusOutlined />} disabled={filters.length >= schema.length}>新增筛选</Button>
         </div>
       </div>
@@ -132,7 +117,6 @@ const FilterComponent = ({ filters, setFilters, schema, onFilter }) => {
       >
         {filtersExpanded ? '收起筛选' : '展开筛选'}
       </Button>
-
     </div>
   );
 };
