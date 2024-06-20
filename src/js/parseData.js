@@ -4,17 +4,26 @@ import api from '../api/axios'
 
 export async function rowToInquiry(row, inquiryType) {
     let param;
+
     // new inquiry
     if (inquiryType) {
         let salesmanId = null;
         const res = await fetchUser(row.salesmanName, "2");
         salesmanId = res?.toString();
 
-        const { itemId, customerName, saleNum, expectedTime, remark, inquiryId, inquiryCode, state, customerId } = row;
+        const { itemId, customerName, saleNum, expectedTime, remark, inquiryId, inquiryCode, state } = row;
+        let customerId = null;
+
+        if (row.customerId) {
+            customerId = row.customerId;
+        } else {
+            const customerIdLikeListRes = await api.post("/customer/likeList", { "customerName": customerName });
+            customerId = customerIdLikeListRes.data.data[0].customerId?.toString();
+
+        }
 
         param = {
             salesmanId,
-            // inquiryId,
             inquiryCode,
             itemId: itemId?.toString(),
             customerId: customerId, // 已获取customerId
@@ -43,7 +52,6 @@ export async function rowToInquiry(row, inquiryType) {
             inquiryType: getInquiryTypeInt(inquiryType)?.toString(),
             arrangedTime: arrangedTime ? moment(arrangedTime).format("YYYY/MM/DD") : null,
             state: getStateNum(state),
-            customerId: customerId,
             remark
         };
     }
