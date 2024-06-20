@@ -67,7 +67,7 @@ const PostMessage = () => {
                 <h1>已发布列表</h1>
                 <div className='col g1 scroll'>
                     {pastMessages?.map((message) =>
-                        <Message message={message} key={message.id} setMessages={setPastMessages} deletable />
+                        < Message message={message} key={message.id} setMessages={setPastMessages} deletable />
                     )}
                 </div>
             </div >

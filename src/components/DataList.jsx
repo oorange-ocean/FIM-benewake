@@ -65,7 +65,6 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
         }
 
         else if (identifier === "customerName") {
-            console.log('我要修改cell的值了，option是', option)
             setValue(option.customerName)
             handleChange(["customerName", "customerId"], [option.customerName, option.customerId])
         }

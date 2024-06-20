@@ -77,7 +77,6 @@ export default function Toolbar({ features }) {
         updateTableData({ type: "CLEAR_TABLE_DATA" })
 
         const res = await fetchData(selectedQuery[tableId])
-        console.log(selectedQuery[tableId])
         updateTableData({ type: "SET_TABLE_DATA", tableData: res.lists })
     }
     const handleReload = async () => {

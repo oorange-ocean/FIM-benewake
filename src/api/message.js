@@ -60,3 +60,15 @@ export async function fetchFilteredInquiries() {
         console.log(err);
     }
 }
+
+export const hideMessage = async (id) => {
+    try {
+        const formData = new FormData();
+        formData.append('id', id);
+
+        const response = await api.post('/notice/hidden', formData);
+        return response.data;
+    } catch (error) {
+        return { code: 500, message: '网络错误' };
+    }
+}

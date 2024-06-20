@@ -30,7 +30,6 @@ const SimpleToolbar = ({ rows, inquiryType, setRows }) => {
 
     const handleSaveClick = async () => {
         setAction({ type: "保存", time: new Date() })
-        console.log('rows', rows, inquiryType, "inquiryType")
         const newInquiries = await Promise.all(
             rows.map(row => rowToInquiry(row, inquiryType))
         );
