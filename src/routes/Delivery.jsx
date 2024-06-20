@@ -39,9 +39,9 @@ export default function Delivery() {
   const { selectedQuery } = useSelectedDataContext()
   const secTab = selectedQuery[6].secTab
 
-  useEffect(() => {
-    fetchDeliveryUpdates()
-  }, [])
+  // useEffect(() => {
+  //   fetchDeliveryUpdates()
+  // }, [])
 
   useEffect(() => {
     if (secTab === "已完成") { setViews(deliveryViews.complete) }
