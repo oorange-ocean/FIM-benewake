@@ -19,8 +19,8 @@ const analysisChildren = Object.keys(analysisSchema).map(
                     };
 
                     const res = await fetchAnalysisData(item.select, {
-                        pageNum: savedPagination.current,
-                        pageSize: savedPagination.pageSize,
+                        pageNum: savedPagination.current || 1,
+                        pageSize: savedPagination.pageSize || 100,
                         signal
                     });
                     return res;

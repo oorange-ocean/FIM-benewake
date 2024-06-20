@@ -57,14 +57,6 @@ export default function Sidebar({ showSidebar }) {
                     退出登录&nbsp;<LogoutIcon />
                 </button>
             ),
-        },
-        {
-            key: '2',
-            label: (
-                <button onClick={handleOpenModal} >
-                    修改密码
-                </button >
-            ),
         }
     ];
 
@@ -115,50 +107,6 @@ export default function Sidebar({ showSidebar }) {
             <Dropdown menu={{ items }} placement="top">
                 <Button>用户：{auth?.username ?? ""}</Button>
             </Dropdown>
-            <Modal
-                title="修改密码"
-                open={modalOpen}
-                onCancel={handleCloseModal}
-                footer={null}
-            >
-                <Form
-                    form={form}
-                    layout="vertical"
-                    onFinish={handleUpdatePwd}
-                >
-                    <Form.Item
-                        name="oldPassword"
-                        label="旧密码"
-                        rules={[{ required: true, message: '请输入旧密码' }]}
-                    >
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item
-                        name="newPassword"
-                        label="新密码"
-                        rules={[{ required: true, message: '请输入新密码' }]}
-                    >
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item
-                        name="rePassword"
-                        label="确认新密码"
-                        rules={[{ required: true, message: '请确认新密码' }]}
-                    >
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item>
-                        <Space>
-                            <Button type="primary" htmlType="submit">
-                                提交
-                            </Button>
-                            <Button onClick={handleCloseModal}>
-                                取消
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                </Form>
-            </Modal>
         </div>
     );
 }
