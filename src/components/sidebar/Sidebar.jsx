@@ -40,7 +40,7 @@ export default function Sidebar({ showSidebar }) {
 
     const handleUpdatePwd = async (values) => {
         const { oldPassword, newPassword, rePassword } = values;
-        const userId = auth.userId.toString(); // 从 auth 获取 userId 并转换为字符串
+        const userId = auth.userId?.toString(); // 从 auth 获取 userId 并转换为字符串
         try {
             await updatePwd({ oldPassword, newPassword, rePassword, userId });
             handleCloseModal();

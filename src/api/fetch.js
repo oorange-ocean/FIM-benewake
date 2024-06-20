@@ -217,7 +217,7 @@ export async function fetchNewViews(tableId, { signal } = {}) {
 
 export async function fetchCustomerType(itemId, customerId) {
     try {
-        const response = await api.post('/customer/type', { itemId: itemId.toString(), customerId: customerId.toString() })
+        const response = await api.post('/customer/type', { itemId: itemId?.toString(), customerId: customerId?.toString() })
         return response.data;
     }
     catch (err) {

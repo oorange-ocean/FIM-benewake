@@ -21,8 +21,8 @@ const Manage = ({ type }) => {
     const [isFiltered, setIsFiltered] = useState(false);
     const [filterCriteriaList, setFilterCriteriaList] = useState([]);
 
-    const [currentPage, setCurrentPage] = useState(pagination.current);
-    const [pageSize, setPageSize] = useState(pagination.pageSize);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
     const [total, setTotal] = useState(pagination.total);
 
     const schema = useMemo(() => {
@@ -81,6 +81,7 @@ const Manage = ({ type }) => {
     useEffect(() => {
         setRows(data);
         setTotal(data.length);
+        setPagination({ ...pagination, total: data.length })
     }, [type, data]);
 
     useEffect(() => {

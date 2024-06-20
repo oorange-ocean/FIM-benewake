@@ -85,7 +85,8 @@ const Analysis = ({ schema }) => {
     const [defs, setDefs] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const { current, pageSize, total } = pagination;
+    const { current, total } = pagination;
+    const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
 
     useEffect(() => {
         if (!res || !res.data || !res.data.records) {
