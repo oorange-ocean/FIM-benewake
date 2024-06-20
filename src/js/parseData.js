@@ -4,21 +4,13 @@ import api from '../api/axios'
 
 export async function rowToInquiry(row, inquiryType) {
     let param;
-    let customerId = null;
-    // 获取customerId
-    if (row.customerName) {
-        const customerRes = await api.get(`/customer/getByCustomerName`, {
-            params: { customerName: row.customerName }
-        });
-        customerId = customerRes?.data.customerId.toString();
-    }
     // new inquiry
     if (inquiryType) {
         let salesmanId = null;
         const res = await fetchUser(row.salesmanName, "2");
-        salesmanId = res.toString();
+        salesmanId = res?.toString();
 
-        const { itemId, customerName, saleNum, expectedTime, remark, inquiryId, inquiryCode, state } = row;
+        const { itemId, customerName, saleNum, expectedTime, remark, inquiryId, inquiryCode, state, customerId } = row;
 
         param = {
             salesmanId,
@@ -38,7 +30,7 @@ export async function rowToInquiry(row, inquiryType) {
         const { inquiryId, inquiryCode, inquiryType, itemId, customerId, saleNum, expectedTime, remark, arrangedTime, state, salesmanName } = row;
         let salesmanId = null;
         const res = await fetchUser(row.salesmanName, "2");
-        salesmanId = res.toString();
+        salesmanId = res?.toString();
 
         param = {
             inquiryId: inquiryId?.toString(),

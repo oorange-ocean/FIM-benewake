@@ -30,19 +30,19 @@ const SimpleToolbar = ({ rows, inquiryType, setRows }) => {
 
     const handleSaveClick = async () => {
         setAction({ type: "保存", time: new Date() })
-
+        console.log('rows', rows, inquiryType, "inquiryType")
         const newInquiries = await Promise.all(
             rows.map(row => rowToInquiry(row, inquiryType))
         );
 
         const res = await startInquiry(newInquiries, 0)
         const saveInquiryIdAndCode = () => {
-            const { ids, inquiryCode } = res.data;
+            const inquiryCode = res.data;
 
             const newArray = rows.map((row, i) =>
             ({
                 ...row,
-                inquiryId: ids[i],
+                // inquiryId: ids[i],
                 inquiryCode: inquiryCode[i],
             }))
             setRows(newArray);
@@ -64,14 +64,14 @@ const SimpleToolbar = ({ rows, inquiryType, setRows }) => {
         const res = await startInquiry(newInquiries, 1)
 
         const saveInquiryIdAndCode = () => {
-            const { ids, inquiryCode } = res.data;
+            const inquiryCode = res.data;
 
             const newArray = rows.map((row) =>
                 row.inquiryId ?
                     row :
                     {
                         ...row,
-                        inquiryId: ids.shift(),
+                        // inquiryId: ids.shift(),
                         inquiryCode: inquiryCode.shift()
                     })
             setRows(newArray);

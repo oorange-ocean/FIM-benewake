@@ -16,7 +16,7 @@ import { noData, isObjectEmpty, noVisibleCols } from '../js/valueCheck';
 import { getVisbleTableData, parseInquiryObj } from '../js/parseData';
 import { getTableId } from '../js/getData';
 import { EDIT_INQUIRY_TAB, NEW_INQUIRY_TAB } from '../constants/Global';
-
+import api from '../api/axios';
 
 
 export default function Toolbar({ features }) {
@@ -79,6 +79,13 @@ export default function Toolbar({ features }) {
         const res = await fetchData(selectedQuery[tableId])
         console.log(selectedQuery[tableId])
         updateTableData({ type: "SET_TABLE_DATA", tableData: res.lists })
+    }
+    const handleReload = async () => {
+        // 如果 tableId 是 1 或 6，先请求 /delivery/update
+        if (tableId === 1 || tableId === 6) {
+            await api.get('/delivery/update');
+            handleRefresh();
+        }
     }
 
     const handleAllowInquiry = async () => {
@@ -210,7 +217,7 @@ export default function Toolbar({ features }) {
                 <ToolbarButton feature="delete" handler={handleDelete} text="删除" additionalCondition={auth.userType != "3"} />
                 <ToolbarButton feature="pin" handler={handlePin} text="置顶" />
                 <ToolbarButton feature="unpin" handler={handleUnpin} text="取消置顶" />
-                <ToolbarButton feature="refresh" handler={handleRefresh} text="刷新" />
+                <ToolbarButton feature="refresh" handler={handleReload} text="刷新" />
                 <ToolbarButton feature="import" handler={toggleImportPopup} text="导入" additionalCondition={auth.userType != "3"} />
                 {openImportPopup && importPopup}
                 <ToolbarButton feature="export" handler={handleExport} text="导出" />

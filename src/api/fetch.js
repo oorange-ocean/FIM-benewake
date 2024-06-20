@@ -159,11 +159,6 @@ export async function fetchData({ tableId, viewId, filterCriterias, secTab }) {
     }
 
     try {
-        // 如果 tableId 是 1 或 6，先请求 /delivery/update
-        if (tableId === 1 || tableId === 6) {
-            await api.get('/delivery/update');
-        }
-
         // 然后请求 /order/Lists
         const res = await api.post('/order/Lists', {
             tableId,

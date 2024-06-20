@@ -6,7 +6,7 @@ const inquiryTypeOptions = [{ inquiryType: "PO(客户付款)" }, { inquiryType: 
 const getOptionName = (type, option, searchKey) => {
     switch (type) {
         case "customer":
-            return option.fname
+            return option.customerName
         default:
             return option[searchKey]
     }
@@ -40,11 +40,14 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
 
     const onChange = async (e) => {
         setValue(e.target.value)
-        if (identifier === "salesmanName") {
-            const res = await fetchUser(e.target.value, "2")
-            setOptions(res)
-        }
-        else if (identifier === "inquiryType") {
+        // if (identifier === "salesmanName") {
+        //     const res = await fetchUser(e.target.value, "2")
+        //     setOptions(res)
+        // }
+        // else if (identifier === "inquiryType") {
+        //     setOptions(inquiryTypeOptions)
+        // }
+        if (identifier === "inquiryType") {
             setOptions(inquiryTypeOptions)
         }
         else {
@@ -56,14 +59,15 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
 
     const handleSelect = (option) => {
         if (identifier === "itemCode") {
-            
+
             setValue(option.itemCode)
             handleChange(["itemCode", "itemName", "itemType", "itemId"], [option.itemCode, option.itemName, option.itemType, option.id])
         }
 
         else if (identifier === "customerName") {
-            setValue(option.fname)
-            handleChange(["customerName", "customerId"], [option.fname, option.fcustId])
+            console.log('我要修改cell的值了，option是', option)
+            setValue(option.customerName)
+            handleChange(["customerName", "customerId"], [option.customerName, option.customerId])
         }
 
         else if (identifier === "salesmanName") {
@@ -110,7 +114,7 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
                     {
                         identifier === "itemCode" &&
                         < li className='row sticky g1' >
-                            <div style={{width: 66}}>物料编码</div><div>物料名称</div>
+                            <div style={{ width: 66 }}>物料编码</div><div>物料名称</div>
                         </li>
                     }
                     {
