@@ -159,6 +159,22 @@ const adminSchema = {
         "filter": {
             url: "/item/filter/chooseItem"
         }
+    },
+    suspiciousData: {
+        "cn": "可疑数据标准表",
+        "add": {
+            url: "getAllStandards",
+            bodyKeys: ["itemCode", "itemName", "startMonth"]
+        },
+        "delete": {
+            url: "deletePastChooseItemByItemCode",
+            bodyKeys: ["itemCode", "itemName", "startMonth"]
+        },
+        "select": "suspiciousData",
+        // Added multi-condition filtering URL
+        "filter": {
+            url: "/item/filter/chooseItem"
+        }
     }
 }
 

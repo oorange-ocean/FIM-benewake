@@ -22,7 +22,8 @@ const adminDefs = [
     createColumn("订单状态名称", "typeName"),
     createColumn("客户名称", "addCustomerName"),
     createColumn("客户名称（替换前）", "oldCustomerName"),
-    createColumn("客户名称（替换后）", "newCustomerName")
+    createColumn("客户名称（替换后）", "newCustomerName"),
+    createColumn("数量", "num", 80),
 ];
 
 export default adminDefs;
