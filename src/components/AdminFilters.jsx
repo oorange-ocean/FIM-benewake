@@ -24,13 +24,16 @@ const conditions = [
 const getInputElement = (schemaItem, value, handleChange) => {
   const { eng, url, searchKey } = schemaItem;
 
-  return <SimpleDataList
-    // name={identifier}
-    url={url}
-    searchKey={searchKey}
-    initialValue={value}
-    handleChange={handleChange}
-  />;
+  return (
+    <div className="data-list"
+    >
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => handleChange("value", e.target.value)}
+      />
+    </div>
+  )
 
 };
 
