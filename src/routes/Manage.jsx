@@ -7,6 +7,8 @@ import adminSchema from '../constants/schemas/adminSchema';
 import adminDefs from '../constants/defs/AdminDefs';
 import FilterComponent from '../components/admin/FilterComponent';
 import { useAlertContext, usePagination } from '../hooks/useCustomContext';
+import AdminFliters from '../components/AdminFilters';
+import Loader from '../components/Loader';
 
 // Utility function to convert camelCase to snake_case
 const camelToSnake = (str) => {
@@ -25,20 +27,16 @@ const Manage = ({ type }) => {
     const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
     const [total, setTotal] = useState(pagination.total);
 
-    const schema = useMemo(() => {
-        return Object.keys(rows[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
-    }, [rows]);
-
-    const initialFilters = useMemo(() => {
-        return [{ key: schema[0]?.eng, condition: 'like', value: '' }];
-    }, [schema]);
-
-    const [filters, setFilters] = useState(initialFilters);
+    const [schema, setSchema] = useState([]);
+    const [filters, setFilters] = useState([]);
+    const [isLoading, setIsLoading] = useState(false); // 新增加载状态
     const hasFilter = adminSchema[type]?.filter;
 
     const handleRefresh = async () => {
+        setIsLoading(true); // 开始加载
         const fetchUrl = adminSchema[type].select;
         const res = await fetchAdminData(fetchUrl);
+        setIsLoading(false); // 加载结束
         if (res.data.records.length === 0) {
             alertWarning('查询结果为空');
             setRows(data);
@@ -50,6 +48,7 @@ const Manage = ({ type }) => {
     };
 
     const handleSearch = async (filters) => {
+        setIsLoading(true); // 开始加载
         const filterCriteriaList = filters
             .filter(filter => filter.value !== '' && !/^\s*$/.test(filter.value))
             .map((filter) => ({
@@ -59,12 +58,14 @@ const Manage = ({ type }) => {
             }));
 
         if (filterCriteriaList.length === 0) {
+            setIsLoading(false); // 加载结束
             alertWarning("筛选值为空！");
             return;
         }
 
         const fetchUrl = adminSchema[type].filter.url;
         const res = await fetchAdminData(fetchUrl, { filterCriteriaList, page: 1, size: pageSize });
+        setIsLoading(false); // 加载结束
         if (res.data.records.length === 0) {
             alertWarning('查询结果为空');
             setRows(data);
@@ -81,12 +82,16 @@ const Manage = ({ type }) => {
     useEffect(() => {
         setRows(data);
         setTotal(data.length);
-        setPagination({ ...pagination, total: data.length })
+        setPagination({ ...pagination, total: data.length });
     }, [type, data]);
 
     useEffect(() => {
-        setFilters(initialFilters);
-    }, [initialFilters]);
+        const initialSchema = Object.keys(rows[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
+        setSchema(initialSchema);
+        if (initialSchema.length > 0) {
+            setFilters([{ key: initialSchema[0].eng, condition: 'like', value: '' }]);
+        }
+    }, [rows, adminDefs]);
 
     const handlePageChange = async (page, size) => {
         setCurrentPage(page);
@@ -94,8 +99,10 @@ const Manage = ({ type }) => {
         setPagination({ ...pagination, current: page, pageSize: size });
 
         if (isFiltered) {
+            setIsLoading(true); // 开始加载
             const fetchUrl = adminSchema[type].filter.url;
             const res = await fetchAdminData(fetchUrl, { filterCriteriaList, page, size });
+            setIsLoading(false); // 加载结束
             setRows(res.data.records ?? []);
             setTotal(res.data.total);
         }
@@ -112,32 +119,37 @@ const Manage = ({ type }) => {
 
     return (
         <div className='col full-screen'>
-            {rows?.length > 0 ? (
-                <>
-                    {hasFilter && (
-                        <FilterComponent schema={schema} filters={filters} setFilters={setFilters} onSearch={handleSearch} />
-                    )}
-                    <AdminTable
-                        schema={schema}
-                        type={type}
-                        rows={currentData}
-                        setRows={setRows}
-                        handleRefresh={handleRefresh}
-                    />
-                    <div style={{ marginTop: '16px' }}></div>
-                    <Pagination
-                        current={currentPage}
-                        pageSize={pageSize}
-                        total={total}
-                        onChange={handlePageChange}
-                        showSizeChanger
-                        pageSizeOptions={[100, 500, 1500]}
-                    />
-                    <div style={{ marginTop: '16px' }}></div>
-
-                </>
+            {isLoading ? (
+                <Loader /> // 显示加载组件
             ) : (
-                <p>No data available</p>
+                rows?.length > 0 ? (
+                    <>
+                        {hasFilter && (
+                            <div className="col flex-center">
+                                <AdminFliters schema={schema} filters={filters} setFilters={setFilters} onSearch={handleSearch} />
+                            </div>
+                        )}
+                        <AdminTable
+                            schema={schema}
+                            type={type}
+                            rows={currentData}
+                            setRows={setRows}
+                            handleRefresh={handleRefresh}
+                        />
+                        <div style={{ marginTop: '16px' }}></div>
+                        <Pagination
+                            current={currentPage}
+                            pageSize={pageSize}
+                            total={total}
+                            onChange={handlePageChange}
+                            showSizeChanger
+                            pageSizeOptions={[100, 500, 1500]}
+                        />
+                        <div style={{ marginTop: '16px' }}></div>
+                    </>
+                ) : (
+                    <p>No data available</p>
+                )
             )}
         </div>
     );

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUser, login, logout } from '../api/auth';
 import { useAlertContext, useAuthContext } from '../hooks/useCustomContext';
-import axios from 'axios';
+import axios from '../api/axios';
 import '../styles/feishuLogin.css'; // 引入 CSS 文件
 import logo from '../assets/images/en-transparent-logo.png'; // 使用模块导入图片
 
@@ -46,7 +46,7 @@ export default function FeishuLogin() {
     const urlParams = new URLSearchParams(queryParams);
     const code = urlParams.get('code');
     if (code) {
-      axios.get(`/benewake/home/codeLogin?code=${code}`)
+      axios.get(`/home/codeLogin?code=${code}`)
         .then(response => {
           const res = response.data;
           switch (res.code) {
