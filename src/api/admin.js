@@ -4,20 +4,25 @@ import adminSchema from '../constants/schemas/adminSchema'
 export async function fetchAdminData(url, filters = null) {
     try {
         let response;
-        if (filters && filters.filterCriteriaList && filters.filterCriteriaList.length > 0) {
-            // Use POST method for filtering
+        const hasFilters = filters && filters.filterCriteriaList && filters.filterCriteriaList.length > 0;
+        const hasSortingOrPagination = filters && (filters.desc || filters.asc || filters.page || filters.size);
+
+        if (hasFilters || hasSortingOrPagination) {
+            // Use POST method for filtering, sorting, or pagination
             response = await axios.post(url, filters);
         }
         else if (url === "suspiciousData") {
-            response = await axios.get('/past-analysis/getAllStandards')
+            response = await axios.get('/past-analysis/getAllStandards');
         }
         else {
             // Use GET method for simple data fetching
             response = await axios.get(`/admin/${url}`);
         }
+
         return response.data;
     } catch (err) {
-        console.log(err);
+        console.error('Error fetching admin data:', err);
+        throw err; // Re-throw the error so it can be handled by the caller
     }
 }
 

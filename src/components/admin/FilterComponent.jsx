@@ -34,10 +34,10 @@ const FilterComponent = ({ filters, setFilters, schema, onSearch }) => {
   };
 
   const handleSearch = () => {
-    if (filters.filter(filter => filter.value !== '' && !/^\s*$/.test(filter.value)).length === 0) {
-      alertWarning("筛选值为空！");
-      return;
-    }
+    // if (filters.filter(filter => filter.value !== '' && !/^\s*$/.test(filter.value)).length === 0) {
+    //   alertWarning("筛选值为空！");
+    //   return;
+    // }
 
     onSearch(filters);
   };

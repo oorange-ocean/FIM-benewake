@@ -48,9 +48,10 @@ const Manage = ({ type }) => {
     };
 
     const handleSearch = async (filters) => {
+        console.log(filters)
         setIsLoading(true); // 开始加载
         const filterCriteriaList = filters
-            .filter(filter => filter.value !== '' && !/^\s*$/.test(filter.value))
+            .filter(filter => filter.condition === 'is' || filter.condition === 'is not' || (filter.value !== '' && !/^\s*$/.test(filter.value)))
             .map((filter) => ({
                 colName: camelToSnake(filter.key),
                 condition: filter.condition,
@@ -76,6 +77,40 @@ const Manage = ({ type }) => {
             setCurrentPage(1);
             setIsFiltered(true);
             setFilterCriteriaList(filterCriteriaList);
+        }
+    };
+    //eg. "desc":"customerId"
+    const handleSort = async (columnName, direction) => {
+        console.log('handlesort的参数', columnName, direction);
+        setIsLoading(true); // 开始加载
+
+        let desc, asc;
+        const fetchUrl = adminSchema[type].filter.url;
+        try {
+            const res = await fetchAdminData(fetchUrl, {
+                filterCriteriaList,
+                page: 1,
+                size: pageSize,
+                desc: direction === 'desc' ? columnName : null,
+                asc: direction === 'asc' ? columnName : null,
+            });
+
+            setIsLoading(false); // 加载结束
+
+            if (res.data.records.length === 0) {
+                alertWarning('查询结果为空');
+                setRows(data);
+                setIsFiltered(false);
+            } else {
+                setRows(res.data.records ?? []);
+                setTotal(res.data.total);
+                setCurrentPage(1);
+                setIsFiltered(true);
+            }
+        } catch (error) {
+            setIsLoading(false);
+            alertError('排序过程中发生错误');
+            console.error('Error during sorting:', error);
         }
     };
 
@@ -135,6 +170,7 @@ const Manage = ({ type }) => {
                             rows={currentData}
                             setRows={setRows}
                             handleRefresh={handleRefresh}
+                            handleSort={handleSort}
                         />
                         <div style={{ marginTop: '16px' }}></div>
                         <Pagination

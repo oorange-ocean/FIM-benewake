@@ -50,15 +50,13 @@ const router = createHashRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <AlertProvider>
-        <PaginationProvider>
-          <Suspense fallback={<Loader />}>
-            <RouterProvider router={router} />
-          </Suspense>
-        </PaginationProvider>
-      </AlertProvider>
-    </AuthProvider>
-  </React.StrictMode>
+  <AuthProvider>
+    <AlertProvider>
+      <PaginationProvider>
+        <Suspense fallback={<Loader />}>
+          <RouterProvider router={router} />
+        </Suspense>
+      </PaginationProvider>
+    </AlertProvider>
+  </AuthProvider>
 )

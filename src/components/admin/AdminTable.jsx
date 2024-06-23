@@ -10,7 +10,8 @@ import adminSchema from '../../constants/schemas/adminSchema';
 import { useEffect } from 'react';
 import { getCustomerTypes, updateCustomerType } from '../../api/admin';
 import { Button, Modal, Select, Space } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import useSortStore from '../../store/sortStore';
 const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonClick }) => {
     // // 检查 schema 是否符合特定结构
     // const isSpecificSchema = schema.length === 3 &&
@@ -44,11 +45,12 @@ const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonC
 
 
 
-const AdminTable = ({ schema, type, rows, setRows, handleRefresh, isFiltered }) => {
+const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort }) => {
     const [customerTypes, setCustomerTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRowData, setCurrentRowData] = useState(null);
     const [selectedCustomerType, setSelectedCustomerType] = useState(null);
+    const { sortColumn, sortDirection, setSortState } = useSortStore();
     useEffect(() => {
         const fetchCustomerTypes = async () => {
             try {
@@ -142,6 +144,27 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, isFiltered }) 
             return newWidths;
         });
     };
+    const handleClick = (columnName) => {
+        let newDirection;
+        if (sortColumn !== columnName) {
+            newDirection = 'asc';
+        } else if (sortDirection === 'asc') {
+            newDirection = 'desc';
+        } else {
+            newDirection = null;
+        }
+
+        setSortState(newDirection ? columnName : null, newDirection);
+        handleSort(newDirection ? columnName : null, newDirection);
+    };
+
+    const getSortIcon = (columnName) => {
+        if (sortColumn === columnName) {
+            return sortDirection === 'asc' ? <ArrowUpOutlined /> : <ArrowDownOutlined />;
+        }
+        return null;
+    };
+
     // // 检查 schema 是否符合特定结构
     // const isSpecificSchema = schema.length === 3 &&
     //     schema[0].eng === 'customerName' &&
@@ -210,7 +233,10 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, isFiltered }) 
                                     index={i}
                                     type={item.eng}
                                 >
-                                    {item.cn}
+                                    <div onClick={() => handleClick(item.eng)}
+                                    >
+                                        {item.cn}{getSortIcon(item.eng)}
+                                    </div>
                                 </ResizableHeader>)
                             }
                             {/* {isSpecificSchema && (
