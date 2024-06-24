@@ -12,6 +12,9 @@ import { getCustomerTypes, updateCustomerType } from '../../api/admin';
 import { Button, Modal, Select, Space } from 'antd';
 import { EditOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import useSortStore from '../../store/sortStore';
+import AdminExcelUploader from './AdminExcelUploader';
+import AdminExcelDownloader from './AdminExcelDownloader';
+
 const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonClick }) => {
     // // 检查 schema 是否符合特定结构
     // const isSpecificSchema = schema.length === 3 &&
@@ -45,12 +48,17 @@ const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonC
 
 
 
-const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, data }) => {
+const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, data, currentPage, pageSize }) => {
     const [customerTypes, setCustomerTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRowData, setCurrentRowData] = useState(null);
     const [selectedCustomerType, setSelectedCustomerType] = useState(null);
     const { sortColumn, sortDirection, setSortState } = useSortStore();
+    const [openImportPopup, setOpenImportPopup] = useState(false)
+    const [openExportPopup, setOpenExportPopup] = useState(false)
+    const toggleImportPopup = () => setOpenImportPopup(!openImportPopup)
+    const toggleExportPopup = () => setOpenExportPopup(!openExportPopup)
+
     useEffect(() => {
         const fetchCustomerTypes = async () => {
             try {
@@ -67,7 +75,6 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
     const { alertWarning, alertConfirm, alertSuccess, alertError } = useAlertContext()
     const [selectedRows, setSelectedRows] = useState([])
     const [pageNum, setPageNum] = useState(1);
-    const [pageSize, setPageSize] = useState(100);
     const [showPopup, setShowPopup] = useState(false)
     const [action, setAction] = useState()
 
@@ -227,6 +234,15 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
         setSelectedCustomerType(value);
     };
 
+    const importPopup =
+        <div className="popup-container flex-center">
+            <AdminExcelUploader close={toggleImportPopup} exportTypeNum={adminSchema[type].exportTypeNum} />
+        </div>
+    const exportPopup =
+        <div className="popup-container flex-center">
+            <AdminExcelDownloader close={toggleExportPopup} currentPage={currentPage} pageSize={pageSize} exportTypeNum={adminSchema[type].exportTypeNum} />
+        </div>
+
     return (
         <div className='col table-container'>
             {showPopup &&
@@ -247,6 +263,23 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                     handleRefresh()
                 }}
                 >刷新</button>
+                {/* 如果adminSchema里有exportTypeNum，就显示导入和导出按钮 */}
+                {adminSchema[type].exportTypeNum && (
+                    <Space>
+                        <button
+                            onClick={() => setOpenImportPopup(!openImportPopup)}
+                        >
+                            导入
+                        </button>
+                        {openImportPopup && importPopup}
+                        <button
+                            onClick={() => setOpenExportPopup(!openExportPopup)}
+                        >
+                            导出
+                        </button>
+                        {openExportPopup && exportPopup}
+                    </Space>
+                )}
             </div>
             <div className='admin-table-wrapper col'>
                 <div className="table">

@@ -33,7 +33,7 @@ export default function ExcelUploader({ close }) {
         <div className='excel-uploader-container col flex-center '>
             <input id="excel-uploader" type="file" accept=".xlsx,.xls" onChange={handleFile} className='hidden' />
             <a href="/benewake/order/downloadFile" download="导入模板.xlsx" className="btn blue40 small">
-               下载导入模板
+                下载导入模板
             </a>
             <label htmlFor="excel-uploader">选择文件(.xls, .xlsx)</label>
             {file?.name}

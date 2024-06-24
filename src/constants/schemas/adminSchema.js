@@ -54,7 +54,8 @@ const adminSchema = {
         // Added multi-condition filtering URL
         "filter": {
             url: "/customer/filter/customer"
-        }
+        },
+        "exportTypeNum": 1
     },
     customerItem: {
         "cn": "客户管理",
@@ -70,7 +71,8 @@ const adminSchema = {
         // Added multi-condition filtering URL
         "filter": {
             url: "/customer/filter/customerType"
-        }
+        },
+        "exportTypeNum": 2
     },
     customerRename: {
         "cn": "客户名称替换表",
@@ -90,7 +92,8 @@ const adminSchema = {
         // Added multi-condition filtering URL
         "filter": {
             url: "/customer/filter/customerRename"
-        }
+        },
+        "exportTypeNum": 3
     },
     itemChange: {
         "cn": "物料替换表",
@@ -110,7 +113,8 @@ const adminSchema = {
         // Added multi-condition filtering URL
         "filter": {
             url: "/item/filter/itemChange"
-        }
+        },
+        "exportTypeNum": 4
     },
     salesmanChange: {
         "cn": "销售员替换表",
@@ -130,7 +134,8 @@ const adminSchema = {
         // Added multi-condition filtering URL
         "filter": {
             url: "/admin/filter/salesmanChanging"
-        }
+        },
+        "exportTypeNum": 5
     },
     customizedItemChange: {
         "cn": "定制物料替换表",
@@ -158,7 +163,8 @@ const adminSchema = {
         // Added multi-condition filtering URL
         "filter": {
             url: "/item/filter/chooseItem"
-        }
+        },
+        "exportTypeNum": 6
     },
     suspiciousData: {
         "cn": "可疑数据标准表",
@@ -174,7 +180,8 @@ const adminSchema = {
         // Added multi-condition filtering URL
         "filter": {
             url: "/past-analysis/delStandards"
-        }
+        },
+        "exportTypeNum": 7
     }
 }
 

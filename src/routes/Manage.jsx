@@ -170,6 +170,8 @@ const Manage = ({ type }) => {
                             handleRefresh={handleRefresh}
                             handleSort={handleSort}
                             data={data}
+                            currentPage={currentPage}
+                            pageSize={pageSize}
                         />
                         <div style={{ marginTop: '16px' }}></div>
                         <Pagination
