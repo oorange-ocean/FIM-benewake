@@ -31,7 +31,13 @@ export async function addAdminData(type, payload) {
     const addUrl = adminSchema[type].add.url
 
     try {
-        const response = await axios.post(`/admin/${addUrl}`, null, { params: payload })
+        if (type == "suspiciousData") {
+            const response = await axios.post(`/past-analysis/insertStandard`, payload)
+        }
+        else {
+            const response = await axios.post(`/admin/${addUrl}`, null, { params: payload })
+
+        }
         return response.data;
     }
     catch (err) {
@@ -40,6 +46,21 @@ export async function addAdminData(type, payload) {
 }
 
 export async function deleteAdminData(type, payload) {
+    if (type === 'suspiciousData') {
+        console.log(payload);
+        try {
+            const response = await axios.delete(`/past-analysis/delStandards`, { params: { "id": payload } });
+            // 根据 status 返回结果
+            if (response.status === 200) {
+                return { message: '删除成功' };
+            } else {
+                return { message: `删除失败，状态码：${response.status}` };
+            }
+        } catch (err) {
+            console.log(err);
+            return { message: '删除异常' };
+        }
+    }
     const deleteUrl = adminSchema[type].delete.url
 
     try {

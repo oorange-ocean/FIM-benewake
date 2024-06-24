@@ -48,7 +48,6 @@ const Manage = ({ type }) => {
     };
 
     const handleSearch = async (filters) => {
-        console.log(filters)
         setIsLoading(true); // 开始加载
         const filterCriteriaList = filters
             .filter(filter => filter.condition === 'is' || filter.condition === 'is not' || (filter.value !== '' && !/^\s*$/.test(filter.value)))
@@ -81,7 +80,6 @@ const Manage = ({ type }) => {
     };
     //eg. "desc":"customerId"
     const handleSort = async (columnName, direction) => {
-        console.log('handlesort的参数', columnName, direction);
         setIsLoading(true); // 开始加载
 
         let desc, asc;
@@ -91,8 +89,8 @@ const Manage = ({ type }) => {
                 filterCriteriaList,
                 page: 1,
                 size: pageSize,
-                desc: direction === 'desc' ? columnName : null,
-                asc: direction === 'asc' ? columnName : null,
+                desc: direction === 'desc' ? camelToSnake(columnName) : null,
+                asc: direction === 'asc' ? camelToSnake(columnName) : null,
             });
 
             setIsLoading(false); // 加载结束
@@ -171,6 +169,7 @@ const Manage = ({ type }) => {
                             setRows={setRows}
                             handleRefresh={handleRefresh}
                             handleSort={handleSort}
+                            data={data}
                         />
                         <div style={{ marginTop: '16px' }}></div>
                         <Pagination

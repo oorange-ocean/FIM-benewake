@@ -163,17 +163,17 @@ const adminSchema = {
     suspiciousData: {
         "cn": "可疑数据标准表",
         "add": {
-            url: "getAllStandards",
-            bodyKeys: ["itemCode", "itemName", "startMonth"]
+            url: "/past-analysis/insertStandard",
+            bodyKeys: ["itemCode", "itemName", "num"]
         },
         "delete": {
             url: "deletePastChooseItemByItemCode",
-            bodyKeys: ["itemCode", "itemName", "startMonth"]
+            bodyKeys: ["itemCode", "itemName", "num"]
         },
         "select": "suspiciousData",
         // Added multi-condition filtering URL
         "filter": {
-            url: "/item/filter/chooseItem"
+            url: "/past-analysis/delStandards"
         }
     }
 }

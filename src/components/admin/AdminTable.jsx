@@ -45,7 +45,7 @@ const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonC
 
 
 
-const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort }) => {
+const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, data }) => {
     const [customerTypes, setCustomerTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRowData, setCurrentRowData] = useState(null);
@@ -82,8 +82,38 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort }) 
         setShowPopup(true)
         setAction("add")
     }
+    const deleteSuspiciousData = async () => {
+        // 根据 data 里的每个对象的 id 删除
+        const deleteList = data.filter((_, index) => selectedRows.includes(index));
+        const payloads = deleteList.map(obj => obj.id);
+        // map 每个 payload，走 deleteAdminData 接口
+        const messages = [];
+        const promises = payloads.map(payload => deleteAdminData('suspiciousData', payload));
+
+        Promise.all(promises).then(results => {
+            results.forEach((res, index) => {
+                if (res.message.includes("失败") || res.message.includes("异常")) {
+                    messages.push(`id: ${payloads[index]} ${res.message}`);
+                }
+            });
+
+            if (messages.length > 0) {
+                alertError(messages.join('\n'));
+            } else {
+                alertSuccess('删除成功！');
+            }
+            handleRefresh();
+        }).catch(error => {
+            console.log(error);
+        });
+    };
+
 
     const handleDelete = async () => {
+        if (type === "suspiciousData") {
+            deleteSuspiciousData()
+            return
+        }
         let payloads;
         const deleteList = rows.filter((_, index) => selectedRows.includes
             (index))

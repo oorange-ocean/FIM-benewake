@@ -21,23 +21,27 @@ const conditions = [
   { id: '!=', name: '不等于' }
 ];
 
-const getInputElement = (schemaItem, value, handleChange) => {
+const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
   const { eng, url, searchKey } = schemaItem;
 
   return (
-    <div className="data-list"
-    >
+    <div className="data-list">
       <input
         type="text"
         value={value}
         onChange={(e) => handleChange("value", e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
       />
     </div>
   )
 
 };
 
-const Filter = ({ index, filter, setFilters, schema }) => {
+const Filter = ({ index, filter, setFilters, schema, handleSearch }) => {
   const handleChange = (key, value) => {
     setFilters(prev => prev.map((f, i) => i === index ? { ...f, [key]: value } : f));
   };
@@ -66,7 +70,7 @@ const Filter = ({ index, filter, setFilters, schema }) => {
         </select>
         <ArrowIcon />
       </div>
-      {getInputElement(schemaItem, filter.value, handleChange)}
+      {getInputElement(schemaItem, filter.value, handleChange, handleSearch)}
       <button className="close-btn" onClick={removeFilter}>
         <CloseIcon className="icon__small close-icon" />
       </button>
@@ -103,6 +107,7 @@ const Filters = ({ schema, filters, setFilters, onSearch }) => {
                 filter={filter}
                 setFilters={setFilters}
                 schema={schema}
+                handleSearch={handleSearch}
               />
             ))}
           </div>
