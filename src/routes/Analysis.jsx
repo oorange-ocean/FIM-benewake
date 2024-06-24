@@ -100,7 +100,7 @@ const Analysis = ({ schema }) => {
             ...prev,
             total: res.data.total,
             current: res.data.current,
-            pageSize: res.data.size
+            pageSize: res.data.pageSize
         }));
     }, [res, setPagination]);
 
@@ -115,6 +115,7 @@ const Analysis = ({ schema }) => {
             current: page,
             pageSize: size
         }));
+        setPageSize(size);
         setLoading(false);  // 加载完成
     };
 

@@ -13,9 +13,9 @@ const analysisChildren = Object.keys(analysisSchema).map(
             loader: async ({ signal }) => {
                 try {
                     // 从 localStorage 获取分页参数
-                    const savedPagination = JSON.parse(localStorage.getItem('pagination')) || {
+                    const savedPagination = {
                         current: 1,
-                        pageSize: 100
+                        pageSize: localStorage.getItem('pagination').pageSize || 100
                     };
 
                     const res = await fetchAnalysisData(item.select, {
