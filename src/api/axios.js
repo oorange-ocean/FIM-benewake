@@ -1,8 +1,6 @@
 import axios from "axios";
-
 // const baseURL = import.meta.env.VITE_BASE_URL;
-const baseURL = 'https://www.fim.benewake.top/benewake/'
-
+let baseURL = import.meta.env.VITE_BASE_URL === 'https://fim.benewake.com/benewake' ? 'https://fim.benewake.com/benewake' : 'https://www.fim.benewake.top/benewake/';
 const api = axios.create({
     baseURL,
     withCredentials: true

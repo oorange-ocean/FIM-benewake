@@ -6,22 +6,21 @@ export async function rowToInquiry(row, inquiryType) {
     let param;
 
     // new inquiry
+    let salesmanId = null;
+    const res = await fetchUser(row.salesmanName, "2");
+    salesmanId = res?.toString();
+
+    const { itemId, customerName, saleNum, expectedTime, remark, inquiryId, inquiryCode, state, arrangedTime, salesmanName } = row;
+    let customerId = null;
+
+    if (row.customerId) {
+        customerId = row.customerId;
+    } else {
+        const customerIdLikeListRes = await api.post("/customer/likeList", { "customerName": customerName });
+        customerId = customerIdLikeListRes.data.data[0].customerId?.toString();
+
+    }
     if (inquiryType) {
-        let salesmanId = null;
-        const res = await fetchUser(row.salesmanName, "2");
-        salesmanId = res?.toString();
-
-        const { itemId, customerName, saleNum, expectedTime, remark, inquiryId, inquiryCode, state } = row;
-        let customerId = null;
-
-        if (row.customerId) {
-            customerId = row.customerId;
-        } else {
-            const customerIdLikeListRes = await api.post("/customer/likeList", { "customerName": customerName });
-            customerId = customerIdLikeListRes.data.data[0].customerId?.toString();
-
-        }
-
         param = {
             salesmanId,
             inquiryCode,
@@ -36,11 +35,8 @@ export async function rowToInquiry(row, inquiryType) {
     }
     // edit inquiry
     else {
-        const { inquiryId, inquiryCode, inquiryType, itemId, customerId, saleNum, expectedTime, remark, arrangedTime, state, salesmanName } = row;
-        let salesmanId = null;
-        const res = await fetchUser(row.salesmanName, "2");
-        salesmanId = res?.toString();
-
+        const { inquiryType } = row
+        console.log(inquiryType)
         param = {
             inquiryId: inquiryId?.toString(),
             inquiryCode,
@@ -52,7 +48,8 @@ export async function rowToInquiry(row, inquiryType) {
             inquiryType: getInquiryTypeInt(inquiryType)?.toString(),
             arrangedTime: arrangedTime ? moment(arrangedTime).format("YYYY/MM/DD") : null,
             state: getStateNum(state),
-            remark
+            remark,
+            customerName: customerName
         };
     }
     return param;
