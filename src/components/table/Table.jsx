@@ -65,7 +65,7 @@ import DraggableHeader from './DraggableHeader';
 //     );
 // }
 
-export default function Table({ data, columns, setNewInquiryData }) {
+export default function Table({ data, columns, noPagination, setNewInquiryData }) {
     const states = useTableStatesContext()
     const [rowSelection, setRowSelection] = useState({})
 
@@ -191,7 +191,7 @@ export default function Table({ data, columns, setNewInquiryData }) {
                         </div>
                     </div>
                 </div>
-                {/* <Paginate table={table} /> */}
+                {!noPagination && <Paginate table={table} />}
             </div>
 
         </DndProvider >
