@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input, Button } from 'antd';
+import { Input, Button } from 'antd';
 import DatePicker from '../components/DatePicker';
 import EditTable from '../components/EditTable';
 import { startInquiry, updateInquiry, saveDivideList } from '../api/inquiry';
 import { rowToInquiry } from '../js/parseData';
 import moment from 'moment';
 import { useAlertContext, useSelectedDataContext } from '../hooks/useCustomContext';
+import CustomModal from '../components/customModal/customModal.jsx'; // 引入新的模态框组件
 
 const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
     const { alertSuccess, alertError, alertWarning } = useAlertContext();
@@ -18,7 +19,6 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
         setAction({ type: "保存", time: new Date() });
 
         if (rows.length === 1) {
-            // 处理只有一条数据的情况
             const newInquiry = await rowToInquiry(rows[0]);
             const res = await updateInquiry(newInquiry);
             switch (res.code) {
@@ -35,7 +35,6 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
                     break;
             }
         } else {
-            // 处理多条数据的情况
             const newInquiries = await Promise.all(rows.map(row => rowToInquiry(row, 1)));
             const res = await saveDivideList({ inquiries: newInquiries, inquiryCode: rows[0].inquiryCode });
             if (res) {
@@ -122,15 +121,13 @@ const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
                     </span>
                 }
             </div>
-            <Modal open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                <p>请输入拆分数量：</p>
-                <Input
-                    type="number"
-                    value={splitCount}
-                    onChange={(e) => setSplitCount(e.target.value)}
-                    min={1}
-                />
-            </Modal>
+            <CustomModal
+                isVisible={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                splitCount={splitCount}
+                setSplitCount={setSplitCount}
+            />
         </div>
     );
 }
@@ -140,7 +137,7 @@ const Edit = () => {
 
     const [ids, setIds] = useState([selectedData.inquiryId]);
     const [rows, setRows] = useState([selectedData]);
-    const [originalRows, setOriginalRows] = useState([selectedData]); // 保留原始数据
+    const [originalRows, setOriginalRows] = useState([selectedData]);
     useEffect(() => {
         if (rows) {
             setSelectedData(rows[0]);
