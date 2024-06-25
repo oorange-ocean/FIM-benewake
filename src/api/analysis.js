@@ -41,7 +41,10 @@ export async function fetchAnalysisData(url, params = {}) {
 
         // 合并分页参数到请求参数
         params = { ...paginationParams, ...params };
-
+        if (url === 'getAnalysisUnlikelyData') {
+            const response = await axios.post(`/past-analysis/${url}`, params);
+            return response.data;
+        }
         const response = await axios.get(`/past-analysis/${url}`, { params: params });
         return response.data;
     } catch (err) {

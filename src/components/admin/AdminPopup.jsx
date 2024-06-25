@@ -45,7 +45,7 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
         closePopup()
     }
 
-    
+
 
     const addForm = <form className='col flex-center g1' onSubmit={handleAdd}>
         {labels?.length > 0 && labels.map((label, index) =>
@@ -65,10 +65,15 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
             <input type="submit" value="确定" className='small blue40' />
         </div>
     </form>
+    // 动态计算高度
+
+    const baseHeight = 14;
+    const extraHeight = labels && labels.length > 2 ? (labels.length - 2) * 3 : 0;
+    const totalHeight = baseHeight + extraHeight;
 
     return (
         <div className='popup-container admin-popup flex-center'>
-            <div className='admin-popup-wrapper col flex-center' >
+            <div className='admin-popup-wrapper col flex-center' style={{ height: `${totalHeight}rem` }}>
                 {action === "add" && addForm}
             </div>
         </div>

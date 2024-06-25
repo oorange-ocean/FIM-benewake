@@ -1574,7 +1574,7 @@ input[type=number] {
 .admin-popup-wrapper {
   width: 35rem;
   height: auto;
-  height: 14rem;
+  height: 14rem
 }
 
 .admin-popup-wrapper input[type="text"] {
