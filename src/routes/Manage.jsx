@@ -37,14 +37,7 @@ const Manage = ({ type }) => {
         const fetchUrl = adminSchema[type].select;
         const res = await fetchAdminData(fetchUrl);
         setIsLoading(false); // 加载结束
-        if (res.data.records.length === 0) {
-            alertWarning('查询结果为空');
-            setRows(data);
-            setIsFiltered(false);
-        } else {
-            setRows(res.data.records ?? []);
-            setIsFiltered(false);
-        }
+        setRows(res)
     };
 
     const handleSearch = async (filters) => {

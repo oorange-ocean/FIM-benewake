@@ -1,0 +1,5 @@
+.cell-content {
+  display: block; /* 确保元素为块级元素 */
+  width: 100%; /* 占满父容器的宽度 */
+  box-sizing: border-box; /* 包括内边距和边框在内的宽度计算方式 */
+}

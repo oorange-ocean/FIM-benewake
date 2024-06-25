@@ -14,37 +14,7 @@ import { EditOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/ic
 import useSortStore from '../../store/sortStore';
 import AdminExcelUploader from './AdminExcelUploader';
 import AdminExcelDownloader from './AdminExcelDownloader';
-
-const Row = ({ schema, data, colWidths, addRow, removeRow, isSelected, onButtonClick }) => {
-    // // 检查 schema 是否符合特定结构
-    // const isSpecificSchema = schema.length === 3 &&
-    //     schema[0].eng === 'customerName' &&
-    //     schema[1].eng === 'itemCode' &&
-    //     schema[2].eng === 'customerType';
-
-    return (
-        <div className="tr">
-            <div className='td fixed checkbox'>
-                <Checkbox addRow={addRow} removeRow={removeRow} isSelected={isSelected} />
-            </div>
-            {schema.map((cell, i) => (
-                <div
-                    style={{ width: colWidths[i] }}
-                    className='td'
-                    key={i}>
-                    {cell.eng === "startMonth" ? (
-                        <span>{moment(data.startMonth).format('YYYY/MM/DD')}</span>
-                    ) : cell.eng === "customerType" ? (
-                        <span>{data[cell.eng]} <EditOutlined onClick={() => onButtonClick(data)} /></span>
-                    ) : (
-                        <span>{data[cell.eng]}</span>
-                    )}
-                </div>
-            ))}
-
-        </div>
-    )
-}
+import Row from './AdminRow';
 
 
 
@@ -208,28 +178,6 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
     //     schema[1].eng === 'itemCode' &&
     //     schema[2].eng === 'customerType';
 
-    // 处理按钮点击事件
-    const handleButtonClick = (rowData) => {
-        setCurrentRowData(rowData);
-        setSelectedCustomerType(rowData.customerType);
-        setIsModalOpen(true);
-    };
-
-    const handleModalOk = async () => {
-        try {
-            await updateCustomerType(currentRowData.customerName, currentRowData.itemCode, selectedCustomerType);
-            alertSuccess('客户类型更新成功');
-            handleRefresh();
-        } catch (error) {
-            alertError('客户类型更新失败');
-        }
-        setIsModalOpen(false);
-    };
-
-
-    const handleModalCancel = () => {
-        setIsModalOpen(false);
-    };
     const handleCustomerTypeChange = (value) => {
         setSelectedCustomerType(value);
     };
@@ -242,6 +190,16 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
         <div className="popup-container flex-center">
             <AdminExcelDownloader close={toggleExportPopup} currentPage={currentPage} pageSize={pageSize} exportTypeNum={adminSchema[type].exportTypeNum} />
         </div>
+
+    const handleTypeChange = async (customerName, itemCode, newType) => {
+        try {
+            await updateCustomerType(customerName, itemCode, newType);
+            alertSuccess('客户类型更新成功');
+            handleRefresh();
+        } catch (error) {
+            alertError('客户类型更新失败');
+        }
+    };
 
     return (
         <div className='col table-container'>
@@ -327,7 +285,8 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                                     isSelected={selectedRows.includes(i)}
                                     addRow={() => addSelectedRow(i)}
                                     removeRow={() => removeSelectedRow(i)}
-                                    onButtonClick={handleButtonClick}
+                                    onTypeChange={handleTypeChange}
+                                    customerTypes={customerTypes}
                                 />
                             )
                             )}
@@ -335,21 +294,6 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                 </div>
             </div>
             {/* <AdminPaginate totalItems={rows.length} pageSize={pageSize} setPageSize={setPageSize} pageNum={pageNum} setPageNum={setPageNum} /> */}
-            <Modal
-                title="修改客户类型"
-                open={isModalOpen}
-                onOk={handleModalOk}
-                onCancel={handleModalCancel}
-            >
-                <p>客户名称: {currentRowData?.customerName}</p>
-                <p>物料编码: {currentRowData?.itemCode}</p>
-                <Select
-                    value={selectedCustomerType}
-                    style={{ width: '100%' }}
-                    onChange={handleCustomerTypeChange}
-                    options={customerTypes.map(type => ({ value: type.customerType, label: type.customerType }))}
-                />
-            </Modal>
         </div >
     )
 }

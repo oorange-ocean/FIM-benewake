@@ -29,13 +29,13 @@ export async function fetchAdminData(url, filters = null) {
 export async function addAdminData(type, payload) {
 
     const addUrl = adminSchema[type].add.url
-
+    let response = null
     try {
         if (type == "suspiciousData") {
-            const response = await axios.post(`/past-analysis/insertStandard`, payload)
+            response = await axios.post(`/past-analysis/insertStandard`, payload)
         }
         else {
-            const response = await axios.post(`/admin/${addUrl}`, null, { params: payload })
+            response = await axios.post(`/admin/${addUrl}`, null, { params: payload })
 
         }
         return response.data;

@@ -32,14 +32,15 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
     const handleAdd = async (e) => {
         e.preventDefault()
         const res = await addAdminData(type, values)
-        if (res.message.includes("成功")) {
-            alertSuccess(res.message)
+        console.log(res)
+        if (res.data.includes("成功")) {
+            alertSuccess(res.data)
         }
-        else if (res.message.includes("失败")) {
-            alertError(res.message);
+        else if (res.data.includes("失败")) {
+            alertError(res.data);
         }
         else {
-            alertWarning(res.message)
+            alertWarning(res.data)
         }
         handleRefresh()
         closePopup()
