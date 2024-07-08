@@ -4,13 +4,14 @@ import { FilterOutlined } from '@ant-design/icons';
 import Table from '../components/table/Table';
 import Loader from '../components/Loader';
 import { useLoaderData } from 'react-router-dom';
-import { fetchAnalysisData } from '../api/analysis';
+import { fetchAnalysisData, updateAnalysisUnlikelyData } from '../api/analysis';
 import analysisDefs from '../constants/defs/AnalysisDefs';
 import * as XLSX from 'xlsx';
 import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import moment from 'moment';
 
 const { Option } = Select;
+const labels = ['年度客户', '月度客户', '代理商', '新增客户', '临时客户', '日常客户'];
 
 function EngToCn(col_name_ENG) {
     return analysisDefs.find(col => col.id === col_name_ENG)?.header;
@@ -27,7 +28,6 @@ const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, 
         daily: 1,
     });
 
-    const labels = ['年度客户', '月度客户', '代理商', '新增客户', '临时客户', '日常客户'];
     const keys = Object.keys(params).slice(0, 6);
 
     const handleClick = async () => {
@@ -88,23 +88,21 @@ const Analysis = ({ schema }) => {
     const { current, total } = pagination;
     const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
 
+    // 提取更新状态的逻辑为一个函数
+    const updateStateWithResponse = (response) => {
+        const { records, total, current, size: pageSize } = response;
+        setRows(records);
+        setDefs(analysisDefs.filter((def) => Object.keys(records[0]).includes(def.id)));
+        setPagination(prev => ({
+            ...prev,
+            total,
+            current,
+            pageSize
+        }));
+    };
     useEffect(() => {
-        // 提取更新状态的逻辑为一个函数
-        const updateStateWithResponse = (response) => {
-            const { records, total, current, size: pageSize } = response;
-            setRows(records);
-            setDefs(analysisDefs.filter((def) => Object.keys(records[0]).includes(def.id)));
-            setPagination(prev => ({
-                ...prev,
-                total,
-                current,
-                pageSize
-            }));
-        };
-
         // 确定使用的数据源
         const dataSource = schema.select === "getAnalysisUnlikelyData" ? res : res.data;
-
         // 检查数据有效性
         if (!dataSource || !dataSource.records || dataSource.records.length === 0) {
             alertWarning("数据加载失败，请刷新页面重试");
@@ -117,16 +115,22 @@ const Analysis = ({ schema }) => {
 
     const handleRefresh = async (page = current, size = pageSize) => {
         setLoading(true);  // 开始加载
+        const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
+        //如果是可疑数据，则在请求前先更新数据，调用updateAnalysisUnlikelyData
+        if (isUnlikelyData) {
+            await updateAnalysisUnlikelyData();
+        }
         const res = await fetchAnalysisData(schema.select, { pageNum: page, pageSize: size });
-        setRows(res.data.records);
-        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
-        setPagination(prev => ({
-            ...prev,
-            total: res.data.total,
-            current: page,
-            pageSize: size
-        }));
-        setPageSize(size);
+        // 确定使用的数据源
+        const dataSource = isUnlikelyData ? res : res.data;
+        // 检查数据有效性
+        if (!dataSource || !dataSource.records || dataSource.records.length === 0) {
+            alertWarning("数据加载失败，请刷新页面重试");
+            return;
+        }
+
+        // 使用提取的函数更新状态
+        updateStateWithResponse(dataSource);
         setLoading(false);  // 加载完成
     };
 
@@ -184,7 +188,7 @@ const Analysis = ({ schema }) => {
                 <>
                     {rows?.length > 0 ? (
                         <>
-                            <Table data={rows} columns={defs} noPagination={true} />
+                            <Table data={rows} columns={defs} noPagination={true} labels={labels} />
                             <Pagination
                                 current={current}
                                 pageSize={pageSize}

@@ -51,3 +51,21 @@ export async function fetchAnalysisData(url, params = {}) {
         console.log(err);
     }
 }
+//调用/past-analysis/updateAnalysisUnlikelyData
+export async function updateAnalysisUnlikelyData() {
+    try {
+        const response = await axios.get('/past-analysis/updateAnalysisUnlikelyData');
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}
+///past-analysis/updateCustomerTypeReviseById?id=23&customerTypeRevise=请问
+export async function updateCustomerTypeReviseById(id, customerTypeRevise) {
+    try {
+        const response = await axios.post(`/past-analysis/updateCustomerTypeReviseById?id=${id}&customerTypeRevise=${customerTypeRevise}`);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}

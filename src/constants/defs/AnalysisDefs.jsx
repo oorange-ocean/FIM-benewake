@@ -9,7 +9,7 @@ const createAnalysisDef = (header, id, size = 80) => ({
 const analysisDefs = [
     createAnalysisDef("序号", "serial_num", 50),
     createAnalysisDef("物料编码", "item_code", 150),
-    createAnalysisDef("物料名称", "item_name", 290),
+    createAnalysisDef("物料名称", "item_name", 220),
     createAnalysisDef("年", "sale_year"),
     createAnalysisDef("季度", "sale_quarter"),
     createAnalysisDef("季度销量", "quarter_item_sale_num"),
@@ -20,10 +20,10 @@ const analysisDefs = [
     createAnalysisDef("剩余百分比", "rest_percentage"),
     createAnalysisDef("剩余个数", "rest_num"),
     createAnalysisDef("月度平均比例", "month_avg_proportion"),
-    createAnalysisDef("客户名称", "customer_name"),
+    createAnalysisDef("客户名称", "customer_name", 220),
     createAnalysisDef("销售员", "salesman_name", 100),
-    createAnalysisDef("日期", "sale_time"),
-    createAnalysisDef("订单号码", "order_code"),
+    createAnalysisDef("日期", "sale_time", 100),
+    createAnalysisDef("订单号码", "order_code", 120),
     createAnalysisDef("1为标黄", "is_yellow"),
     createAnalysisDef("客户", "customer"),
     createAnalysisDef("次数", "sale_times"),
@@ -36,7 +36,8 @@ const analysisDefs = [
     createAnalysisDef("1为标黄", "one_is_yellow"),
     createAnalysisDef("客户类型", "customer_type"),
     createAnalysisDef("有效月份", "total_months"),
-    createAnalysisDef("最大值", "max_")
+    createAnalysisDef("最大值", "max_"),
+    createAnalysisDef("客户类型转换", "customerTypeRevise", 100)
 ];
 
 export default analysisDefs;

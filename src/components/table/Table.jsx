@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
     flexRender,
     useReactTable,
@@ -9,139 +9,100 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     getGroupedRowModel
-} from '@tanstack/react-table'
+} from '@tanstack/react-table';
 import Paginate from './Paginate';
 import { ReactComponent as FilterIcon } from '../../assets/icons/filter.svg';
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTableStatesContext, useUpdateTableStatesContext } from '../../hooks/useCustomContext';
 import DraggableHeader from './DraggableHeader';
-// const Search = ({ column, closeSearch }) => {
-//     const [inputValue, setInputValue] = useState('');
-
-//     const allOptions = useMemo(
-//         () => Array.from(column.getFacetedUniqueValues().keys()).sort(),
-//         [column.getFacetedUniqueValues()]
-//     )
-
-//     const options = useMemo(() => {
-//         return inputValue
-//             ? allOptions.filter(option => option.toLowerCase().includes(inputValue.toLowerCase()))
-//             : allOptions;
-//     }, [inputValue, allOptions]);
-
-//     const handleInputChange = (value) => {
-//         setInputValue(value);
-//     };
-
-//     const handleOptionClick = (uniqueValue) => {
-//         setInputValue(uniqueValue);
-//         column.setFilterValue(uniqueValue);
-//         // closeSearch()
-//     };
-
-//     return (
-//         <div className="search-wrapper">
-//             <input
-//                 type="text"
-//                 value={inputValue}
-//                 onChange={e => handleInputChange(e.target.value)}
-//                 placeholder={`搜索 (${column.getFacetedUniqueValues().size})`}
-//                 name={column.id}
-//             />
-//             {inputValue &&
-//                 <ul>
-//                     {options.map((uniqueValue) => (
-//                         <li
-//                             key={uniqueValue}
-//                             onClick={() => handleOptionClick(uniqueValue)}
-//                         >
-//                             {uniqueValue}
-//                         </li>
-//                     ))}
-//                 </ul>
-//             }
-//         </div>
-//     );
-// }
-
-export default function Table({ data, columns, noPagination, setNewInquiryData }) {
-    const states = useTableStatesContext()
-    const [rowSelection, setRowSelection] = useState({})
-
-    const columnVisibility = states.columnVisibility
-    const [sorting, setSorting] = useState([])
-    const [grouping, setGrouping] = useState([])
-    const [columnFilters, setColumnFilters] = useState([])
-    const [columnResizeMode] = useState('onChange')
-
-    const updateTableStates = useUpdateTableStatesContext()
-
-    const [columnOrder, setColumnOrder] = useState(columns.map(column => column.id))
-
-    useEffect(() => setRowSelection({}), [data])
-    useEffect(() => updateTableStates({ type: "SET_ROW_SELECTION", rowSelection }), [rowSelection])
+import { Modal, Box, Typography, Select, MenuItem } from '@mui/material';
+import { updateCustomerTypeReviseById } from '../../api/analysis'
 
 
-    const table = useReactTable
-        ({
-            data,
-            columns,
-            columnResizeMode,
-            enableRowSelection: true,
-            defaultColumn: {
-                isVisible: false
+export default function Table({ data, columns, noPagination, setNewInquiryData, labels }) {
+    const states = useTableStatesContext();
+    const [rowSelection, setRowSelection] = useState({});
+    const columnVisibility = states.columnVisibility;
+    const [sorting, setSorting] = useState([]);
+    const [grouping, setGrouping] = useState([]);
+    const [columnFilters, setColumnFilters] = useState([]);
+    const [columnResizeMode] = useState('onChange');
+    const updateTableStates = useUpdateTableStatesContext();
+    const [columnOrder, setColumnOrder] = useState(columns.map(column => column.id));
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [currentCellData, setCurrentCellData] = useState('');
+    const [currentRowData, setCurrentRowData] = useState(null);
+
+    useEffect(() => setRowSelection({}), [data]);
+    useEffect(() => updateTableStates({ type: "SET_ROW_SELECTION", rowSelection }), [rowSelection]);
+
+    const handleClose = () => setModalOpen(false);
+    const handleChange = async (event) => {
+        const value = event.target.value;
+        // 调用/past-analysis/updateCustomerTypeReviseById?id=23&customerTypeRevise=请问 
+        // console.log(currentRowData, value);
+        // console.log(currentCellData);
+        await updateCustomerTypeReviseById(currentRowData.id, labels[value] ?? '');
+        setModalOpen(false);
+    };
+
+    const table = useReactTable({
+        data,
+        columns,
+        columnResizeMode,
+        enableRowSelection: true,
+        defaultColumn: {
+            isVisible: false
+        },
+        state: {
+            sorting,
+            grouping,
+            columnFilters,
+            columnVisibility,
+            rowSelection,
+            columnOrder
+        },
+        initialState: {
+            columnVisibility: columnVisibility,
+            pagination: {
+                pageSize: 100,
             },
-            state: {
-                sorting,
-                grouping,
-                columnFilters,
-                columnVisibility,
-                rowSelection,
-                columnOrder
+        },
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getGroupedRowModel: getGroupedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getFacetedRowModel: getFacetedRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+        onSortingChange: setSorting,
+        onGroupingChange: setGrouping,
+        onColumnOrderChange: setColumnOrder,
+        onRowSelectionChange: setRowSelection,
+        onColumnFiltersChange: setColumnFilters,
+        meta: {
+            updateData: (rowIndex, columnId, value) => {
+                setNewInquiryData(prev =>
+                    prev.map((row, index) => {
+                        if (index === rowIndex) {
+                            return { ...prev[rowIndex], [columnId]: value };
+                        }
+                        return row;
+                    })
+                );
             },
-            initialState: {
-                columnVisibility: columnVisibility,
-                pagination: {
-                    pageSize: 100,
-                },
-            },
-            getCoreRowModel: getCoreRowModel(),
-            getPaginationRowModel: getPaginationRowModel(),
-            getSortedRowModel: getSortedRowModel(),
-            getGroupedRowModel: getGroupedRowModel(),
-            getFilteredRowModel: getFilteredRowModel(),
-            getFacetedRowModel: getFacetedRowModel(),
-            getFacetedUniqueValues: getFacetedUniqueValues(),
-
-            onSortingChange: setSorting,
-            onGroupingChange: setGrouping,
-            onColumnOrderChange: setColumnOrder,
-            onRowSelectionChange: setRowSelection,
-            onColumnFiltersChange: setColumnFilters,
-            meta: {
-                updateData: (rowIndex, columnId, value) => {
-                    setNewInquiryData(prev =>
-                        prev.map((row, index) => {
-                            if (index === rowIndex) {
-                                return { ...prev[rowIndex], [columnId]: value, }
-                            }
-                            return row
-                        })
-                    )
-                },
-            },
-        })
+        },
+    });
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="table-container col" >
-                <div className="table-wrapper" >
-                    <div className="table" style={{
-                        width: table.getCenterTotalSize(),
-                    }}>
+            <div className="table-container col">
+                <div className="table-wrapper">
+                    <div className="table" style={{ width: table.getCenterTotalSize() }}>
                         <div className='thead'>
-                            {table.getHeaderGroups().map(headerGroup =>
+                            {table.getHeaderGroups().map(headerGroup => (
                                 <div className='tr' key={headerGroup.id}>
                                     <div className='th checkbox fixed'>
                                         <input
@@ -151,49 +112,83 @@ export default function Table({ data, columns, noPagination, setNewInquiryData }
                                             onChange={table.getToggleAllRowsSelectedHandler()}
                                         />
                                     </div>
-                                    {headerGroup.headers.map(header =>
+                                    {headerGroup.headers.map(header => (
                                         <DraggableHeader
                                             key={header.id}
                                             header={header}
                                             table={table}
                                         />
-                                    )}
+                                    ))}
                                 </div>
-                            )}
+                            ))}
                         </div>
                         <div className='tbody'>
-                            {table.getRowModel().rows.map(row =>
+                            {table.getRowModel().rows.map(row => (
                                 <div
                                     key={row.id}
                                     className={`tr${row.getIsSelected() ? ' selected' : ''}`}
                                 >
                                     <div className='td checkbox fixed'>
-                                        <input type="checkbox"
+                                        <input
+                                            type="checkbox"
                                             name={row.id}
                                             checked={row.getIsSelected()}
                                             onChange={row.getToggleSelectedHandler()}
                                         />
                                     </div>
-                                    {row.getVisibleCells().map(cell =>
+                                    {row.getVisibleCells().map(cell => (
                                         <div
                                             key={cell.id}
-                                            style={{
-                                                width: cell.column.getSize()
+                                            style={{ width: cell.column.getSize() }}
+                                            className={`td ${cell.column.columnDef.id}`}
+                                            onDoubleClick={() => {
+                                                if (cell.column.columnDef.id === "customerTypeRevise") {
+                                                    setCurrentCellData(cell.getValue() ?? '');
+                                                    setCurrentRowData(row.original);
+                                                    setModalOpen(true);
+                                                }
                                             }}
-                                            className={`td ${cell.column.columnDef.id}`}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext())}
+                                        >
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </div>
-                                    )}
+                                    ))}
                                 </div>
-                            )}
+                            ))}
                         </div>
                     </div>
                 </div>
                 {!noPagination && <Paginate table={table} />}
             </div>
+            <Modal open={modalOpen} onClose={handleClose}>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 300,
+                    bgcolor: 'background.paper',
+                    boxShadow: 24,
+                    p: 4,
+                }}>
+                    <Typography variant="h6" component="h2">
+                        客户类型转换
+                    </Typography>
+                    <Select
+                        value={labels.find(label => label === currentCellData) ? labels.indexOf(currentRowData?.customerType) : ''}
+                        onChange={handleChange}
+                        fullWidth
+                    >
+                        {labels.map((label, i) => (
+                            <MenuItem key={i} value={i}>
+                                {label}
+                            </MenuItem>
+                        ))}
 
-        </DndProvider >
-    )
+                    </Select>
+
+
+                </Box>
+            </Modal>
+        </DndProvider>
+    );
 }
