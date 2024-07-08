@@ -89,20 +89,31 @@ const Analysis = ({ schema }) => {
     const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
 
     useEffect(() => {
-        if (!res || !res.data || !res.data.records) {
+        // 提取更新状态的逻辑为一个函数
+        const updateStateWithResponse = (response) => {
+            const { records, total, current, size: pageSize } = response;
+            setRows(records);
+            setDefs(analysisDefs.filter((def) => Object.keys(records[0]).includes(def.id)));
+            setPagination(prev => ({
+                ...prev,
+                total,
+                current,
+                pageSize
+            }));
+        };
+
+        // 确定使用的数据源
+        const dataSource = schema.select === "getAnalysisUnlikelyData" ? res : res.data;
+
+        // 检查数据有效性
+        if (!dataSource || !dataSource.records || dataSource.records.length === 0) {
             alertWarning("数据加载失败，请刷新页面重试");
             return;
         }
 
-        setRows(res.data.records);
-        setDefs(analysisDefs.filter((def) => Object.keys(res.data.records[0]).includes(def.id)));
-        setPagination(prev => ({
-            ...prev,
-            total: res.data.total,
-            current: res.data.current,
-            pageSize: res.data.pageSize
-        }));
-    }, [res, setPagination]);
+        // 使用提取的函数更新状态
+        updateStateWithResponse(dataSource);
+    }, [res, setPagination, schema.select]);
 
     const handleRefresh = async (page = current, size = pageSize) => {
         setLoading(true);  // 开始加载
