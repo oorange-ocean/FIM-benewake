@@ -20,7 +20,7 @@ import { Modal, Box, Typography, Select, MenuItem } from '@mui/material';
 import { updateCustomerTypeReviseById } from '../../api/analysis'
 
 
-export default function Table({ data, columns, noPagination, setNewInquiryData, labels }) {
+export default function Table({ data, columns, noPagination, setNewInquiryData, labels, handleRefresh }) {
     const states = useTableStatesContext();
     const [rowSelection, setRowSelection] = useState({});
     const columnVisibility = states.columnVisibility;
@@ -42,9 +42,8 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     const handleChange = async (event) => {
         const value = event.target.value;
         // 调用/past-analysis/updateCustomerTypeReviseById?id=23&customerTypeRevise=请问 
-        // console.log(currentRowData, value);
-        // console.log(currentCellData);
         await updateCustomerTypeReviseById(currentRowData.id, labels[value] ?? '');
+        await handleRefresh()
         setModalOpen(false);
     };
 
@@ -143,7 +142,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                             className={`td ${cell.column.columnDef.id}`}
                                             onDoubleClick={() => {
                                                 if (cell.column.columnDef.id === "customerTypeRevise") {
-                                                    setCurrentCellData(cell.getValue() ?? '');
+                                                    setCurrentCellData(cell.getContext().getValue() ?? '');
                                                     setCurrentRowData(row.original);
                                                     setModalOpen(true);
                                                 }
@@ -173,8 +172,8 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                     <Typography variant="h6" component="h2">
                         客户类型转换
                     </Typography>
-                    <Select
-                        value={labels.find(label => label === currentCellData) ? labels.indexOf(currentRowData?.customerType) : ''}
+                    <Select size='small'
+                        value={labels.find(label => label == currentCellData) ? labels.indexOf(currentRowData?.customerType) : ''}
                         onChange={handleChange}
                         fullWidth
                     >

@@ -69,3 +69,12 @@ export async function updateCustomerTypeReviseById(id, customerTypeRevise) {
         console.log(err);
     }
 }
+// /past-analysis/updateAllReviseToCustomerType
+export async function updateAllReviseToCustomerType() {
+    try {
+        const response = await axios.post('/past-analysis/updateAllReviseToCustomerType');
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}

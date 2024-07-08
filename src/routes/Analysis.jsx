@@ -4,21 +4,21 @@ import { FilterOutlined } from '@ant-design/icons';
 import Table from '../components/table/Table';
 import Loader from '../components/Loader';
 import { useLoaderData } from 'react-router-dom';
-import { fetchAnalysisData, updateAnalysisUnlikelyData } from '../api/analysis';
+import { fetchAnalysisData, updateAnalysisUnlikelyData, updateAllReviseToCustomerType } from '../api/analysis';
 import analysisDefs from '../constants/defs/AnalysisDefs';
 import * as XLSX from 'xlsx';
 import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import moment from 'moment';
 
 const { Option } = Select;
-const labels = ['年度客户', '月度客户', '代理商', '新增客户', '临时客户', '日常客户'];
+const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 
 function EngToCn(col_name_ENG) {
     return analysisDefs.find(col => col.id === col_name_ENG)?.header;
 }
 
 const FilterPopup = ({ url, open, closePopup, setRows, setCurrent, setPageSize, setTotal }) => {
-    const { alertWarning } = useAlertContext();
+    const { alertWarning, alertSuccess } = useAlertContext();
     const [params, setParams] = useState({
         yearly: 1,
         monthly: 1,
@@ -87,7 +87,7 @@ const Analysis = ({ schema }) => {
 
     const { current, total } = pagination;
     const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
-
+    const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
     // 提取更新状态的逻辑为一个函数
     const updateStateWithResponse = (response) => {
         const { records, total, current, size: pageSize } = response;
@@ -115,7 +115,6 @@ const Analysis = ({ schema }) => {
 
     const handleRefresh = async (page = current, size = pageSize) => {
         setLoading(true);  // 开始加载
-        const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
         //如果是可疑数据，则在请求前先更新数据，调用updateAnalysisUnlikelyData
         if (isUnlikelyData) {
             await updateAnalysisUnlikelyData();
@@ -158,12 +157,28 @@ const Analysis = ({ schema }) => {
         });
     };
 
+    const handleRevise = async () => {
+        // updateAllReviseToCustomerType
+        const res = await updateAllReviseToCustomerType();
+        if (res.code === 200) {
+            alertSuccess("更新成功");
+            handleRefresh();
+        }
+        else {
+            alertWarning("更新失败");
+        }
+    }
+
+
     return (
         <div className='col full-screen analysis'>
             <div className='row toolbar'>
                 <div className='row flex-center'>
                     <Button type="text" onClick={() => handleRefresh(current, pageSize)}>刷新</Button>
                     <Button type="text" onClick={handleExport}>导出</Button>
+                    {/* 确认更新客户类型,仅当schema.select === "getAnalysisUnlikelyData"出现 */}
+                    {isUnlikelyData && (
+                        <button type="text" onClick={() => handleRevise()} > 确认更新客户类型 </button>)}
                 </div>
             </div>
             {rows?.length > 0 && rows[0].hasOwnProperty('customerType') && (
@@ -188,7 +203,13 @@ const Analysis = ({ schema }) => {
                 <>
                     {rows?.length > 0 ? (
                         <>
-                            <Table data={rows} columns={defs} noPagination={true} labels={labels} />
+                            <Table
+                                data={rows}
+                                columns={defs}
+                                noPagination={true}
+                                labels={labels}
+                                handleRefresh={handleRefresh}
+                            />
                             <Pagination
                                 current={current}
                                 pageSize={pageSize}
