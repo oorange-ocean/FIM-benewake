@@ -173,7 +173,7 @@ const Analysis = ({ schema }) => {
                 <>
                     {rows?.length > 0 ? (
                         <>
-                            <Table data={rows} columns={defs} />
+                            <Table data={rows} columns={defs} noPagination={true} />
                             <Pagination
                                 current={current}
                                 pageSize={pageSize}

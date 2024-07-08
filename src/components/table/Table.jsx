@@ -103,7 +103,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData }
             initialState: {
                 columnVisibility: columnVisibility,
                 pagination: {
-                    pageSize: 1500,
+                    pageSize: 100,
                 },
             },
             getCoreRowModel: getCoreRowModel(),

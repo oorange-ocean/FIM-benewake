@@ -80,11 +80,11 @@ export default function Toolbar({ features }) {
         updateTableData({ type: "SET_TABLE_DATA", tableData: res.lists })
     }
     const handleReload = async () => {
-        // 如果 tableId 是 1 或 6，先请求 /delivery/update
-        if (tableId === 1 || tableId === 6) {
+        // 如果 tableId 是 6，先请求 /delivery/update
+        if (tableId === 6) {
             await api.get('/delivery/update');
-            handleRefresh();
         }
+        handleRefresh();
     }
 
     const handleAllowInquiry = async () => {
