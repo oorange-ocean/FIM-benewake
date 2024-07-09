@@ -47,7 +47,6 @@ export async function addAdminData(type, payload) {
 
 export async function deleteAdminData(type, payload) {
     if (type === 'suspiciousData') {
-        console.log(payload);
         try {
             const response = await axios.delete(`/past-analysis/delStandards`, { params: { "id": payload } });
             // 根据 status 返回结果

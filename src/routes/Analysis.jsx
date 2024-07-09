@@ -160,8 +160,9 @@ const Analysis = ({ schema }) => {
     const handleRevise = async () => {
         // updateAllReviseToCustomerType
         const res = await updateAllReviseToCustomerType();
-        if (res.code === 200) {
-            alertSuccess("更新成功");
+        console.log(res)
+        if (res.status == 200) {
+            alertWarning("更新成功");
             handleRefresh();
         }
         else {
