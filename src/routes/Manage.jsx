@@ -112,6 +112,7 @@ const Manage = ({ type }) => {
     }, [type, data]);
 
     useEffect(() => {
+        // 初始化schema和filters，schema为当前表格的表头，filters为筛选条件
         const initialSchema = Object.keys(rows[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
         setSchema(initialSchema);
         if (initialSchema.length > 0) {

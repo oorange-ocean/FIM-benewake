@@ -256,3 +256,4 @@ const EditTable = ({ rows, setRows }) => {
 }
 
 export default EditTable
+export { schema, Input }

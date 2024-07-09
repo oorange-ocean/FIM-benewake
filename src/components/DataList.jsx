@@ -16,7 +16,6 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
     const [options, setOptions] = useState(null)
     const [showDropdown, setShowDropdown] = useState(false);
     const [value, setValue] = useState("")
-
     const containerRef = useRef(null);
 
     const handleDocumentClick = (e) => {
@@ -40,13 +39,6 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
 
     const onChange = async (e) => {
         setValue(e.target.value)
-        // if (identifier === "salesmanName") {
-        //     const res = await fetchUser(e.target.value, "2")
-        //     setOptions(res)
-        // }
-        // else if (identifier === "inquiryType") {
-        //     setOptions(inquiryTypeOptions)
-        // }
         if (identifier === "inquiryType") {
             setOptions(inquiryTypeOptions)
         }
@@ -59,7 +51,6 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
 
     const handleSelect = (option) => {
         if (identifier === "itemCode") {
-
             setValue(option.itemCode)
             handleChange(["itemCode", "itemName", "itemType", "itemId"], [option.itemCode, option.itemName, option.itemType, option.id])
         }

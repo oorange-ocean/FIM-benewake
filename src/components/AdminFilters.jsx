@@ -5,127 +5,142 @@ import { ReactComponent as ArrowIcon } from '../assets/icons/arrow-down.svg';
 import { ReactComponent as SearchIcon } from '../assets/icons/search.svg';
 import SimpleDataList from './SimpleDataList';
 import DatePicker from './DatePicker';
-
+import DataList from './DataList'
+import { schema, Input } from './EditTable'
 const conditions = [
-  { id: 'like', name: '包含' },
-  { id: '=', name: '等于' },
-  { id: '<>', name: '不等于' },
-  { id: '>', name: '大于' },
-  { id: '<', name: '小于' },
-  { id: '>=', name: '大于等于' },
-  { id: '<=', name: '小于等于' },
-  { id: 'is', name: '空' },
-  { id: 'is not', name: '非空' },
-  { id: 'in', name: '包含于' },
-  { id: 'not in', name: '不包含于' },
-  { id: '!=', name: '不等于' }
+    { id: 'like', name: '包含' },
+    { id: '=', name: '等于' },
+    { id: '<>', name: '不等于' },
+    { id: '>', name: '大于' },
+    { id: '<', name: '小于' },
+    { id: '>=', name: '大于等于' },
+    { id: '<=', name: '小于等于' },
+    { id: 'is', name: '空' },
+    { id: 'is not', name: '非空' },
+    { id: 'in', name: '包含于' },
+    { id: 'not in', name: '不包含于' },
+    { id: '!=', name: '不等于' }
 ];
 
 const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
-  const { eng, url, searchKey } = schemaItem;
+    const { eng, url, searchKey } = schemaItem;
+    const onChange = (keys, values) => {
+        // onChange(["itemCode", "itemName", "itemType", "itemId"], [option.itemCode, option.itemName, option.itemType, option.id])
+        keys.map((key, index) => {
+            if (key === eng) {
+                handleChange("value", values[index]);
+            }
+        });
+    }
+    const matchingElement = Object.keys(schema).find((key) => schema[key].identifier === eng);
 
-  return (
-    <div className="data-list">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => handleChange("value", e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSearch();
-          }
-        }}
-      />
-    </div>
-  )
-
+    return matchingElement ? (
+        schema[matchingElement].element(value, onChange)
+    ) : (
+        <div className='data-list'>
+            <input
+                type="text"
+                value={value}
+                onChange={(e) => handleChange("value", e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        handleSearch();
+                    }
+                }}
+            />
+        </div>
+    );
 };
 
+
+
+
 const Filter = ({ index, filter, setFilters, schema, handleSearch }) => {
-  const handleChange = (key, value) => {
-    setFilters(prev => prev.map((f, i) => i === index ? { ...f, [key]: value } : f));
-  };
+    const handleChange = (key, value) => {
+        // 根据key和value来修改filter的值
+        setFilters(prev => prev.map((f, i) => i === index ? { ...f, [key]: value } : f));
+    };
 
-  const removeFilter = () => {
-    setFilters(prev => prev.filter((_, i) => i !== index));
-  };
+    const removeFilter = () => {
+        setFilters(prev => prev.filter((_, i) => i !== index));
+    };
 
-  const schemaItem = schema.find(item => item.eng === filter.key);
+    const schemaItem = schema.find(item => item.eng === filter.key);
 
-  return (
-    <div className='row filter'>
-      <div className='filter-select-wrapper'>
-        <select value={filter.key} onChange={(e) => handleChange("key", e.target.value)}>
-          {schema.map((item, i) => (
-            <option value={item.eng} key={i}>{item.cn}</option>
-          ))}
-        </select>
-        <ArrowIcon />
-      </div>
-      <div className='filter-select-wrapper'>
-        <select value={filter.condition} onChange={(e) => handleChange("condition", e.target.value)}>
-          {conditions.map((condition, i) => (
-            <option value={condition.id} key={i}>{condition.name}</option>
-          ))}
-        </select>
-        <ArrowIcon />
-      </div>
-      {getInputElement(schemaItem, filter.value, handleChange, handleSearch)}
-      <button className="close-btn" onClick={removeFilter}>
-        <CloseIcon className="icon__small close-icon" />
-      </button>
-    </div>
-  );
+    return (
+        <div className='row filter'>
+            <div className='filter-select-wrapper'>
+                <select value={filter.key} onChange={(e) => handleChange("key", e.target.value)}>
+                    {schema.map((item, i) => (
+                        <option value={item.eng} key={i}>{item.cn}</option>
+                    ))}
+                </select>
+                <ArrowIcon />
+            </div>
+            <div className='filter-select-wrapper'>
+                <select value={filter.condition} onChange={(e) => handleChange("condition", e.target.value)}>
+                    {conditions.map((condition, i) => (
+                        <option value={condition.id} key={i}>{condition.name}</option>
+                    ))}
+                </select>
+                <ArrowIcon />
+            </div>
+            {getInputElement(schemaItem, filter.value, handleChange, handleSearch)}
+            <button className="close-btn" onClick={removeFilter}>
+                <CloseIcon className="icon__small close-icon" />
+            </button>
+        </div>
+    );
 };
 
 const Filters = ({ schema, filters, setFilters, onSearch }) => {
-  const [isVisible, setIsVisible] = useState(true);
-  const toggleVisible = () => setIsVisible(!isVisible);
+    const [isVisible, setIsVisible] = useState(true);
+    const toggleVisible = () => setIsVisible(!isVisible);
 
-  const addFilter = () => {
-    const newFilter = {
-      key: schema[0].eng,
-      condition: 'like',
-      value: ''
+    const addFilter = () => {
+        const newFilter = {
+            key: schema[0].eng,
+            condition: 'like',
+            value: ''
+        };
+        setFilters([...filters, newFilter]);
     };
-    setFilters([...filters, newFilter]);
-  };
 
-  const handleSearch = () => {
-    onSearch(filters);
-  };
+    const handleSearch = () => {
+        onSearch(filters);
+    };
 
-  return (
-    <div className='col filter-container'>
-      {isVisible && (
-        <div className='row'>
-          <div className="filter-wrapper" tabIndex="0">
-            {filters.map((filter, i) => (
-              <Filter
-                key={i}
-                index={i}
-                filter={filter}
-                setFilters={setFilters}
-                schema={schema}
-                handleSearch={handleSearch}
-              />
-            ))}
-          </div>
-          <div className="col flex-center controls">
-            <button className="rounded blue40" onClick={handleSearch}>
-              <SearchIcon />搜索
+    return (
+        <div className='col filter-container'>
+            {isVisible && (
+                <div className='row'>
+                    <div className="filter-wrapper" tabIndex="0">
+                        {filters.map((filter, i) => (
+                            <Filter
+                                key={i}
+                                index={i}
+                                filter={filter}
+                                setFilters={setFilters}
+                                schema={schema}
+                                handleSearch={handleSearch}
+                            />
+                        ))}
+                    </div>
+                    <div className="col flex-center controls">
+                        <button className="rounded blue40" onClick={handleSearch}>
+                            <SearchIcon />搜索
+                        </button>
+                        <button onClick={addFilter} className="icon-btn">
+                            <AddIcon className="icon__small add-icon" /> 新增筛选
+                        </button>
+                    </div>
+                </div>
+            )}
+            <button onClick={toggleVisible} className="row flex-center toggle-btn blue5">
+                <ArrowIcon className={isVisible ? "rotate180" : "rotate0"} /> {isVisible ? "收起筛选" : "展示筛选"}
             </button>
-            <button onClick={addFilter} className="icon-btn">
-              <AddIcon className="icon__small add-icon" /> 新增筛选
-            </button>
-          </div>
         </div>
-      )}
-      <button onClick={toggleVisible} className="row flex-center toggle-btn blue5">
-        <ArrowIcon className={isVisible ? "rotate180" : "rotate0"} /> {isVisible ? "收起筛选" : "展示筛选"}
-      </button>
-    </div>
-  );
+    );
 };
 
 export default Filters;

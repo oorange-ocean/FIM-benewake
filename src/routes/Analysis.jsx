@@ -207,7 +207,6 @@ const Analysis = ({ schema }) => {
                                 data={rows}
                                 columns={defs}
                                 noPagination={true}
-                                labels={labels}
                                 handleRefresh={handleRefresh}
                             />
                             <Pagination

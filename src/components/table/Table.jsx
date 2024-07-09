@@ -20,7 +20,7 @@ import { Modal, Box, Typography, Select, MenuItem } from '@mui/material';
 import { updateCustomerTypeReviseById } from '../../api/analysis'
 
 
-export default function Table({ data, columns, noPagination, setNewInquiryData, labels, handleRefresh }) {
+export default function Table({ data, columns, noPagination, setNewInquiryData, handleRefresh }) {
     const states = useTableStatesContext();
     const [rowSelection, setRowSelection] = useState({});
     const columnVisibility = states.columnVisibility;
@@ -34,6 +34,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     const [modalOpen, setModalOpen] = useState(false);
     const [currentCellData, setCurrentCellData] = useState('');
     const [currentRowData, setCurrentRowData] = useState(null);
+    const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 
     useEffect(() => setRowSelection({}), [data]);
     useEffect(() => updateTableStates({ type: "SET_ROW_SELECTION", rowSelection }), [rowSelection]);
@@ -173,7 +174,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                         客户类型转换
                     </Typography>
                     <Select size='small'
-                        value={labels.find(label => label == currentCellData) ? labels.indexOf(currentRowData?.customerType) : ''}
+                        value={labels?.find(label => label == currentCellData) ? labels.indexOf(currentRowData?.customerType) : ''}
                         onChange={handleChange}
                         fullWidth
                     >
