@@ -19,6 +19,7 @@ import Row from './AdminRow';
 
 
 const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, data, currentPage, pageSize }) => {
+    console.log('从manage组件传来的data', data)
     const [customerTypes, setCustomerTypes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentRowData, setCurrentRowData] = useState(null);
@@ -63,6 +64,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
         // 根据 data 里的每个对象的 id 删除
         const deleteList = data.filter((_, index) => selectedRows.includes(index));
         const payloads = deleteList.map(obj => obj.id);
+        console.log('data', data, 'payloads', payloads, 'deleteList', deleteList)
         // map 每个 payload，走 deleteAdminData 接口
         const messages = [];
         const promises = payloads.map(payload => deleteAdminData('suspiciousData', payload));
@@ -78,6 +80,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                 alertError(messages.join('\n'));
             } else {
                 alertSuccess('删除成功！');
+
             }
             handleRefresh();
         }).catch(error => {

@@ -164,7 +164,7 @@ const Manage = ({ type }) => {
                             setRows={setRows}
                             handleRefresh={handleRefresh}
                             handleSort={handleSort}
-                            data={data}
+                            data={rows}
                             currentPage={currentPage}
                             pageSize={pageSize}
                         />
