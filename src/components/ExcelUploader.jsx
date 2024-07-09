@@ -5,7 +5,7 @@ import api from '../api/axios';
 
 export default function ExcelUploader({ close }) {
     const [file, setFile] = useState(null);
-    const { alertWarning, alertSuccess } = useAlertContext
+    const { alertWarning, alertSuccess } = useAlertContext()
     const handleFile = (event) => {
         setFile(event.target.files[0])
     };

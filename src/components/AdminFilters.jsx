@@ -7,6 +7,7 @@ import SimpleDataList from './SimpleDataList';
 import DatePicker from './DatePicker';
 import DataList from './DataList'
 import { schema, Input } from './EditTable'
+import { useAlertContext } from '../hooks/useCustomContext';
 const conditions = [
     { id: 'like', name: '包含' },
     { id: '=', name: '等于' },
@@ -33,8 +34,10 @@ const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
         });
     }
     const matchingElement = Object.keys(schema).find((key) => schema[key].identifier === eng);
-
-    return matchingElement ? (
+    //并且 ["element"]对应的函数所返回的标签 必须是DataList
+    let mockData = '';
+    const jsxElement = schema[matchingElement]?.element(mockData, onChange)
+    return jsxElement?.type === DataList ? (
         schema[matchingElement].element(value, onChange)
     ) : (
         <div className='data-list'>
@@ -94,15 +97,27 @@ const Filter = ({ index, filter, setFilters, schema, handleSearch }) => {
 };
 
 const Filters = ({ schema, filters, setFilters, onSearch }) => {
+    const { alertSuccess, alertError, alertConfirm, alertWarning } = useAlertContext()
+
     const [isVisible, setIsVisible] = useState(true);
     const toggleVisible = () => setIsVisible(!isVisible);
 
     const addFilter = () => {
+        // const newFilter = {
+        //     key: schema[0].eng,
+        //     condition: 'like',
+        //     value: ''
+        // };
         const newFilter = {
-            key: schema[0].eng,
+            //禁止重复使用，如果不存在新的筛选条件，报错
+            key: schema.find(item => !filters.map(f => f.key).includes(item.eng))?.eng,
             condition: 'like',
             value: ''
         };
+        if (!newFilter.key) {
+            alertWarning("筛选条件已用完")
+            return;
+        }
         setFilters([...filters, newFilter]);
     };
 

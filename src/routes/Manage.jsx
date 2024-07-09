@@ -71,6 +71,7 @@ const Manage = ({ type }) => {
             setFilterCriteriaList(filterCriteriaList);
         }
     };
+
     //eg. "desc":"customerId"
     const handleSort = async (columnName, direction) => {
         setIsLoading(true); // 开始加载

@@ -42,7 +42,7 @@ export const Filter = ({ index, initialValues, setFilters, headers }) => {
     )
 }
 
-export default function SimpleFilters({ filters, setFilters, headers}) {
+export default function SimpleFilters({ filters, setFilters, headers }) {
 
     const initialFilterValue = {
         colName: headers[0].id, condition: conditions[0].id, value: ""
