@@ -6,7 +6,7 @@ const adminDefs = [
     createColumn("客户类型", "customerType", 80),
     createColumn("订单状态", "inquiryType", 80),
     createColumn("订单状态名称", "inquiryTypeName", 140),
-    createColumn("产品类型", "itemType", 80),
+    // createColumn("产品类型", "itemType", 80),
     createColumn("产品类型名称", "itemTypeName", 140),
     createColumn("客户ID", "customerId", 80),
     createColumn("客户名称", "customerName", 460),

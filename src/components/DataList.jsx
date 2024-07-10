@@ -39,6 +39,7 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
 
     const onChange = async (e) => {
         setValue(e.target.value)
+        handleChange([identifier], [e.target.value])
         if (identifier === "inquiryType") {
             setOptions(inquiryTypeOptions)
         }
