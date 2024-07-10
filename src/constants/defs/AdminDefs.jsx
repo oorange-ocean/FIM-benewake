@@ -1,3 +1,4 @@
+
 const createColumn = (cn, eng, width) => {
     return { cn, eng, width };
 };
@@ -24,7 +25,13 @@ const adminDefs = [
     createColumn("客户名称（替换前）", "oldCustomerName"),
     createColumn("客户名称（替换后）", "newCustomerName"),
     createColumn("数量", "num", 80),
-    createColumn('数量', "quantitative", 80)
+    createColumn('数量', "quantitative", 80),
+    createColumn("序号", "serialNum", 80),
+    createColumn("产品月平均", "monthAvg", 80),
+    createColumn("产品销售总额", "totalItem", 80),
+    createColumn("有效月份", "totalMonths", 80),
+    createColumn("最大值", "max", 80),
+
 ];
 
 export default adminDefs;

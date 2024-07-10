@@ -149,7 +149,10 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                                 }
                                             }}
                                         >
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {/* 如果当前列是monthAvg，且内容是数值，则只保留两位小数 */}
+                                            {cell.column.columnDef.id === 'monthAvg' ?
+                                                cell.getContext().getValue() ? parseFloat(cell.getContext().getValue()).toFixed(2) : ''
+                                                : flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </div>
                                     ))}
                                 </div>

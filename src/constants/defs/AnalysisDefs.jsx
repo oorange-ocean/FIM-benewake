@@ -36,7 +36,7 @@ const analysisDefs = [
     createAnalysisDef("1为标黄", "one_is_yellow"),
     createAnalysisDef("客户类型", "customer_type"),
     createAnalysisDef("有效月份", "total_months"),
-    createAnalysisDef("最大值", "max_"),
+    createAnalysisDef("最大值", "max"),
     createAnalysisDef("客户类型转换", "customerTypeRevise", 100)
 ];
 
