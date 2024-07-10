@@ -37,10 +37,13 @@ const AlertProvider = ({ children }) => {
     const alertWarning = (message) => updateAlertInfo({
         type: "SHOW_ALERT", data: { type: "warning", message: message }
     })
-
+    //alertChoice与alertConfirm的区别是，alertChoice只有一个确认按钮，而alertConfirm提供多个选项，action是一个数组
+    const alertChoice = (message, actions, cancel) => updateAlertInfo({
+        type: "SHOW_ALERT", data: { type: "choice", message: message, action: actions, cancel: cancel }
+    })
 
     return (
-        <AlertContext.Provider value={{ alertConfirm, alertSuccess, alertError, alertWarning, closeAlert }}>
+        <AlertContext.Provider value={{ alertConfirm, alertSuccess, alertError, alertWarning, closeAlert, alertChoice }}>
             {
                 alertInfo.display &&
                 <Alert

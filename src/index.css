@@ -1262,6 +1262,10 @@ strong {
   background-color: var(--confirm-light);
   border-color: var(--confirm-dark);
 }
+.alert-container.choice {
+  background-color: var(--confirm-light);
+  border-color: var(--confirm-dark);
+}
 
 .alert-container.confirm h1 {
   color: var(--confirm-dark)

@@ -187,10 +187,6 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
         <div className="popup-container flex-center">
             <AdminExcelUploader close={toggleImportPopup} exportTypeNum={adminSchema[type].exportTypeNum} />
         </div>
-    const exportPopup =
-        <div className="popup-container flex-center">
-            <AdminExcelDownloader close={toggleExportPopup} currentPage={currentPage} pageSize={pageSize} exportTypeNum={adminSchema[type].exportTypeNum} />
-        </div>
 
     const handleTypeChange = async (customerName, itemCode, newType) => {
         try {
@@ -232,11 +228,19 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                         </button>
                         {openImportPopup && importPopup}
                         <button
-                            onClick={() => setOpenExportPopup(!openExportPopup)}
+                            onClick={toggleExportPopup}
                         >
                             导出
                         </button>
-                        {openExportPopup && exportPopup}
+                        {openExportPopup && (
+                            <AdminExcelDownloader
+                                close={toggleExportPopup}
+                                currentPage={currentPage}
+                                pageSize={pageSize}
+                                exportTypeNum={adminSchema[type].exportTypeNum}
+                                toggleExportPopup={toggleExportPopup}
+                            />
+                        )}
                     </Space>
                 )}
             </div>
