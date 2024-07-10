@@ -182,7 +182,23 @@ const adminSchema = {
             url: "/past-analysis/delStandards"
         },
         "exportTypeNum": 7
-    }
+    },
+    materialType: {
+        "cn": "物料类型管理",
+        "add": {
+            url: "addFimItemTable",
+            bodyKeys: ["itemCode", "itemName", "itemType", "quantitative"]
+        },
+        "delete": {
+            url: "batchDeleteItems",
+            bodyKeys: ["itemCode"]
+        },
+        "update": {
+            url: "updateFimItemTable",
+            bodyKeys: ["itemCode", "itemName", "itemType", "quantitative", "itemId"]
+        },
+        "select": "materialType",
+    },
 }
 
 export default adminSchema;

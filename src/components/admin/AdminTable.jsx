@@ -59,13 +59,13 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
         setShowPopup(true)
         setAction("add")
     }
-    const deleteSuspiciousData = async () => {
+    const deleteData = async () => {
         // 根据 data 里的每个对象的 id 删除
         const deleteList = data.filter((_, index) => selectedRows.includes(index));
-        const payloads = deleteList.map(obj => obj.id);
+        const payloads = (type === 'materialType') ? deleteList.map(obj => obj.itemId) : deleteList.map(obj => obj.id);
         // map 每个 payload，走 deleteAdminData 接口
         const messages = [];
-        const promises = payloads.map(payload => deleteAdminData('suspiciousData', payload));
+        const promises = payloads.map(payload => deleteAdminData(type, payload));
 
         Promise.all(promises).then(results => {
             results.forEach((res, index) => {
@@ -88,8 +88,8 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
 
 
     const handleDelete = async () => {
-        if (type === "suspiciousData") {
-            deleteSuspiciousData()
+        if (type === "suspiciousData" || type === "materialType") {
+            deleteData()
             return
         }
         let payloads;
@@ -278,6 +278,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                         {
                             rows.map((row, i) => (
                                 <Row
+                                    type={type}
                                     key={i}
                                     rowIndex={i}
                                     data={row}

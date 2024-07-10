@@ -16,7 +16,10 @@ const camelToSnake = (str) => {
 };
 
 const Manage = ({ type }) => {
-    const data = useLoaderData();
+    let data = useLoaderData();
+    if (type === "materialType") {
+        data = data.data.records
+    }
     const { alertWarning } = useAlertContext();
     const { pagination, setPagination } = usePagination();
     const [rows, setRows] = useState(data);
@@ -24,7 +27,7 @@ const Manage = ({ type }) => {
     const [filterCriteriaList, setFilterCriteriaList] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
+    const [pageSize, setPageSize] = useState(data.size || pagination.pageSize || 100);
     const [total, setTotal] = useState(pagination.total);
 
     const [schema, setSchema] = useState([]);
@@ -37,6 +40,10 @@ const Manage = ({ type }) => {
         const fetchUrl = adminSchema[type].select;
         const res = await fetchAdminData(fetchUrl);
         setIsLoading(false); // 加载结束
+        if (type === 'materialType') {
+            setRows(res.data.records)
+            return
+        };
         setRows(res)
     };
 
@@ -142,6 +149,7 @@ const Manage = ({ type }) => {
         }
         const start = (currentPage - 1) * pageSize;
         const end = start + pageSize;
+        console.log('a line before the error', rows)
         return rows.slice(start, end);
     }, [rows, currentPage, pageSize, isFiltered]);
 

@@ -14,6 +14,9 @@ export async function fetchAdminData(url, filters = null) {
         else if (url === "suspiciousData") {
             response = await axios.get('/past-analysis/getAllStandards');
         }
+        else if (url === "materialType") {
+            response = await axios.post('/item/filter/itemType', { page: 1, size: 100 });
+        }
         else {
             // Use GET method for simple data fetching
             response = await axios.get(`/admin/${url}`);
@@ -49,6 +52,20 @@ export async function deleteAdminData(type, payload) {
     if (type === 'suspiciousData') {
         try {
             const response = await axios.delete(`/past-analysis/delStandards`, { params: { "id": payload } });
+            // 根据 status 返回结果
+            if (response.status === 200) {
+                return { message: '删除成功' };
+            } else {
+                return { message: `删除失败，状态码：${response.status}` };
+            }
+        } catch (err) {
+            console.log(err);
+            return { message: '删除异常' };
+        }
+    }
+    if (type === 'materialType') {
+        try {
+            const response = await axios.post(`/item/batchDeleteItems`, [payload]);
             // 根据 status 返回结果
             if (response.status === 200) {
                 return { message: '删除成功' };

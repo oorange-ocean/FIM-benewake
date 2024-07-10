@@ -33,7 +33,9 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
         e.preventDefault()
         const res = await addAdminData(type, values)
         console.log(res)
-        if (res.data.includes("成功")) {
+        //字符串message中有成功
+        const regex = /成功/g
+        if (res.data?.includes("成功") || res.message?.match(regex)) {
             alertSuccess(res.data)
         }
         else if (res.data.includes("失败")) {
@@ -47,19 +49,36 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
     }
 
 
-
     const addForm = <form className='col flex-center g1' onSubmit={handleAdd}>
         {labels?.length > 0 && labels.map((label, index) =>
-            <label key={index} htmlFor={label} className='row'>
-                {label}
-                <input
-                    id={label}
-                    name={label}
-                    type="text"
-                    value={values[keys[index]]}
-                    onChange={(e) => setValues(prev => ({ ...prev, [keys[index]]: e.target.value }))}
-                />
-            </label>
+            label === "产品类型" ? (
+                <label key={index} htmlFor={label} className='row'>
+                    {label}
+                    <select
+                        id={label}
+                        name={label}
+                        value={values[keys[index]]}
+                        onChange={(e) => setValues(prev => ({ ...prev, [keys[index]]: e.target.value }))}
+                    >
+                        <option value="已有标品">已有标品</option>
+                        <option value="已有定制">已有定制</option>
+                        <option value="新增软件定制">新增软件定制</option>
+                        <option value="新增原材料定制">新增原材料定制</option>
+                        <option value="新增原材料+软件定制">新增原材料+软件定制</option>
+                    </select>
+                </label>
+            ) : (
+                <label key={index} htmlFor={label} className='row'>
+                    {label}
+                    <input
+                        id={label}
+                        name={label}
+                        type="text"
+                        value={values[keys[index]]}
+                        onChange={(e) => setValues(prev => ({ ...prev, [keys[index]]: e.target.value }))}
+                    />
+                </label>
+            )
         )}
         <div className='row mt1 g1'>
             <button className='small white bordered' onClick={closePopup}>取消</button>

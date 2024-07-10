@@ -1587,6 +1587,16 @@ input[type=number] {
   width: 100%;
 }
 
+.admin-popup-wrapper select {
+    text-overflow: ellipsis;
+    margin-left: 1rem;
+    background-color: var(--blue5);
+    padding: 0.5rem;
+    border: 1px solid var(--blue30);
+    height: 36px;
+    width: 100%;
+}
+
 .admin-popup-wrapper label {
   width: 100%;
   text-wrap: nowrap;
