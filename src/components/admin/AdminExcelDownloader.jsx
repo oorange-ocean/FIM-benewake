@@ -21,10 +21,21 @@ const AdminExcelDownloader = ({ close, currentPage, pageSize, exportTypeNum, tog
                 responseType: 'blob' // 确保返回的是一个文件
             });
 
+            const disposition = response.headers['content-disposition'];
+            console.log('response', response)
+            let filename = '导出数据.xlsx';
+
+            if (disposition) {
+                const filenameMatch = disposition.match(/filename\*=utf-8''(.+)/);
+                if (filenameMatch && filenameMatch.length > 1) {
+                    filename = decodeURIComponent(filenameMatch[1]);
+                }
+            }
+
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', '导出数据.xlsx');
+            link.setAttribute('download', filename);
             document.body.appendChild(link);
             link.click();
             link.remove();
