@@ -63,7 +63,7 @@ export async function deleteAdminData(type, payload) {
             return { message: '删除异常' };
         }
     }
-    if (type === 'materialType') {
+    else if (type === 'materialType') {
         try {
             const response = await axios.post(`/item/batchDeleteItems`, [payload]);
             // 根据 status 返回结果
@@ -75,6 +75,18 @@ export async function deleteAdminData(type, payload) {
         } catch (err) {
             console.log(err);
             return { message: '删除异常' };
+        }
+    }
+    else if (type === "inquiryType") {
+        try {
+            //将payloads所有值提取出来，变成一个数组
+            const values = payload.map(item => item.inquiryTypeName);
+            const response = await axios.delete('/admin/deleteInquiryType', {
+                data: values  // 直接发送值数组
+            });
+            return response.data;
+        } catch (err) {
+            console.log(err);
         }
     }
     const deleteUrl = adminSchema[type].delete.url

@@ -20,7 +20,7 @@ const adminSchema = {
         },
         "delete": {
             url: "deleteInquiryType",
-            bodyKeys: ["typeName"]
+            bodyKeys: ["inquiryTypeName"]
         }
     },
     itemType: {
@@ -30,7 +30,7 @@ const adminSchema = {
             bodyKeys: ["itemTypeName"]
         },
         "delete": {
-            url: "insertItemType",
+            url: "deleteItemType",
             bodyKeys: ["itemTypeName"]
         },
         "select": "selectItemTypeDic"

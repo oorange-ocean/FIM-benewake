@@ -15,6 +15,7 @@ import useSortStore from '../../store/sortStore';
 import AdminExcelUploader from './AdminExcelUploader';
 import AdminExcelDownloader from './AdminExcelDownloader';
 import Row from './AdminRow';
+import { couldStartTrivia } from 'typescript';
 
 
 
@@ -99,7 +100,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
 
         if (type === "customerName") {
             payloads = deleteList.map((item) => ({
-                "deletCustomerName": item.customerName
+                "deleteCustomerName": item.customerName
             }))
         }
         else {
@@ -114,7 +115,8 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
         }
 
         let messages = [];
-        const promises = payloads.map(payload => deleteAdminData(type, payload));
+        //根据type是否是inquiryType来选择不同的删除方式
+        const promises = type === "inquiryType" ? [deleteAdminData(type, payloads)] : payloads.map(payload => deleteAdminData(type, payload));
 
         Promise.all(promises).then(results => {
             results.forEach((res, index) => {

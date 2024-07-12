@@ -149,7 +149,6 @@ const Manage = ({ type }) => {
         }
         const start = (currentPage - 1) * pageSize;
         const end = start + pageSize;
-        console.log('a line before the error', rows)
         return rows.slice(start, end);
     }, [rows, currentPage, pageSize, isFiltered]);
 
