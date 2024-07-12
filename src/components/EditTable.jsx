@@ -12,11 +12,12 @@ const schema = [
         header: "物料编码 *",
         identifier: "itemCode",
         element:
-            (data, handleChange) => <DataList
+            (data, handleChange, handleSearch) => <DataList
                 type="item"
                 searchKey="itemCode"
                 initialValue={data.itemCode}
                 handleChange={handleChange}
+                handleSearch={handleSearch}
                 identifier="itemCode"
             />
     },
@@ -35,11 +36,12 @@ const schema = [
         header: "客户名称 *",
         identifier: "customerName",
         element:
-            (data, handleChange) => <DataList
+            (data, handleChange, handleSearch) => <DataList
                 type="customer"
                 searchKey="customerName"
                 initialValue={data.customerName}
                 handleChange={handleChange}
+                handleSearch={handleSearch}
                 identifier="customerName"
             />
     },
@@ -47,19 +49,20 @@ const schema = [
         header: "订单状态 *",
         identifier: "inquiryType",
         element:
-            (data, handleChange) =>
+            (data, handleChange, handleSearch) =>
                 <DataList
                     initialValue={data.inquiryType}
                     handleChange={handleChange}
                     identifier="inquiryType"
                     searchKey="inquiryType"
+                    handleSearch={handleSearch}
                 />
     },
     {
         header: "期望发货日期 *",
         identifier: "expected_time",
         element:
-            (data, handleChange) =>
+            (data, handleChange, handleSearch) =>
                 <DatePicker selected={data.expectedTime ? new Date(data.expectedTime) : null}
                     onChange={(date) => handleChange(["expectedTime"], [date])}
                 />
@@ -68,11 +71,12 @@ const schema = [
         header: "销售员 *",
         identifier: "salesmanName",
         element:
-            (data, handleChange) => <DataList
+            (data, handleChange, handleSearch) => <DataList
                 type="user"
                 searchKey="username"
                 initialValue={data.salesmanName}
                 handleChange={handleChange}
+                handleSearch={handleSearch}
                 identifier="salesmanName"
             />
     },
@@ -112,7 +116,7 @@ const schema = [
         header: "计划反馈日期",
         identifier: "arrangedTime",
         element:
-            (data, handleChange) => <Input
+            (data, handleChange, handleSearch) => <Input
                 name="arrangedTime"
                 value={data.arrangedTime ? moment(data.arrangedTime).format("YYYY/MM/DD") : ""}
                 onChange={(date) => handleChange(["arrangedTime"], [date])}
@@ -133,7 +137,7 @@ const schema = [
         header: "备注",
         identifier: "remark",
         element:
-            (data, handleChange) => <Input
+            (data, handleChange, handleSearch) => <Input
                 name="remark"
                 value={data.remark}
                 onChange={(e) => handleChange(["remark"], [e.target.value])}

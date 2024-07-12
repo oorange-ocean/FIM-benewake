@@ -4,11 +4,13 @@ import { FilterOutlined } from '@ant-design/icons';
 import Table from '../components/table/Table';
 import Loader from '../components/Loader';
 import { useLoaderData } from 'react-router-dom';
-import { fetchAnalysisData, updateAnalysisUnlikelyData, updateAllReviseToCustomerType } from '../api/analysis';
+import { fetchAnalysisData, updateAnalysisUnlikelyData, updateAllReviseToCustomerType, filterAnalysisDate } from '../api/analysis';
 import analysisDefs from '../constants/defs/AnalysisDefs';
 import * as XLSX from 'xlsx';
 import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import moment from 'moment';
+import AdminFliters from '../components/AdminFilters';
+import columnToSchema from '../utils/columnToSchema';
 
 const { Option } = Select;
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
@@ -84,7 +86,7 @@ const Analysis = ({ schema }) => {
     const [openPopup, setOpenPopup] = useState(false);
     const [defs, setDefs] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    const [filters, setFilters] = useState([]);
     const { current, total } = pagination;
     const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
     const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
@@ -111,6 +113,7 @@ const Analysis = ({ schema }) => {
 
         // 使用提取的函数更新状态
         updateStateWithResponse(dataSource);
+        //如果type改变，则重置filters
     }, [res, setPagination, schema.select]);
 
     const handleRefresh = async (page = current, size = pageSize) => {
@@ -160,7 +163,6 @@ const Analysis = ({ schema }) => {
     const handleRevise = async () => {
         // updateAllReviseToCustomerType
         const res = await updateAllReviseToCustomerType();
-        console.log(res)
         if (res.status == 200) {
             alertWarning("更新成功");
             handleRefresh();
@@ -170,9 +172,31 @@ const Analysis = ({ schema }) => {
         }
     }
 
+    const handleSearch = async (filters) => {
+        setLoading(true);
+        const res = await filterAnalysisDate(schema.select, {
+            pageNum: 1,
+            pageSize,
+            filters
+        });
+        const dataSource = isUnlikelyData ? res : res.data;
+        if (!dataSource || !dataSource.records || dataSource.records.length === 0) {
+            alertWarning("查询结果为空");
+            setRows([]);
+            setLoading(false);
+            return;
+        }
+        updateStateWithResponse(dataSource);
+        setLoading(false);
+    }
+
+
 
     return (
         <div className='col full-screen analysis'>
+            <div className="col flex-center">
+                <AdminFliters schema={columnToSchema(defs)} filters={filters} setFilters={setFilters} onSearch={handleSearch} />
+            </div>
             <div className='row toolbar'>
                 <div className='row flex-center'>
                     <Button type="text" onClick={() => handleRefresh(current, pageSize)}>刷新</Button>

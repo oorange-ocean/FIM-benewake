@@ -36,9 +36,9 @@ const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
     const matchingElement = Object.keys(schema).find((key) => schema[key].identifier === eng);
     //并且 ["element"]对应的函数所返回的标签 必须是DataList
     let mockData = '';
-    const jsxElement = schema[matchingElement]?.element(mockData, onChange)
+    const jsxElement = schema[matchingElement]?.element(mockData, onChange, handleSearch)
     return jsxElement?.type === DataList ? (
-        schema[matchingElement].element(value, onChange)
+        schema[matchingElement].element(value, onChange, handleSearch)
     ) : (
         <div className='data-list'>
             <input
@@ -124,6 +124,12 @@ const Filters = ({ schema, filters, setFilters, onSearch }) => {
     const handleSearch = () => {
         onSearch(filters);
     };
+    //如果filters数量为零并且筛选条件还没用完，则添加一个
+    useEffect(() => {
+        if (filters.length === 0 && schema.length > 0) {
+            addFilter();
+        }
+    }, []);
 
     return (
         <div className='col filter-container'>

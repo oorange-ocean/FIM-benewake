@@ -1,5 +1,19 @@
 import axios from "./axios";
 
+export async function filterAnalysisDate(url, params = {}) {
+    console.log('filterAnalysisDate', url, params);
+    //params包括pageNum,pageSize,filters，其中前两个拼接到url里，最后一个放到请求体里
+    const { pageNum, pageSize, filters } = params;
+    const pagination = `pageNum=${pageNum}&pageSize=${pageSize}`;
+    //将filter转为values,一个对象，键为filter的key，值为filter的value
+    const values = filters.reduce((acc, filter) => {
+        acc[filter.key] = filter.value;
+        return acc;
+    }, {});
+    const response = await axios.post(`/past-analysis/${url}?${pagination}`, values);
+    return response.data;
+}
+
 export async function fetchAnalysisData(url, params = {}) {
     try {
         // 从 localStorage 获取分页参数
@@ -45,7 +59,7 @@ export async function fetchAnalysisData(url, params = {}) {
             const response = await axios.post(`/past-analysis/${url}`, params);
             return response.data;
         }
-        const response = await axios.get(`/past-analysis/${url}`, { params: params });
+        const response = await axios.post(`/past-analysis/${url}`, { params: params });
         return response.data;
     } catch (err) {
         console.log(err);

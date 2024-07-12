@@ -36,7 +36,6 @@ export async function rowToInquiry(row, inquiryType) {
     // edit inquiry
     else {
         const { inquiryType } = row
-        console.log(inquiryType)
         param = {
             inquiryId: inquiryId?.toString(),
             inquiryCode,

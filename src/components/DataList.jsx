@@ -12,7 +12,7 @@ const getOptionName = (type, option, searchKey) => {
     }
 }
 
-const DataList = memo(function DataList({ type, searchKey, initialValue, handleChange, identifier }) {
+const DataList = memo(function DataList({ type, searchKey, initialValue, handleChange, identifier, handleSearch }) {
     const [options, setOptions] = useState(null)
     const [showDropdown, setShowDropdown] = useState(false);
     const [value, setValue] = useState("")
@@ -96,6 +96,12 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
                 value={value}
                 onChange={onChange}
                 onFocus={() => setShowDropdown(true)}
+                //回车搜索
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        handleSearch()
+                    }
+                }}
             />
             {
                 showDropdown && options &&

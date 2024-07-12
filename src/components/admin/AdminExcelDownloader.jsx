@@ -22,7 +22,6 @@ const AdminExcelDownloader = ({ close, currentPage, pageSize, exportTypeNum, tog
             });
 
             const disposition = response.headers['content-disposition'];
-            console.log('response', response)
             let filename = '导出数据.xlsx';
 
             if (disposition) {
