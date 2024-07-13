@@ -9,6 +9,7 @@ import FilterComponent from '../components/admin/FilterComponent';
 import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import AdminFliters from '../components/AdminFilters';
 import Loader from '../components/Loader';
+import CommonPagination from '../components/table/commonPaginate';
 
 // Utility function to convert camelCase to snake_case
 const camelToSnake = (str) => {
@@ -176,7 +177,7 @@ const Manage = ({ type }) => {
                             pageSize={pageSize}
                         />
                         <div style={{ marginTop: '16px' }}></div>
-                        <Pagination
+                        <CommonPagination
                             current={currentPage}
                             pageSize={pageSize}
                             total={total}

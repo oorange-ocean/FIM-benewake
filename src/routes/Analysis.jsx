@@ -11,7 +11,7 @@ import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import moment from 'moment';
 import AdminFliters from '../components/AdminFilters';
 import columnToSchema from '../utils/columnToSchema';
-
+import CommonPagination from '../components/table/commonPaginate';
 const { Option } = Select;
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 
@@ -234,7 +234,7 @@ const Analysis = ({ schema }) => {
                                 noPagination={true}
                                 handleRefresh={handleRefresh}
                             />
-                            <Pagination
+                            <CommonPagination
                                 current={current}
                                 pageSize={pageSize}
                                 total={total}
