@@ -117,6 +117,7 @@ const Manage = ({ type }) => {
     useEffect(() => {
         setRows(data);
         setTotal(data.length);
+        setCurrentPage(1);
         setPagination({ ...pagination, total: data.length });
     }, [type, data]);
 
@@ -132,7 +133,7 @@ const Manage = ({ type }) => {
     const handlePageChange = async (page, size) => {
         setCurrentPage(page);
         setPageSize(size);
-        setPagination({ ...pagination, current: page, pageSize: size });
+        setPagination({ ...pagination, pageSize: size });
 
         if (isFiltered) {
             setIsLoading(true); // 开始加载
