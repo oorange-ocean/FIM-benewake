@@ -69,7 +69,10 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
             setValue(option[searchKey])
             handleChange([identifier], [option[searchKey]]);
         }
-        setShowDropdown(false)
+        // setShowDropdown(false)
+        // 将焦点移动到输入框
+        containerRef.current.children[0].focus();
+
     };
 
     const clearData = () => {
