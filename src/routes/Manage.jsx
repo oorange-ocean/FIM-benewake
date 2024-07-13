@@ -1,15 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Table, Pagination } from 'antd';
 import AdminTable from '../components/admin/AdminTable';
 import { useLoaderData } from 'react-router-dom';
 import { fetchAdminData } from '../api/admin';
 import adminSchema from '../constants/schemas/adminSchema';
 import adminDefs from '../constants/defs/AdminDefs';
-import FilterComponent from '../components/admin/FilterComponent';
 import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import AdminFliters from '../components/AdminFilters';
 import Loader from '../components/Loader';
 import CommonPagination from '../components/table/commonPaginate';
+import usePageState from '../hooks/usePageState';
 
 // Utility function to convert camelCase to snake_case
 const camelToSnake = (str) => {
@@ -28,11 +27,10 @@ const Manage = ({ type }) => {
     const [filterCriteriaList, setFilterCriteriaList] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(data.size || pagination.pageSize || 100);
+    const { pageSize, setPageSize, filters, setFilters } = usePageState(type);
     const [total, setTotal] = useState(pagination.total);
 
     const [schema, setSchema] = useState([]);
-    const [filters, setFilters] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // 新增加载状态
     const hasFilter = adminSchema[type]?.filter;
 
@@ -51,7 +49,7 @@ const Manage = ({ type }) => {
     const handleSearch = async (filters) => {
         setIsLoading(true); // 开始加载
         const filterCriteriaList = filters
-            .filter(filter => filter.condition === 'is' || filter.condition === 'is not' || (filter.value !== '' && !/^\s*$/.test(filter.value)))
+            // .filter(filter => filter.condition === 'is' || filter.condition === 'is not' || (filter.value !== '' && !/^\s*$/.test(filter.value)))
             .map((filter) => ({
                 colName: camelToSnake(filter.key),
                 condition: filter.condition,
@@ -77,6 +75,7 @@ const Manage = ({ type }) => {
             setCurrentPage(1);
             setIsFiltered(true);
             setFilterCriteriaList(filterCriteriaList);
+            console.log('filters:', filters)
         }
     };
 
@@ -125,10 +124,13 @@ const Manage = ({ type }) => {
         // 初始化schema和filters，schema为当前表格的表头，filters为筛选条件
         const initialSchema = Object.keys(rows[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
         setSchema(initialSchema);
-        if (initialSchema.length > 0) {
-            setFilters([{ key: initialSchema[0].eng, condition: 'like', value: '' }]);
-        }
     }, [rows, adminDefs]);
+
+    useEffect(() => {
+        const initialSchema = Object.keys(rows[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
+        setSchema(initialSchema);
+        setFilters([{ key: initialSchema[0].eng, condition: 'like', value: '' }]);
+    }, [type]);
 
     const handlePageChange = async (page, size) => {
         setCurrentPage(page);
@@ -163,7 +165,11 @@ const Manage = ({ type }) => {
                     <>
                         {hasFilter && (
                             <div className="col flex-center">
-                                <AdminFliters schema={schema} filters={filters} setFilters={setFilters} onSearch={handleSearch} />
+                                <AdminFliters
+                                    schema={schema}
+                                    filters={filters}
+                                    setFilters={setFilters}
+                                    onSearch={handleSearch} />
                             </div>
                         )}
                         <AdminTable

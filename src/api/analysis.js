@@ -1,7 +1,6 @@
 import axios from "./axios";
 
 export async function filterAnalysisDate(url, params = {}) {
-    console.log('filterAnalysisDate', url, params);
     //params包括pageNum,pageSize,filters，其中前两个拼接到url里，最后一个放到请求体里
     const { pageNum, pageSize, filters } = params;
     const pagination = `pageNum=${pageNum}&pageSize=${pageSize}`;

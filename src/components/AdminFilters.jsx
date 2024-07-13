@@ -24,6 +24,9 @@ const conditions = [
 ];
 
 const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
+    if (!schemaItem) {
+        return null; // 或者返回一个默认的输入元素
+    }
     const { eng, url, searchKey } = schemaItem;
     const onChange = (keys, values) => {
         // onChange(["itemCode", "itemName", "itemType", "itemId"], [option.itemCode, option.itemName, option.itemType, option.id])
@@ -58,17 +61,17 @@ const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
 
 
 
-const Filter = ({ index, filter, setFilters, schema, handleSearch }) => {
+const Filter = ({ index, filter, setFilters, schema, handleSearch, filters }) => {
     const handleChange = (key, value) => {
-        // 根据key和value来修改filter的值
-        setFilters(prev => prev.map((f, i) => i === index ? { ...f, [key]: value } : f));
+        //将该filter的key（condition或者value）的值修改为value, setFilters接受新的filters
+        setFilters(filters.map((f, i) => f === filter ? { ...f, [key]: value } : f));
     };
 
     const removeFilter = () => {
-        setFilters(prev => prev.filter((_, i) => i !== index));
+        setFilters(filters.filter((_, i) => i !== index));
     };
 
-    const schemaItem = schema.find(item => item.eng === filter.key);
+    const schemaItem = schema.find(item => item.eng === filter.key) || {};
 
     return (
         <div className='row filter'>
@@ -136,15 +139,15 @@ const Filters = ({ schema, filters, setFilters, onSearch }) => {
             {isVisible && (
                 <div className='row'>
                     <div className="filter-wrapper" tabIndex="0">
-                        {filters.map((filter, i) => (
-                            <Filter
-                                key={i}
-                                index={i}
-                                filter={filter}
-                                setFilters={setFilters}
-                                schema={schema}
-                                handleSearch={handleSearch}
-                            />
+                        {Array.isArray(filters) && filters.map((filter, i) => (<Filter
+                            key={i}
+                            index={i}
+                            filter={filter}
+                            setFilters={setFilters}
+                            schema={schema}
+                            handleSearch={handleSearch}
+                            filters={filters}
+                        />
                         ))}
                     </div>
                     <div className="col flex-center controls">
