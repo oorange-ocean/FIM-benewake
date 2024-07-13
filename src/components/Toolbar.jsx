@@ -81,7 +81,7 @@ export default function Toolbar({ features }) {
     }
     const handleReload = async () => {
         // 如果 tableId 是 6，先请求 /delivery/update
-        if (tableId === 6) {
+        if (tableId === 1 || tableId === 6) {
             await api.get('/delivery/update');
         }
         handleRefresh();

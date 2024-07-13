@@ -138,6 +138,7 @@ const Analysis = ({ schema }) => {
 
     const handlePageChange = (page, size) => {
         handleRefresh(page, size);
+        setPageSize(size);
     };
 
     const handleExport = () => {
@@ -242,7 +243,7 @@ const Analysis = ({ schema }) => {
                                 onChange={handlePageChange}
                                 onShowSizeChange={handlePageChange}
                                 style={{ marginTop: '30px', marginBottom: '20px', textAlign: 'left' }}
-                                pageSizeOptions={[100, 500, 1500]}
+                                pageSizeOptions={[10, 100, 500, 1500]}
                             />
                         </>
                     ) : (

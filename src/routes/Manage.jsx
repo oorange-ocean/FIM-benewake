@@ -184,7 +184,7 @@ const Manage = ({ type }) => {
                             total={total}
                             onChange={handlePageChange}
                             showSizeChanger
-                            pageSizeOptions={[100, 500, 1500]}
+                            pageSizeOptions={[10, 100, 500, 1500]}
                         />
                         <div style={{ marginTop: '16px' }}></div>
                     </>
