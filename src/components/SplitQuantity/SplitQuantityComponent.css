@@ -1,0 +1,73 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色遮罩 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99; /* 确保遮罩层在弹窗下面 */
+}
+
+.splitquantity {
+    width: 17.5rem; /* 14rem * 1.25 */
+    height: 8.75rem; /* 7rem * 1.25 */
+    border-radius: 7px;
+    padding: 1rem 2rem;
+    box-sizing: border-box;
+    font-size: 12px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* 2px 4px */
+    font-family: '微软雅黑', sans-serif;
+    z-index: 100; /* 确保弹窗在遮罩层上面 */
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem; /* 23px / 16px */
+}
+
+.input-group label {
+    margin-right: 1rem;
+}
+
+.input-group input {
+    width: 6rem; /* 189px / 16px */
+    height: 2rem; /* 60px / 16px */
+    border: 0.0625rem solid #2189e7; /* 1px / 16px */
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #2189e7;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-group button {
+    width: 6rem; /* 163px / 16px */
+    height: 1.8rem; /* 50px / 16px */
+    font-size: 12px; /* 12px / 16px */
+    cursor: pointer;
+}
+
+.button-group .cancel {
+    background-color: #fff;
+    color: #2189e7;
+    border: 0.0625rem solid #2189e7; /* 1px / 16px */
+}
+
+.button-group .confirm {
+    background-color: #2189e7;
+    color: #fff;
+    border: none;
+}

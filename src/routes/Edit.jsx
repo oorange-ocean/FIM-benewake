@@ -6,7 +6,7 @@ import { startInquiry, updateInquiry, saveDivideList } from '../api/inquiry';
 import { rowToInquiry } from '../js/parseData';
 import moment from 'moment';
 import { useAlertContext, useSelectedDataContext } from '../hooks/useCustomContext';
-import CustomModal from '../components/customModal/customModal.jsx'; // 引入新的模态框组件
+import CustomModal from '../components/SplitQuantity/SplitQuantity.jsx'; // 引入新的模态框组件
 
 const SimpleToolbar = ({ rows, ids, setIds, setRows, originalRows }) => {
     const { alertSuccess, alertError, alertWarning } = useAlertContext();
