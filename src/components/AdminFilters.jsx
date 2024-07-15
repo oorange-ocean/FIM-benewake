@@ -6,7 +6,7 @@ import { ReactComponent as SearchIcon } from '../assets/icons/search.svg';
 import SimpleDataList from './SimpleDataList';
 import DatePicker from './DatePicker';
 import DataList from './DataList'
-import { schema, Input } from './EditTable'
+import { schema } from './EditTable'
 import { useAlertContext } from '../hooks/useCustomContext';
 const conditions = [
     { id: 'like', name: '包含' },

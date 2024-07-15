@@ -126,6 +126,10 @@ const Analysis = ({ schema }) => {
     const handlePageChange = (page, size) => {
         handleRefresh(page, size);
         setPageSize(size);
+        setPagination(prev => ({
+            ...prev,
+            pageSize: size
+        }));
     };
 
     const handleExport = () => {

@@ -28,9 +28,7 @@ export async function fetchAnalysisData(url, params = {}) {
             agent: 1,
             newCustomer: 1,
             temporaryCustomer: 1,
-            daily: 1,
-            pageNum: savedPagination.current,
-            pageSize: savedPagination.pageSize
+            daily: 1
         };
 
         // 检查特定的 URL，并合并默认参数
@@ -52,18 +50,26 @@ export async function fetchAnalysisData(url, params = {}) {
             params = { ...defaultParams, ...params };
         }
 
-        // 合并分页参数到请求参数
-        params = { ...paginationParams, ...params };
-        if (url === 'getAnalysisUnlikelyData') {
-            const response = await axios.post(`/past-analysis/${url}`, params);
-            return response.data;
-        }
-        const response = await axios.post(`/past-analysis/${url}`, { params: params });
+        // 从请求参数中剔除分页参数
+        const { pageNum, pageSize, ...restParams } = params;
+
+        // 将分页参数拼接到 URL 中
+        const queryString = new URLSearchParams({
+            pageNum: paginationParams.pageNum,
+            pageSize: paginationParams.pageSize
+        }).toString();
+
+        // 拼接最终的请求 URL
+        const finalUrl = `/past-analysis/${url}?${queryString}`;
+
+        const response = await axios.post(finalUrl, restParams);
         return response.data;
     } catch (err) {
         console.log(err);
     }
 }
+
+
 //调用/past-analysis/updateAnalysisUnlikelyData
 export async function updateAnalysisUnlikelyData() {
     try {

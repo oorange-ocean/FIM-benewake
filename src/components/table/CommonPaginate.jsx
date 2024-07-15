@@ -9,6 +9,8 @@ const Pagination = ({
     showQuickJumper = true,
     pageSizeOptions = [100, 500, 1500]
 }) => {
+    console.log("111")
+    console.log('params of pagniation:', "current", current, "total", total, "pageSize", pageSize);
     const [pageNum, setPageNum] = useState(current);
     const [currentPageSize, setCurrentPageSize] = useState(pageSize);
     const totalPages = Math.ceil(total / currentPageSize);
