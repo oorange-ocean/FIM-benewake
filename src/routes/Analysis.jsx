@@ -96,6 +96,13 @@ const Analysis = ({ schema }) => {
         //如果type改变，则重置filters
     }, [res, setPagination, schema.select]);
 
+    //给filters设置初始值
+    useEffect(() => {
+        if (defs.length > 0) {
+            setFilters([{ key: defs[0].id, condition: 'like', value: '' }]);
+        }
+    }, [defs]);
+
     const handleRefresh = async (page = current, size = pageSize) => {
         setLoading(true);  // 开始加载
         //如果是可疑数据，则在请求前先更新数据，调用updateAnalysisUnlikelyData
@@ -185,7 +192,13 @@ const Analysis = ({ schema }) => {
     return (
         <div className='col full-screen analysis'>
             <div className="col flex-center">
-                <AdminFliters schema={columnToSchema(defs)} filters={filters} setFilters={setFilters} onSearch={handleSearch} />
+                <AdminFliters
+                    schema={columnToSchema(defs)}
+                    filters={filters}
+                    setFilters={setFilters}
+                    onSearch={handleSearch}
+                    tableId={"analysis"}
+                />
             </div>
             <div className='row toolbar'>
                 <div className='row flex-center'>

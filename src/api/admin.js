@@ -37,6 +37,12 @@ export async function addAdminData(type, payload) {
         if (type == "suspiciousData") {
             response = await axios.post(`/past-analysis/insertStandard`, payload)
         }
+        else if (type === "itemType") {
+            //传参格式为form-data
+            const formData = new FormData();
+            formData.append('itemTypeName', payload.itemTypeName.toString());
+            response = await axios.post('/admin/insertItemType', formData);
+        }
         else {
             response = await axios.post(`/admin/${addUrl}`, null, { params: payload })
 

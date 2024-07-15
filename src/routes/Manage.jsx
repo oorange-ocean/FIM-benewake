@@ -75,7 +75,6 @@ const Manage = ({ type }) => {
             setCurrentPage(1);
             setIsFiltered(true);
             setFilterCriteriaList(filterCriteriaList);
-            console.log('filters:', filters)
         }
     };
 
