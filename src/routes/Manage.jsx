@@ -8,7 +8,7 @@ import { useAlertContext, usePagination } from '../hooks/useCustomContext';
 import AdminFliters from '../components/AdminFilters';
 import Loader from '../components/Loader';
 import CommonPagination from '../components/table/commonPaginate';
-import usePageState from '../hooks/usePageState';
+import usePageState from '../hooks/useAdminPageState';
 
 // Utility function to convert camelCase to snake_case
 const camelToSnake = (str) => {

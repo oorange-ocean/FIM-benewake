@@ -13,6 +13,8 @@ import AdminFliters from '../components/AdminFilters';
 import columnToSchema from '../utils/columnToSchema';
 import CommonPagination from '../components/table/commonPaginate';
 import { Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import usePageState from '../hooks/useAnalysisPageState';
+
 
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 
@@ -54,12 +56,11 @@ const Analysis = ({ schema }) => {
     const { alertConfirm } = useAlertContext();
     const [rows, setRows] = useState([]);
     const { alertError, alertWarning } = useAlertContext();
-    const { pagination, setPagination } = usePagination();
     const [defs, setDefs] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [filters, setFilters] = useState([]);
-    const { current, total } = pagination;
-    const [pageSize, setPageSize] = useState(pagination.pageSize || 100);
+    const [total, setTotal] = useState(0);
+    const [current, setCurrent] = useState(1);
+    const { pageSize, setPageSize, filters, setFilters } = usePageState(schema);
     const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
     const [params, setParams] = useState({
         yearly: 1,
@@ -74,13 +75,9 @@ const Analysis = ({ schema }) => {
     const updateStateWithResponse = (response) => {
         const { records, total, current, size: pageSize } = response;
         setRows(records);
+        setTotal(total);
+        setCurrent(current);
         setDefs(analysisDefs.filter((def) => Object.keys(records[0]).includes(def.id)));
-        setPagination(prev => ({
-            ...prev,
-            total,
-            current,
-            pageSize
-        }));
     };
     useEffect(() => {
         // 确定使用的数据源
@@ -94,16 +91,16 @@ const Analysis = ({ schema }) => {
         // 使用提取的函数更新状态
         updateStateWithResponse(dataSource);
         //如果type改变，则重置filters
-    }, [res, setPagination, schema.select]);
+    }, [res, schema.select]);
 
     //给filters设置初始值
     useEffect(() => {
-        if (defs.length > 0) {
+        if (defs.length > 0 && filters.length === 0) {
             setFilters([{ key: defs[0].id, condition: 'like', value: '' }]);
         }
     }, [defs]);
 
-    const handleRefresh = async (page = current, size = pageSize) => {
+    const handleRefresh = async (page = 1, size = 100) => {
         setLoading(true);  // 开始加载
         //如果是可疑数据，则在请求前先更新数据，调用updateAnalysisUnlikelyData
         if (isUnlikelyData) {
@@ -123,13 +120,19 @@ const Analysis = ({ schema }) => {
         setLoading(false);  // 加载完成
     };
 
-    const handlePageChange = (page, size) => {
-        handleRefresh(page, size);
-        setPageSize(size);
-        setPagination(prev => ({
-            ...prev,
-            pageSize: size
-        }));
+    const handlePageChange = (pageNum, pageSize) => {
+        // handleRefresh(page, size);
+        // setPageSize(size);
+        if (filters.length !== 0 && filters[0]?.value !== '') {
+            handleSearch(filters, pageNum, pageSize);
+            setPageSize(pageSize);
+            setCurrent(pageNum);
+        }
+        else {
+            handleRefresh(pageNum, pageSize);
+            setPageSize(pageSize);
+            setCurrent(pageNum);
+        }
     };
 
     const handleExport = () => {
@@ -164,12 +167,12 @@ const Analysis = ({ schema }) => {
         }
     }
 
-    const handleSearch = async (filters) => {
+    const handleSearch = async (filters, pageNum = 1, pageSize = 100) => {
         setLoading(true);
         const res = await filterAnalysisDate(schema.select, {
-            pageNum: 1,
-            pageSize,
-            filters
+            pageNum: pageNum,
+            pageSize: pageSize,
+            filters: filters
         });
         const dataSource = isUnlikelyData ? res : res.data;
         if (!dataSource || !dataSource.records || dataSource.records.length === 0) {
