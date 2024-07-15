@@ -172,6 +172,7 @@ const Analysis = ({ schema }) => {
             alertWarning("查询结果为空");
             setRows([]);
             setLoading(false);
+            handleRefresh();
             return;
         }
         updateStateWithResponse(dataSource);

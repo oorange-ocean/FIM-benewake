@@ -179,7 +179,7 @@ const adminSchema = {
         "select": "suspiciousData",
         // Added multi-condition filtering URL
         "filter": {
-            url: "/past-analysis/delStandards"
+            url: "/past-analysis/getStandards"
         },
         "exportTypeNum": 7
     },

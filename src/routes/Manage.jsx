@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import AdminTable from '../components/admin/AdminTable';
 import { useLoaderData } from 'react-router-dom';
 import { fetchAdminData } from '../api/admin';
@@ -33,7 +33,7 @@ const Manage = ({ type }) => {
     const [schema, setSchema] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // 新增加载状态
     const hasFilter = adminSchema[type]?.filter;
-
+    const prevTypeRef = useRef();
     const handleRefresh = async () => {
         setIsLoading(true); // 开始加载
         const fetchUrl = adminSchema[type].select;
@@ -113,23 +113,24 @@ const Manage = ({ type }) => {
     };
 
     useEffect(() => {
+        console.log('setting rows and schema......');
         setRows(data);
         setTotal(data.length);
         setCurrentPage(1);
         setPagination({ ...pagination, total: data.length });
-    }, [type, data]);
 
-    useEffect(() => {
-        // 初始化schema和filters，schema为当前表格的表头，filters为筛选条件
-        const initialSchema = Object.keys(rows[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
-        setSchema(initialSchema);
-    }, [rows, adminDefs]);
+        if (data.length > 0) {
+            const initialSchema = Object.keys(data[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
+            setSchema(initialSchema);
+            console.log('initialSchema:', initialSchema);
 
-    useEffect(() => {
-        const initialSchema = Object.keys(rows[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
-        setSchema(initialSchema);
-        setFilters([{ key: initialSchema[0].eng, condition: 'like', value: '' }]);
-    }, [type]);
+            if (prevTypeRef.current !== type) {
+                setFilters([{ key: initialSchema[0].eng, condition: 'like', value: '' }]);
+                prevTypeRef.current = type;
+            }
+        }
+    }, [type, data, adminDefs]);
+
 
     const handlePageChange = async (page, size) => {
         setCurrentPage(page);

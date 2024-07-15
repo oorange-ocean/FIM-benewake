@@ -113,7 +113,6 @@ const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tabl
 
 const Filters = ({ schema, filters, setFilters, onSearch, tableId }) => {
     const { alertSuccess, alertError, alertConfirm, alertWarning } = useAlertContext()
-
     const [isVisible, setIsVisible] = useState(true);
     const toggleVisible = () => setIsVisible(!isVisible);
 
