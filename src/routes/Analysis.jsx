@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import Table from '../components/table/Table';
@@ -15,8 +15,14 @@ import CommonPagination from '../components/table/commonPaginate';
 import { Checkbox, FormGroup, FormControlLabel } from '@mui/material';
 import usePageState from '../hooks/useAnalysisPageState';
 
-
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
+
+const IsCustomerType = [
+    'getAllCustomerTypeOrdersReplaced',
+    'getAllCustomerTypeOrdersBack',
+    'getAllCustomerTypeordersMonthlyReplaced',
+    'getAllCustomerTypeordersMonthlyBack'
+];
 
 function EngToCn(col_name_ENG) {
     return analysisDefs.find(col => col.id === col_name_ENG)?.header;
@@ -60,8 +66,9 @@ const Analysis = ({ schema }) => {
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
     const [current, setCurrent] = useState(1);
-    const { pageSize, setPageSize, filters, setFilters } = usePageState(schema);
+    const { pageSize, setPageSize, filters, setFilters } = usePageState(schema.select);
     const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
+    const prevTypeRef = useRef();
     const [params, setParams] = useState({
         yearly: 1,
         monthly: 1,
@@ -73,6 +80,7 @@ const Analysis = ({ schema }) => {
 
     // 提取更新状态的逻辑为一个函数
     const updateStateWithResponse = (response) => {
+
         const { records, total, current, size: pageSize } = response;
         setRows(records);
         setTotal(total);
@@ -95,18 +103,23 @@ const Analysis = ({ schema }) => {
 
     //给filters设置初始值
     useEffect(() => {
-        if (defs.length > 0 && filters.length === 0) {
+        if (defs.length > 0 && prevTypeRef.current !== schema.select) {
             setFilters([{ key: defs[0].id, condition: 'like', value: '' }]);
+            prevTypeRef.current = schema.select;
         }
+        // if (prevTypeRef.current !== schema.select) {
+        //     setFilters([{ key: defs[0].id, condition: 'like', value: '' }]);
+        //     prevTypeRef.current = schema.select;
+        // }
     }, [defs]);
 
-    const handleRefresh = async (page = 1, size = 100) => {
+    const handleRefresh = async (page = 1, size = 100, params) => {
         setLoading(true);  // 开始加载
         //如果是可疑数据，则在请求前先更新数据，调用updateAnalysisUnlikelyData
         if (isUnlikelyData) {
             await updateAnalysisUnlikelyData();
         }
-        const res = await fetchAnalysisData(schema.select, { pageNum: page, pageSize: size });
+        const res = await fetchAnalysisData(schema.select, { pageNum: page, pageSize: size, ...params });
         // 确定使用的数据源
         const dataSource = isUnlikelyData ? res : res.data;
         // 检查数据有效性
@@ -129,7 +142,7 @@ const Analysis = ({ schema }) => {
             setCurrent(pageNum);
         }
         else {
-            handleRefresh(pageNum, pageSize);
+            handleRefresh(pageNum, pageSize, params);
             setPageSize(pageSize);
             setCurrent(pageNum);
         }
@@ -187,7 +200,7 @@ const Analysis = ({ schema }) => {
     }
 
     const handleTypeFilter = async (newParams) => {
-        setLoading(true);
+        setLoading(true)
         const res = await fetchAnalysisData(schema.select, newParams);
         if (res.code === 200) {
             updateStateWithResponse(isUnlikelyData ? res : res.data);
@@ -217,11 +230,19 @@ const Analysis = ({ schema }) => {
                         <button type="text" onClick={() => handleRevise()} > 确认更新客户类型 </button>)}
                 </div>
             </div>
-            {rows?.length > 0 && rows[0].hasOwnProperty('customerType') && (
-                <div className='row' style={{ marginBottom: '10px' }}>
-                    <CustomerTypeFilter params={params} setParams={setParams} onFilterChange={handleTypeFilter} />
-                </div>
-            )}
+            {rows?.length > 0 &&
+                // 仅当schema.select 包含          specialUrls = [
+                //     'getAllCustomerTypeOrdersReplaced',
+                //     'getAllCustomerTypeOrdersBack',
+                //     'getAllCustomerTypeordersMonthlyReplaced',
+                //     'getAllCustomerTypeordersMonthlyBack'
+                // ];
+                IsCustomerType.includes(schema.select)
+                && (
+                    <div className='row' style={{ marginBottom: '10px' }}>
+                        <CustomerTypeFilter params={params} setParams={setParams} onFilterChange={handleTypeFilter} />
+                    </div>
+                )}
             {loading ? (
                 <Loader />
             ) : (

@@ -1,5 +1,5 @@
 import axios from "./axios";
-
+import handleTypeFilter from "../utils/handleCustomerType";
 export async function filterAnalysisDate(url, params = {}) {
     //params包括pageNum,pageSize,filters，其中前两个拼接到url里，最后一个放到请求体里
     const { pageNum, pageSize, filters } = params;
@@ -12,6 +12,7 @@ export async function filterAnalysisDate(url, params = {}) {
     const response = await axios.post(`/past-analysis/${url}?${pagination}`, values);
     return response.data;
 }
+//接收一个对象， { "customerType": str }，
 
 export async function fetchAnalysisData(url, params = {}) {
     try {
@@ -31,7 +32,7 @@ export async function fetchAnalysisData(url, params = {}) {
             daily: 1
         };
 
-        // 检查特定的 URL，并合并默认参数
+        // 特定的 URL 列表
         const specialUrls = [
             'getAllCustomerTypeOrdersReplaced',
             'getAllCustomerTypeOrdersBack',
@@ -53,21 +54,46 @@ export async function fetchAnalysisData(url, params = {}) {
         // 从请求参数中剔除分页参数
         const { pageNum, pageSize, ...restParams } = params;
 
-        // 将分页参数拼接到 URL 中
-        const queryString = new URLSearchParams({
-            pageNum: paginationParams.pageNum,
-            pageSize: paginationParams.pageSize
-        }).toString();
+        // 如果 URL 是 'getAllCustomerTypeordersMonthlyReplaced' 或 'getAllCustomerTypeordersMonthlyBack'
+        if (url === 'getAllCustomerTypeordersMonthlyReplaced' || url === 'getAllCustomerTypeordersMonthlyBack') {
+            // 将所有参数拼接到 URL 中
+            const queryString = new URLSearchParams({
+                ...paginationParams,
+                ...restParams
+            }).toString();
 
-        // 拼接最终的请求 URL
-        const finalUrl = `/past-analysis/${url}?${queryString}`;
+            // 拼接最终的请求 URL
+            const finalUrl = `/past-analysis/${url}?${queryString}`;
+            const response = await axios.post(finalUrl);
+            return response.data;
+        }
+        else if (url === 'getAllCustomerTypeOrdersReplaced' || url === 'getAllCustomerTypeOrdersBack') {
+            const filterStr = handleTypeFilter(restParams);
+            const queryString = new URLSearchParams({
+                pageNum: paginationParams.pageNum,
+                pageSize: paginationParams.pageSize
+            }).toString();
+            const finalUrl = `/past-analysis/${url}?${queryString}`;
+            const response = await axios.post(finalUrl, { "customerType": filterStr });
+            return response.data;
+        }
+        else {
+            // 将分页参数拼接到 URL 中
+            const queryString = new URLSearchParams({
+                pageNum: paginationParams.pageNum,
+                pageSize: paginationParams.pageSize
+            }).toString();
 
-        const response = await axios.post(finalUrl, restParams);
-        return response.data;
+            // 拼接最终的请求 URL
+            const finalUrl = `/past-analysis/${url}?${queryString}`;
+            const response = await axios.post(finalUrl, restParams); // 使用 POST 请求
+            return response.data;
+        }
     } catch (err) {
         console.log(err);
     }
 }
+
 
 
 //调用/past-analysis/updateAnalysisUnlikelyData

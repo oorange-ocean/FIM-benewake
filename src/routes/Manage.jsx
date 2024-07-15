@@ -49,7 +49,6 @@ const Manage = ({ type }) => {
     const handleSearch = async (filters) => {
         setIsLoading(true); // 开始加载
         const filterCriteriaList = filters
-            // .filter(filter => filter.condition === 'is' || filter.condition === 'is not' || (filter.value !== '' && !/^\s*$/.test(filter.value)))
             .map((filter) => ({
                 colName: camelToSnake(filter.key),
                 condition: filter.condition,
@@ -113,7 +112,6 @@ const Manage = ({ type }) => {
     };
 
     useEffect(() => {
-        console.log('setting rows and schema......');
         setRows(data);
         setTotal(data.length);
         setCurrentPage(1);
@@ -122,7 +120,6 @@ const Manage = ({ type }) => {
         if (data.length > 0) {
             const initialSchema = Object.keys(data[0] || {}).flatMap(key => adminDefs.filter((item) => item.eng === key));
             setSchema(initialSchema);
-            console.log('initialSchema:', initialSchema);
 
             if (prevTypeRef.current !== type) {
                 setFilters([{ key: initialSchema[0].eng, condition: 'like', value: '' }]);
@@ -169,7 +166,9 @@ const Manage = ({ type }) => {
                                     schema={schema}
                                     filters={filters}
                                     setFilters={setFilters}
-                                    onSearch={handleSearch} />
+                                    onSearch={handleSearch}
+                                    type={type} />
+
                             </div>
                         )}
                         <AdminTable

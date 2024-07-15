@@ -61,7 +61,7 @@ const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
 
 
 
-const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tableId }) => {
+const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tableId, type }) => {
     const handleChange = (key, value) => {
         //将该filter的key（condition或者value）的值修改为value, setFilters接受新的filters
         setFilters(filters.map((f, i) => f === filter ? { ...f, [key]: value } : f));
@@ -85,24 +85,25 @@ const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tabl
                 </select>
                 <ArrowIcon />
             </div>
-            {/* 如果tableId==="analysis",那么筛洗条件就是固定的，只能是等于，不接受选择 */}
-            {tableId === "analysis" ? (
-                <div className='filter-select-wrapper'>
-                    <select value="=" >
-                        <option value="=">等于</option>
-                    </select>
-                    <ArrowIcon />
-                </div>
-            ) : (
-                <div className='filter-select-wrapper'>
-                    <select value={filter.condition} onChange={(e) => handleChange("condition", e.target.value)}>
-                        {conditions.map((condition, i) => (
-                            <option value={condition.id} key={i}>{condition.name}</option>
-                        ))}
-                    </select>
-                    <ArrowIcon />
-                </div>
-            )}
+            {/* 如果tableId==="analysis" ,那么筛洗条件就是固定的，只能是等于，不接受选择 */}
+            {tableId === "analysis"
+                ? (
+                    <div className='filter-select-wrapper'>
+                        <select value="=" >
+                            <option value="=">等于</option>
+                        </select>
+                        <ArrowIcon />
+                    </div>
+                ) : (
+                    <div className='filter-select-wrapper'>
+                        <select value={filter.condition} onChange={(e) => handleChange("condition", e.target.value)}>
+                            {conditions.map((condition, i) => (
+                                <option value={condition.id} key={i}>{condition.name}</option>
+                            ))}
+                        </select>
+                        <ArrowIcon />
+                    </div>
+                )}
             {getInputElement(schemaItem, filter.value, handleChange, handleSearch)}
             <button className="close-btn" onClick={removeFilter}>
                 <CloseIcon className="icon__small close-icon" />
@@ -111,7 +112,7 @@ const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tabl
     );
 };
 
-const Filters = ({ schema, filters, setFilters, onSearch, tableId }) => {
+const Filters = ({ schema, filters, setFilters, onSearch, tableId, type }) => {
     const { alertSuccess, alertError, alertConfirm, alertWarning } = useAlertContext()
     const [isVisible, setIsVisible] = useState(true);
     const toggleVisible = () => setIsVisible(!isVisible);
@@ -159,6 +160,7 @@ const Filters = ({ schema, filters, setFilters, onSearch, tableId }) => {
                             handleSearch={handleSearch}
                             filters={filters}
                             tableId={tableId}
+                            type={type}
                         />
                         ))}
                     </div>
