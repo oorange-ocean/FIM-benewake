@@ -7,7 +7,7 @@ const createAnalysisDef = (header, id, size = 80) => ({
 });
 
 const analysisDefs = [
-    createAnalysisDef("序号", "serial_num", 50),
+    // createAnalysisDef("序号", "serial_num", 50),
     createAnalysisDef("物料编码", "item_code", 150),
     createAnalysisDef("物料名称", "item_name", 220),
     createAnalysisDef("年", "sale_year"),

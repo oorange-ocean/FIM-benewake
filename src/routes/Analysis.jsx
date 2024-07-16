@@ -14,6 +14,7 @@ import columnToSchema from '../utils/columnToSchema';
 import CommonPagination from '../components/table/commonPaginate';
 import { Checkbox, FormGroup, FormControlLabel } from '@mui/material';
 import usePageState from '../hooks/useAnalysisPageState';
+import { ParamsToString, StringToParams } from '../utils/handleCustomerType';
 
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 
@@ -69,14 +70,10 @@ const Analysis = ({ schema }) => {
     const { pageSize, setPageSize, filters, setFilters } = usePageState(schema.select);
     const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
     const prevTypeRef = useRef();
-    const [params, setParams] = useState({
-        yearly: 1,
-        monthly: 1,
-        agent: 1,
-        newCustomer: 1,
-        temporaryCustomer: 1,
-        daily: 1,
-    });
+
+    const setParams = (newParams) => {
+        setFilters([...filters, { key: 'customerType', condition: 'like', value: ParamsToString(newParams) }]);
+    };
 
     // 提取更新状态的逻辑为一个函数
     const updateStateWithResponse = (response) => {
@@ -106,11 +103,11 @@ const Analysis = ({ schema }) => {
         if (defs.length > 0 && prevTypeRef.current !== schema.select) {
             setFilters([{ key: defs[0].id, condition: 'like', value: '' }]);
             prevTypeRef.current = schema.select;
+            if (IsCustomerType) {
+                setFilters([{ key: defs[0].id, condition: 'like', value: '' },
+                { key: 'customerType', condition: 'like', value: "年度,月度,代理商,新增,临时,日常" }]);
+            }
         }
-        // if (prevTypeRef.current !== schema.select) {
-        //     setFilters([{ key: defs[0].id, condition: 'like', value: '' }]);
-        //     prevTypeRef.current = schema.select;
-        // }
     }, [defs]);
 
     const handleRefresh = async (page = 1, size = 100, params) => {
@@ -182,14 +179,22 @@ const Analysis = ({ schema }) => {
 
     const handleSearch = async (filters, pageNum = 1, pageSize = 100) => {
         setLoading(true);
+        // 剔除filters中所有value为空,customerType除外
+        filters = filters.filter(filter => filter.value !== '' || filter.key === 'customerType');
         const res = await filterAnalysisDate(schema.select, {
             pageNum: pageNum,
             pageSize: pageSize,
             filters: filters
-        });
+        }, setFilters);
         const dataSource = isUnlikelyData ? res : res.data;
         if (!dataSource || !dataSource.records || dataSource.records.length === 0) {
             alertWarning("查询结果为空");
+            //将customertype改回全部
+            const index = filters.findIndex(filter => filter.key === 'customerType');
+            const newFilters = index !== -1
+                ? filters.map((filter, i) => i === index ? { ...filter, value: "年度,月度,代理商,新增,临时,日常" } : filter)
+                : [...filters, { key: 'customerType', condition: 'like', value: "年度,月度,代理商,新增,临时,日常" }];
+            setFilters(newFilters);
             setRows([]);
             setLoading(false);
             handleRefresh();
@@ -201,13 +206,16 @@ const Analysis = ({ schema }) => {
 
     const handleTypeFilter = async (newParams) => {
         setLoading(true)
-        const res = await fetchAnalysisData(schema.select, newParams);
-        if (res.code === 200) {
-            updateStateWithResponse(isUnlikelyData ? res : res.data);
-        } else {
-            alertError(res.message);
-        }
-        setLoading(false);
+        //处理客户类型筛选参数
+        const filterStr = ParamsToString(newParams);
+        //将{ "customerType": filterStr }加入filter
+        const index = filters.findIndex(filter => filter.key === 'customerType');
+        //将客户类型筛选参数与其它参数filter合并
+        const newFilters = index !== -1
+            ? filters.map((filter, i) => i === index ? { ...filter, value: filterStr } : filter)
+            : [...filters, { key: 'customerType', condition: 'like', value: filterStr }];
+        setFilters(newFilters);
+        handleSearch(newFilters);
     };
 
     return (
@@ -231,16 +239,13 @@ const Analysis = ({ schema }) => {
                 </div>
             </div>
             {rows?.length > 0 &&
-                // 仅当schema.select 包含          specialUrls = [
-                //     'getAllCustomerTypeOrdersReplaced',
-                //     'getAllCustomerTypeOrdersBack',
-                //     'getAllCustomerTypeordersMonthlyReplaced',
-                //     'getAllCustomerTypeordersMonthlyBack'
-                // ];
                 IsCustomerType.includes(schema.select)
                 && (
                     <div className='row' style={{ marginBottom: '10px' }}>
-                        <CustomerTypeFilter params={params} setParams={setParams} onFilterChange={handleTypeFilter} />
+                        <CustomerTypeFilter
+                            params={StringToParams(filters.find(filter => filter.key === 'customerType')?.value)}
+                            setParams={setParams}
+                            onFilterChange={handleTypeFilter} />
                     </div>
                 )}
             {loading ? (

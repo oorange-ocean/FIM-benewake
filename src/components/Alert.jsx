@@ -25,7 +25,8 @@ export default function Alert({ type, message, action, cancel }) {
             case "confirm":
                 return "确认";
             default:
-                return "提示"
+                return "提示";
+
         }
     }
 

@@ -1,8 +1,37 @@
 import axios from "./axios";
-import handleTypeFilter from "../utils/handleCustomerType";
-export async function filterAnalysisDate(url, params = {}) {
+import { StringToParams } from "../utils/handleCustomerType";
+export async function filterAnalysisDate(url, params = {}, setFilters) {
     //params包括pageNum,pageSize,filters，其中前两个拼接到url里，最后一个放到请求体里
     const { pageNum, pageSize, filters } = params;
+    if (url !== 'getAllCustomerTypeOrdersReplaced' && url !== 'getAllCustomerTypeOrdersBack') {
+        // 将filter的customerType属性转为params，并将其中的字段拼接到url里
+        const customerType = filters.find(filter => filter.key === 'customerType');
+        if (customerType) {
+            const newParams = StringToParams(customerType.value);
+            // 遍历newParams，将其拼接到url里
+            for (let key in newParams) {
+                url += `${url.includes('?') ? '&' : '?'}${key}=${newParams[key]}`;
+            }
+        }
+        // 在filters中剔除这个字段
+        const newfilters = filters.filter(filter => filter.key !== 'customerType');
+        const pagination = `pageNum=${pageNum}&pageSize=${pageSize}`;
+
+        let response;
+        if (newfilters.length > 0) {
+            // 将filter转为values,一个对象，键为filter的key，值为filter的value
+            const values = newfilters.reduce((acc, filter) => {
+                acc[filter.key] = filter.value;
+                return acc;
+            }, {});
+            response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
+        } else {
+            // 如果newfilters为空，则不传递values参数
+            response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`);
+        }
+        return response.data;
+    }
+
     const pagination = `pageNum=${pageNum}&pageSize=${pageSize}`;
     //将filter转为values,一个对象，键为filter的key，值为filter的value
     const values = filters.reduce((acc, filter) => {
@@ -67,16 +96,7 @@ export async function fetchAnalysisData(url, params = {}) {
             const response = await axios.post(finalUrl);
             return response.data;
         }
-        else if (url === 'getAllCustomerTypeOrdersReplaced' || url === 'getAllCustomerTypeOrdersBack') {
-            const filterStr = handleTypeFilter(restParams);
-            const queryString = new URLSearchParams({
-                pageNum: paginationParams.pageNum,
-                pageSize: paginationParams.pageSize
-            }).toString();
-            const finalUrl = `/past-analysis/${url}?${queryString}`;
-            const response = await axios.post(finalUrl, { "customerType": filterStr });
-            return response.data;
-        }
+
         else {
             // 将分页参数拼接到 URL 中
             const queryString = new URLSearchParams({
@@ -93,8 +113,6 @@ export async function fetchAnalysisData(url, params = {}) {
         console.log(err);
     }
 }
-
-
 
 //调用/past-analysis/updateAnalysisUnlikelyData
 export async function updateAnalysisUnlikelyData() {
