@@ -640,7 +640,13 @@ button svg {
   padding: 1rem 0 1rem 1rem;
   gap: 10px;
 }
-
+.filter-wrapper-extra-width {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 改为2列布局 */
+    flex: 1 1 auto;
+    padding: 1rem 0 1rem 1rem;
+    gap: 10px;
+  }
 .filter-container {
   background-color: var(--blue5);
   width: 100%;
@@ -1428,7 +1434,7 @@ input[type=number] {
   background-color: white;
   border: 1px solid var(--blue30);
   align-items: center;
-  flex: 1 0 8rem
+  flex: 1 0 8rem;
 }
 
 .filter-select-wrapper svg {
@@ -1440,6 +1446,26 @@ input[type=number] {
   color: var(--blue30);
 }
 
+.filter-select-wrapper-extra-width svg {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 14px;
+    right: 1rem;
+    color: var(--blue30);
+  }
+.filter-select-wrapper-extra-width {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    padding: 0 2.2rem 0 1rem;
+    height: 3rem;
+    background-color: white;
+    border: 1px solid var(--blue30);
+    align-items: center;
+    flex: 1 0 8rem;
+    min-width: 13rem; /* 额外的宽度 */
+  }
 .data-list-dropdown li.row {
   display: grid;
   gap: 10px;

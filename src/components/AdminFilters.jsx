@@ -75,10 +75,16 @@ const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tabl
 
     return (
         <div className='row filter'>
-            <div className='filter-select-wrapper'>
+            <div
+                className={schema.some(item => item.cn.includes("替换"))
+                    ? 'filter-select-wrapper-extra-width'
+                    : 'filter-select-wrapper'
+                }
+            >
                 <select
                     value={filter.key}
-                    onChange={(e) => handleChange("key", e.target.value)}>
+                    onChange={(e) => handleChange("key", e.target.value)}
+                >
                     {schema.map((item, i) => (
                         <option value={item.eng} key={i}>{item.cn}</option>
                     ))}
@@ -150,7 +156,12 @@ const Filters = ({ schema, filters, setFilters, onSearch, tableId, type }) => {
         <div className='col filter-container'>
             {isVisible && (
                 <div className='row'>
-                    <div className="filter-wrapper" tabIndex="0">
+                    <div className={schema.some(item => item.cn.includes("替换"))
+                        ? 'col filter-wrapper-extra-width'
+                        : 'col filter-wrapper'
+                    }
+
+                        tabIndex="0">
                         {Array.isArray(filters) && filters.map((filter, i) => (<Filter
                             key={i}
                             index={i}
