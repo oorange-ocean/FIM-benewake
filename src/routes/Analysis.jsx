@@ -18,7 +18,7 @@ import { ParamsToString, StringToParams } from '../utils/handleCustomerType';
 
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 
-const IsCustomerType = [
+const ContainCustomerType = [
     'getAllCustomerTypeOrdersReplaced',
     'getAllCustomerTypeOrdersBack',
     'getAllCustomerTypeordersMonthlyReplaced',
@@ -103,7 +103,7 @@ const Analysis = ({ schema }) => {
         if (defs.length > 0 && prevTypeRef.current !== schema.select) {
             setFilters([{ key: defs[0].id, condition: 'like', value: '' }]);
             prevTypeRef.current = schema.select;
-            if (IsCustomerType) {
+            if (ContainCustomerType.includes(schema.select)) {
                 setFilters([{ key: defs[0].id, condition: 'like', value: '' },
                 { key: 'customerType', condition: 'like', value: "年度,月度,代理商,新增,临时,日常" }]);
             }
@@ -239,7 +239,7 @@ const Analysis = ({ schema }) => {
                 </div>
             </div>
             {rows?.length > 0 &&
-                IsCustomerType.includes(schema.select)
+                ContainCustomerType.includes(schema.select)
                 && (
                     <div className='row' style={{ marginBottom: '10px' }}>
                         <CustomerTypeFilter
