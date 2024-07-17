@@ -9,29 +9,29 @@ import AllDefs from '../constants/defs/AllDefs';
 
 // 全部订单
 export default function Order() {
-  const tableData = useTableDataContext()
-  const columns = useMemo(() => AllDefs, [])
-  const features = ["delete", "export", "refresh", 'visibility']
-  const [views, setViews] = useState(orderViews)
+    const tableData = useTableDataContext()
+    const columns = useMemo(() => AllDefs, [])
+    const features = ["delete", "export", "refresh", 'visibility']
+    const [views, setViews] = useState(orderViews)
 
-  return (
-    <div className='col full-screen'>
-      <div className="tab-contents">
-        <Toolbar features={features} />
-        <SecTabs />
-        <Views
-          views={views}
-          setViews={setViews}
-        />
-      </div>
-      {tableData &&
-        <div className='content-container col'>
-          <Table
-            data={tableData}
-            columns={columns}
-          />
+    return (
+        <div className='col full-screen'>
+            <div className="tab-contents">
+                <Toolbar features={features} />
+                <SecTabs />
+                <Views
+                    views={views}
+                    setViews={setViews}
+                />
+            </div>
+            {tableData &&
+                <div className='content-container col'>
+                    <Table
+                        data={tableData}
+                        columns={columns}
+                    />
+                </div>
+            }
         </div>
-      }
-    </div>
-  )
+    )
 }

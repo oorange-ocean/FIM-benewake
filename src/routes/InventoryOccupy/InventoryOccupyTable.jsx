@@ -10,12 +10,11 @@ import {
     getSortedRowModel,
     getGroupedRowModel
 } from '@tanstack/react-table';
-import Paginate from './Paginate';
-import { ReactComponent as FilterIcon } from '../../assets/icons/filter.svg';
+import Paginate from '../../components/table/Paginate';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTableStatesContext, useUpdateTableStatesContext } from '../../hooks/useCustomContext';
-import DraggableHeader from './DraggableHeader';
+import DraggableHeader from '../../components/table/DraggableHeader';
 import { Modal, Box, Typography, Select, MenuItem } from '@mui/material';
 import { updateCustomerTypeReviseById } from '../../api/analysis'
 
