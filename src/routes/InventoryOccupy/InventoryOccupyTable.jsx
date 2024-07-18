@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     flexRender,
     useReactTable,
@@ -29,6 +29,16 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
 
     useEffect(() => setRowSelection({}), [data]);
     useEffect(() => updateTableStates({ type: "SET_ROW_SELECTION", rowSelection }), [rowSelection]);
+
+    // Find the index of the last top row
+    const lastTopRowIndex = useMemo(() => {
+        for (let i = data.length - 1; i >= 0; i--) {
+            if (data[i].isTop === 1) {
+                return i;
+            }
+        }
+        return -1;
+    }, [data]);
 
     const table = useReactTable({
         data,
@@ -105,10 +115,10 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                             ))}
                         </div>
                         <div className='tbody'>
-                            {table.getRowModel().rows.map(row => (
+                            {table.getRowModel().rows.map((row, index) => (
                                 <div
                                     key={row.id}
-                                    className={`tr${row.getIsSelected() ? ' selected' : ''}`}
+                                    className={`tr${row.getIsSelected() ? ' selected' : ''}${index === lastTopRowIndex ? ' last-top-row' : ''}`}
                                 >
                                     <div className='td checkbox fixed'>
                                         <input
