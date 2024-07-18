@@ -2,7 +2,7 @@ import api from "./axios";
 import moment from 'moment';
 import { VISIBILITY_ALL_FALSE } from "../constants/Global";
 import { getInquiryTypeInt } from '../js/parseData'
-
+import { getInventoryOccupySituation } from './inventory'
 const inquiryTypeObject = value => ({
     colName: "inquiry_type",
     condition: "like",

@@ -49,8 +49,8 @@ const children = [
     { name: "新增询单", path: "new", element: <New /> },
     { name: "修改询单", path: "edit", element: <Edit /> },
     { name: "404", path: "*", element: <NotFound /> },
-    { name: "库存占用情况", path: "inventory", element: <InventoryOccupy /> },
-    { name: "生产计划", path: "production", element: <ProductionPlan /> },
+    { name: "库存占用情况", path: "inventory", element: <InventoryOccupy />, id: 7 },
+    { name: "生产计划", path: "production", element: <ProductionPlan />, id: 8 },
 ]
 
 export default children;

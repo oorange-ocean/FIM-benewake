@@ -267,17 +267,6 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                                     </div>
                                 </ResizableHeader>)
                             }
-                            {/* {isSpecificSchema && (
-                                <ResizableHeader
-                                    key={'action'}
-                                    width={100}
-                                    onResize={handleResize}
-                                    index={schema.length}
-                                    type={'action'}
-                                >
-                                    修改客户类型
-                                </ResizableHeader>
-                            )} */}
                         </div>
                     </div>
                     <div className='tbody'>

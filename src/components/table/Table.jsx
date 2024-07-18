@@ -11,7 +11,6 @@ import {
     getGroupedRowModel
 } from '@tanstack/react-table';
 import Paginate from './Paginate';
-import { ReactComponent as FilterIcon } from '../../assets/icons/filter.svg';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTableStatesContext, useUpdateTableStatesContext } from '../../hooks/useCustomContext';
