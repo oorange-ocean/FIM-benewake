@@ -209,17 +209,6 @@ const defaultQuery = {
                 "value": ""
             }
         ]
-    },
-    7: {
-        tableId: 7,
-        secTab: null,
-        viewId: 0,
-        filterCriterias: [
-            {
-                "colName": "materialCode",
-                "condition": "like",
-                "value": ""
-            }]
     }
 }
 

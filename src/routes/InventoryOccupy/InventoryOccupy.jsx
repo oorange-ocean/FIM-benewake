@@ -5,7 +5,7 @@ import InventoryOccupyTable from './InventoryOccupyTable';
 import columns from './InventoryOccupyDefs';
 import { getInventoryOccupySituation } from '../../api/inventory';
 import CommonPaginate from '../../components/table/commonPaginate';
-import { useUpdateTableDataContext, useUpdateTableStatesContext, useTableStatesContext, useAlertContext, useSelectedDataContext } from '../../hooks/useCustomContext';
+import { useUpdateTableDataContext } from '../../hooks/useCustomContext';
 
 export default function InventoryOccupy() {
     const [data, setData] = useState([]);
