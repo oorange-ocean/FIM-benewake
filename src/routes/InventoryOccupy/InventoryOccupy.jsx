@@ -9,18 +9,18 @@ import { useUpdateTableDataContext } from '../../hooks/useCustomContext';
 import AdminFilters from '../../components/AdminFilters';
 import { useAlertContext } from '../../hooks/useCustomContext';
 import Loader from '../../components/Loader';
+import usePageState from '../../hooks/useAdminPageState';
 
 export default function InventoryOccupy() {
     const { alertWarning, alertSuccess, alertError } = useAlertContext();
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
-    const [pageSize, setPageSize] = useState(100);
     const [pageNum, setPageNum] = useState(1);
     const [current, setCurrent] = useState(1);
     const updateTableData = useUpdateTableDataContext();
     const [isFiltered, setIsFiltered] = useState(false);
-    const [filters, setFilters] = useState([]);
     const [loading, setLoading] = useState(false);
+    const { pageSize, setPageSize, filters, setFilters } = usePageState("inventoryOccupy");
 
     const fetchData = async (params) => {
         try {
