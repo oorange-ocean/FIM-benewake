@@ -1125,6 +1125,7 @@ td.select {
   width: 100px;
   margin-right: 1rem;
   gap:1rem;
+  margin-top:1rem
 }
 
 .filter select {

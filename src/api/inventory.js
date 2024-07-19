@@ -33,3 +33,14 @@ export async function cancelTop(params) {
         console.log(err);
     }
 }
+///inventoryOccupySituation/getByMaterialCode?materialCode=12345
+export async function getByMaterialCode(params) {
+    try {
+        let url = `/inventoryOccupySituation/getByMaterialCode?materialCode=${params.materialCode}`
+        const response = await axios.get(url)
+        return response.data;
+    }
+    catch (err) {
+        console.log(err);
+    }
+}

@@ -110,8 +110,6 @@ const deliveryProgressMapping = {
     "-4": [deliveryProgressObject("海外订单")]
 };
 
-import axios from 'axios';
-
 export async function fetchData({ tableId, viewId, filterCriterias, secTab }) {
     let newCriterias = filterCriterias;
     let newViewId = tableId > 1 && viewId > 0 ? -1 : viewId;

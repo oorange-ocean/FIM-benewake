@@ -29,7 +29,6 @@ const getInputElement = (schemaItem, value, handleChange, handleSearch) => {
     }
     const { eng, url, searchKey } = schemaItem;
     const onChange = (keys, values) => {
-        // onChange(["itemCode", "itemName", "itemType", "itemId"], [option.itemCode, option.itemName, option.itemType, option.id])
         keys.map((key, index) => {
             if (key === eng) {
                 handleChange("value", values[index]);
@@ -92,7 +91,7 @@ const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tabl
                 <ArrowIcon />
             </div>
             {/* 如果tableId==="analysis" ,那么筛洗条件就是固定的，只能是等于，不接受选择 */}
-            {tableId === "analysis"
+            {tableId && tableId === "analysis"
                 ? (
                     <div className='filter-select-wrapper'>
                         <select value="=" >

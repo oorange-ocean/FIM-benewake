@@ -75,7 +75,7 @@ export default function Toolbar({ features, handleInventoryRefresh }) {
 
     const handleRefresh = async () => {
         updateTableData({ type: "CLEAR_TABLE_DATA" })
-        if (tableId === 7) {
+        if (features.includes("pin")) {
             handleInventoryRefresh()
             return;
         }

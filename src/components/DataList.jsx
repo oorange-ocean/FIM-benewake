@@ -55,6 +55,10 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
             setValue(option.itemCode)
             handleChange(["itemCode", "itemName", "itemType", "itemId"], [option.itemCode, option.itemName, option.itemType, option.id])
         }
+        else if (identifier === "materialCode") {
+            setValue(option.itemCode)
+            handleChange(["materialCode"], [option.itemCode])
+        }
 
         else if (identifier === "customerName") {
             setValue(option.customerName)
@@ -103,6 +107,7 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {
                         handleSearch()
+                        setShowDropdown(false)
                     }
                 }}
             />
@@ -112,7 +117,7 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
                     className="data-list-dropdown"
                 >
                     {
-                        identifier === "itemCode" &&
+                        (identifier === "itemCode" || identifier === "materialCode") &&
                         < li className='row sticky g1' >
                             <div style={{ width: 66 }}>物料编码</div><div>物料名称</div>
                         </li>
@@ -120,7 +125,7 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
                     {
                         options.length > 0
                             ? options.map((option, i) =>
-                                identifier !== "itemCode"
+                                (identifier !== "itemCode" && identifier !== "materialCode")
                                     ? <li key={i}
                                         onClick={() => handleSelect(option)}>
                                         {getOptionName(type, option, searchKey)}
