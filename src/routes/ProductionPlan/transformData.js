@@ -1,4 +1,4 @@
-export default function transformData(records) {
+export default function transformData(records, viewId) {
     // 确保 records 是一个数组
     if (!Array.isArray(records)) {
         return [];
@@ -6,11 +6,21 @@ export default function transformData(records) {
 
     // 获取当前年份和月份
     const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // getMonth() 返回的月份是从0开始的，所以加1
+    const baseYear = currentDate.getFullYear();
+    const baseMonth = currentDate.getMonth() + 1; // getMonth() 返回的月份是从0开始的，所以加1
 
-    // 生成一个月的日期列
-    const daysInMonth = new Date(year, month, 0).getDate(); // 获取当前月的天数
+    // 根据 viewId 计算目标月份和年份
+    let year = baseYear;
+    let month = baseMonth + viewId;
+
+    // 处理月份和年份的边界情况
+    if (month > 12) {
+        month -= 12;
+        year += 1;
+    }
+
+    // 获取指定月份的天数
+    const daysInMonth = new Date(year, month, 0).getDate();
 
     // 创建一个初始格式的数据表格
     const transformedData = {};
@@ -20,6 +30,7 @@ export default function transformData(records) {
         const materialName = record.fmaterialName;
         const completedQuantity = record.fcompletedQuantity;
         const actualStartTime = new Date(record.factualStartTime);
+        const startYear = actualStartTime.getFullYear();
         const startMonth = actualStartTime.getMonth() + 1; // getMonth() 返回的月份是从0开始的，所以加1
         const startDay = actualStartTime.getDate();
 
@@ -37,7 +48,7 @@ export default function transformData(records) {
         }
 
         // 填充对应日期的完成数量
-        if (startMonth === month) {
+        if (startYear === year && startMonth === month) {
             transformedData[materialCode][`${startMonth}/${startDay}`] = completedQuantity;
         }
     });

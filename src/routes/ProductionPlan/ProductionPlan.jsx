@@ -51,7 +51,7 @@ export default function ProductionPlan() {
                 setViewId={handleViewIdChange}
             />
             <Table
-                data={transformData(records)}
+                data={transformData(records, viewId)}
                 columns={columns}
                 noPagination={true}
             />
