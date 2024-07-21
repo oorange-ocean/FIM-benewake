@@ -33,13 +33,17 @@ function getDynamicColumns(viewId) {
     dateColumns.unshift(
         columnHelper.accessor('materialCode', {
             header: '物料编码',
+            id: 'materialCode',
             size: 100,
             cell: info => info.getValue(),
+            enablePinning: true,
         }),
         columnHelper.accessor('materialName', {
+            id: 'materialName',
             header: '物料名称',
             size: 120,
             cell: info => info.getValue(),
+            enablePinning: true,
         })
     );
 
@@ -48,6 +52,7 @@ function getDynamicColumns(viewId) {
             id: 'assemblyPlan',
             header: `北醒光子${year}年${month}月组装生产计划`,
             columns: dateColumns,
+            size: 70 * (daysInMonth) + 220,
         }),
     ];
 

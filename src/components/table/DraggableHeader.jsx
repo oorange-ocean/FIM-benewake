@@ -4,7 +4,7 @@ import {
 } from '@tanstack/react-table'
 import { ReactComponent as ArrowIcon } from '../../assets/icons/arrow-down.svg';
 
-const DraggableHeader = ({ header, table }) => {
+const DraggableHeader = ({ header, table, pinstyle }) => {
     const { getState, setColumnOrder } = table
     const { columnOrder } = getState()
     const { column } = header
@@ -49,7 +49,8 @@ const DraggableHeader = ({ header, table }) => {
             ref={dropRef}
             style={{
                 opacity: isDragging ? 0.5 : 1,
-                width: header.getSize()
+                width: header.getSize(),
+                ...pinstyle
             }}
 
             id={header.id}

@@ -28,8 +28,6 @@ export default function ProductionPlan() {
         setRecords(data.records || []); // 确保 data.records 是一个数组
         setTotal(data.total || 0); // 确保 data.total 是一个数值
         setCurrent(data.current);
-        //将所有数据打印
-        console.log("data", data, "data.records", data.records, "transformData(data.records)", transformData(data.records));
     };
 
     const handlePageChange = (page = 1, size = 100) => {

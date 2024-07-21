@@ -480,6 +480,7 @@ button svg {
   text-overflow: ellipsis;
   display: table-cell;
   text-align: center;
+  background-color: white;
 }
 
 .table .th {

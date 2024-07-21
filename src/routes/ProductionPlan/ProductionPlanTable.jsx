@@ -17,6 +17,37 @@ import { useTableStatesContext, useUpdateTableStatesContext } from '../../hooks/
 import DraggableHeader from '../../components/table/DraggableHeader';
 import { updateCustomerTypeReviseById } from '../../api/analysis'
 
+const getCommonPinningStyles = (column, columns) => {
+    const isPinned = column.columnDef.header === '物料编码' || column.columnDef.header === '物料名称' ? 'left' : undefined;
+    const isLastLeftPinnedColumn = column.columnDef.header === '物料名称';
+    const isFirstRightPinnedColumn = false;
+
+    // 计算左偏移量
+    let leftOffset = 0;
+    if (isPinned === 'left') {
+        if (column.columnDef.header === '物料名称') {
+            leftOffset = 100; // 第一列的宽度
+        } else if (column.columnDef.header === '物料编码') {
+            leftOffset = 0;
+        }
+    }
+
+    return {
+        boxShadow: isLastLeftPinnedColumn
+            ? '-4px 0 4px -4px gray inset'
+            : isFirstRightPinnedColumn
+                ? '4px 0 4px -4px gray inset'
+                : undefined,
+        left: isPinned === 'left' ? `${leftOffset}px` : undefined,
+        right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+        position: isPinned ? 'sticky' : 'relative',
+        width: column.getSize(),
+        zIndex: isPinned ? 1 : 0,
+    }
+};
+
+
+
 export default function Table({ data, columns, noPagination, setNewInquiryData, handleRefresh }) {
     const states = useTableStatesContext();
     const [rowSelection, setRowSelection] = useState({});
@@ -29,7 +60,12 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     const [columnOrder, setColumnOrder] = useState(columns.map(column => column.id));
 
     const [currentRowData, setCurrentRowData] = useState(null);
-
+    const initialColumnPinningState = {
+        columnPinning: {
+            left: ['materialCode', 'materialName'], // 将列固定在左侧
+            right: [], // 没有列固定在右侧
+        },
+    }
     useEffect(() => setRowSelection({}), [data]);
     useEffect(() => updateTableStates({ type: "SET_ROW_SELECTION", rowSelection }), [rowSelection]);
 
@@ -63,6 +99,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
             pagination: {
                 pageSize: 100,
             },
+            initialColumnPinningState: initialColumnPinningState
         },
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -106,13 +143,18 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                             onChange={table.getToggleAllRowsSelectedHandler()}
                                         />
                                     </div>
-                                    {headerGroup.headers.map(header => (
-                                        <DraggableHeader
-                                            key={header.id}
-                                            header={header}
-                                            table={table}
-                                        />
-                                    ))}
+                                    {headerGroup.headers.map(header => {
+                                        const { column } = header
+                                        console.log("column", column)
+                                        return (
+                                            <DraggableHeader
+                                                key={header.id}
+                                                header={header}
+                                                table={table}
+                                                pinstyle={{ ...getCommonPinningStyles(column) }}
+                                            />
+                                        )
+                                    })}
                                 </div>
                             ))}
                         </div>
@@ -130,15 +172,20 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                             onChange={row.getToggleSelectedHandler()}
                                         />
                                     </div>
-                                    {row.getVisibleCells().map(cell => (
-                                        <div
-                                            key={cell.id}
-                                            style={{ width: cell.column.getSize() }}
-                                            className={`td ${cell.column.columnDef.id}`}
-                                        >
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </div>
-                                    ))}
+                                    {row.getVisibleCells().map(cell => {
+                                        const { column } = cell
+                                        console.log("column", column)
+
+                                        return (
+                                            <div
+                                                key={cell.id}
+                                                style={{ width: cell.column.getSize(), ...getCommonPinningStyles(column) }}
+                                                className={`td ${cell.column.columnDef.id}`}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </div>
+                                        )
+                                    })}
                                 </div>
                             ))}
                         </div>
