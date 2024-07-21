@@ -22,6 +22,19 @@ const schema = [
             />
     },
     {
+        header: "物料编码",
+        identifier: "materialCode",
+        element:
+            (data, handleChange, handleSearch) => <DataList
+                type="item"
+                searchKey="itemCode"
+                initialValue={data.materialCode || data}
+                handleChange={handleChange}
+                handleSearch={handleSearch}
+                identifier="materialCode"
+            />
+    },
+    {
         header: "数量 *",
         identifier: "saleNum",
         element:

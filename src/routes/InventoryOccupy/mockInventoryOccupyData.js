@@ -1,0 +1,68 @@
+// src/data/mockInventoryData.js
+const mockInventoryOccupyData = [
+    {
+        materialCode: "13.01.02.023",
+        materialName: "TF02-Pro",
+        todayPOOccupy: 130,
+        todayPROccupy: 13,
+        todayYGOccupy: 60,
+        todayAvailable: -174,
+        firstStorageTime: "7/15",
+        firstPOOccupy: 50,
+        firstPROccupy: 10,
+        firstYGOccupy: 60,
+        firstStorageCount: 300,
+        firstAvailable: 6,
+        secondStorageTime: "7/25",
+        secondPOOccupy: 0,
+        secondPROccupy: 0,
+        secondYGOccupy: 60,
+        secondStorageCount: 300,
+        secondAvailable: 246,
+        isTop: 1
+    },
+    {
+        materialCode: "13.01.02.024",
+        materialName: "TF03-Lite",
+        todayPOOccupy: 100,
+        todayPROccupy: 20,
+        todayYGOccupy: 40,
+        todayAvailable: -100,
+        firstStorageTime: "7/20",
+        firstPOOccupy: 40,
+        firstPROccupy: 15,
+        firstYGOccupy: 50,
+        firstStorageCount: 250,
+        firstAvailable: 10,
+        secondStorageTime: "8/1",
+        secondPOOccupy: 10,
+        secondPROccupy: 5,
+        secondYGOccupy: 30,
+        secondStorageCount: 200,
+        secondAvailable: 155,
+        isTop: 0
+    },
+    {
+        materialCode: "13.01.02.025",
+        materialName: "TF04-Ultra",
+        todayPOOccupy: 150,
+        todayPROccupy: 30,
+        todayYGOccupy: 70,
+        todayAvailable: -200,
+        firstStorageTime: "7/18",
+        firstPOOccupy: 60,
+        firstPROccupy: 20,
+        firstYGOccupy: 80,
+        firstStorageCount: 400,
+        firstAvailable: 15,
+        secondStorageTime: "7/30",
+        secondPOOccupy: 20,
+        secondPROccupy: 10,
+        secondYGOccupy: 50,
+        secondStorageCount: 350,
+        secondAvailable: 270,
+        isTop: 1
+    }
+];
+
+export default mockInventoryOccupyData;

@@ -13,6 +13,8 @@ import Delivery from '../routes/Delivery';
 import Inventory from '../routes/Inventory';
 import Sales from '../routes/Sales';
 import Edit from '../routes/Edit';
+import InventoryOccupy from '../routes/InventoryOccupy/InventoryOccupy.jsx';
+import ProductionPlan from '../routes/ProductionPlan/ProductionPlan.jsx';
 import { fetchNewViews } from '../api/fetch';
 import { findMessages, findTodos, findPODelay } from '../api/message'
 
@@ -46,7 +48,9 @@ const children = [
     { name: "用户主页", path: "user", element: <User /> },
     { name: "新增询单", path: "new", element: <New /> },
     { name: "修改询单", path: "edit", element: <Edit /> },
-    { name: "404", path: "*", element: <NotFound /> }
+    { name: "404", path: "*", element: <NotFound /> },
+    { name: "库存占用情况", path: "inventory", element: <InventoryOccupy />, id: 7 },
+    { name: "生产计划", path: "production", element: <ProductionPlan />, id: 8 },
 ]
 
 export default children;

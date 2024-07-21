@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ExcelUploader from './ExcelUploader';
+import ExcelUploader from './ExcelUploader'; 5
 import * as XLSX from 'xlsx';
 import { useAlertContext, useAuthContext, useSelectedDataContext, useTableDataContext, useTableStatesContext, useUpdateTabContext, useUpdateTableDataContext, useUpdateTableStatesContext } from '../hooks/useCustomContext';;
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -17,9 +17,9 @@ import { getVisbleTableData, parseInquiryObj } from '../js/parseData';
 import { getTableId } from '../js/getData';
 import { EDIT_INQUIRY_TAB, NEW_INQUIRY_TAB } from '../constants/Global';
 import api from '../api/axios';
+import { setTop, cancelTop } from '../api/inventory';
 
-
-export default function Toolbar({ features }) {
+export default function Toolbar({ features, handleInventoryRefresh }) {
 
     const updateTabs = useUpdateTabContext()
     const updateTableData = useUpdateTableDataContext()
@@ -75,7 +75,10 @@ export default function Toolbar({ features }) {
 
     const handleRefresh = async () => {
         updateTableData({ type: "CLEAR_TABLE_DATA" })
-
+        if (features.includes("pin")) {
+            handleInventoryRefresh()
+            return;
+        }
         const res = await fetchData(selectedQuery[tableId])
         updateTableData({ type: "SET_TABLE_DATA", tableData: res.lists })
     }
@@ -177,15 +180,44 @@ export default function Toolbar({ features }) {
         }
     }
 
-    const handlePin = () => {
-        const pinnedIndexes = getIndexes(rowSelection)
-        const rowData = tabContents[activeTab].filter((_, i) => pinnedIndexes.includes(i));
-        setPinnedRows(rowData)
-        deleteSelectedRows()
-    }
+    const handlePin = async () => {
+        const pinnedIndexes = getIndexes(rowSelection);
+        try {
+            // 等待所有 pin 请求完成
+            await Promise.all(pinnedIndexes.map(async (index) => {
+                const materialCode = tableData[index].materialCode;
+                await setTop({ topMaterialCode: materialCode });
+            }));
 
-    const handleUnpin = () => {
-        //TODO
+            // 更新表格状态
+            updateTableStates({ type: "RESET_ROW_SELECTION" });
+
+            // 所有 pin 操作完成后刷新数据
+            await handleRefresh();
+        } catch (error) {
+            console.error("Error during pin operation:", error);
+            // 这里可以添加错误处理逻辑，比如显示一个错误消息给用户
+        }
+    };
+
+    async function handleUnpin() {
+        const pinnedIndexes = getIndexes(rowSelection);
+        try {
+            // 等待所有 unpin 请求完成
+            await Promise.all(pinnedIndexes.map(async (index) => {
+                const materialCode = tableData[index].materialCode;
+                await cancelTop({ topMaterialCode: materialCode });
+            }));
+
+            // 更新表格状态
+            updateTableStates({ type: "RESET_ROW_SELECTION" });
+
+            // 所有 unpin 操作完成后刷新数据
+            await handleRefresh();
+        } catch (error) {
+            console.error("Error during unpin operation:", error);
+            // 这里可以添加错误处理逻辑，比如显示一个错误消息给用户
+        }
     }
 
     const navigate = useNavigate()

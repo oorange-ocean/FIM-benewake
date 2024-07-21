@@ -2,7 +2,7 @@ import api from "./axios";
 import moment from 'moment';
 import { VISIBILITY_ALL_FALSE } from "../constants/Global";
 import { getInquiryTypeInt } from '../js/parseData'
-
+import { getInventoryOccupySituation } from './inventory'
 const inquiryTypeObject = value => ({
     colName: "inquiry_type",
     condition: "like",
@@ -109,8 +109,6 @@ const deliveryProgressMapping = {
     "-3": [deliveryProgressObject("未发货")],
     "-4": [deliveryProgressObject("海外订单")]
 };
-
-import axios from 'axios';
 
 export async function fetchData({ tableId, viewId, filterCriterias, secTab }) {
     let newCriterias = filterCriterias;

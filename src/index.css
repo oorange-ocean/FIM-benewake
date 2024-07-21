@@ -480,6 +480,7 @@ button svg {
   text-overflow: ellipsis;
   display: table-cell;
   text-align: center;
+  background-color: white;
 }
 
 .table .th {
@@ -1125,6 +1126,7 @@ td.select {
   width: 100px;
   margin-right: 1rem;
   gap:1rem;
+  margin-top:1rem
 }
 
 .filter select {

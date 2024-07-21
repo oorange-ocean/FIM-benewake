@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     flexRender,
     useReactTable,
@@ -10,13 +10,11 @@ import {
     getSortedRowModel,
     getGroupedRowModel
 } from '@tanstack/react-table';
-import Paginate from './Paginate';
+import Paginate from '../../components/table/Paginate';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTableStatesContext, useUpdateTableStatesContext } from '../../hooks/useCustomContext';
-import DraggableHeader from './DraggableHeader';
-import { Modal, Box, Typography, Select, MenuItem } from '@mui/material';
-import { updateCustomerTypeReviseById } from '../../api/analysis'
+import DraggableHeader from '../../components/table/DraggableHeader';
 
 export default function Table({ data, columns, noPagination, setNewInquiryData, handleRefresh }) {
     const states = useTableStatesContext();
@@ -29,22 +27,18 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     const updateTableStates = useUpdateTableStatesContext();
     const [columnOrder, setColumnOrder] = useState(columns.map(column => column.id));
 
-    const [modalOpen, setModalOpen] = useState(false);
-    const [currentCellData, setCurrentCellData] = useState('');
-    const [currentRowData, setCurrentRowData] = useState(null);
-    const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
-
     useEffect(() => setRowSelection({}), [data]);
     useEffect(() => updateTableStates({ type: "SET_ROW_SELECTION", rowSelection }), [rowSelection]);
 
-    const handleClose = () => setModalOpen(false);
-    const handleChange = async (event) => {
-        const value = event.target.value;
-        // 调用/past-analysis/updateCustomerTypeReviseById?id=23&customerTypeRevise=请问 
-        await updateCustomerTypeReviseById(currentRowData.id, labels[value] ?? '');
-        await handleRefresh()
-        setModalOpen(false);
-    };
+    // Find the index of the last top row
+    const lastTopRowIndex = useMemo(() => {
+        for (let i = data.length - 1; i >= 0; i--) {
+            if (data[i].isTop === 1) {
+                return i;
+            }
+        }
+        return -1;
+    }, [data]);
 
     const table = useReactTable({
         data,
@@ -121,10 +115,10 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                             ))}
                         </div>
                         <div className='tbody'>
-                            {table.getRowModel().rows.map(row => (
+                            {table.getRowModel().rows.map((row, index) => (
                                 <div
                                     key={row.id}
-                                    className={`tr${row.getIsSelected() ? ' selected' : ''}`}
+                                    className={`tr${row.getIsSelected() ? ' selected' : ''}${index === lastTopRowIndex ? ' last-top-row' : ''}`}
                                 >
                                     <div className='td checkbox fixed'>
                                         <input
@@ -139,18 +133,8 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                             key={cell.id}
                                             style={{ width: cell.column.getSize() }}
                                             className={`td ${cell.column.columnDef.id}`}
-                                            onDoubleClick={() => {
-                                                if (cell.column.columnDef.id === "customerTypeRevise") {
-                                                    setCurrentCellData(cell.getContext().getValue() ?? '');
-                                                    setCurrentRowData(row.original);
-                                                    setModalOpen(true);
-                                                }
-                                            }}
                                         >
-                                            {/* 如果当前列是monthAvg，且内容是数值，则只保留两位小数 */}
-                                            {cell.column.columnDef.id === 'monthAvg' ?
-                                                cell.getContext().getValue() ? parseFloat(cell.getContext().getValue()).toFixed(2) : ''
-                                                : flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </div>
                                     ))}
                                 </div>
@@ -160,36 +144,6 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                 </div>
                 {!noPagination && <Paginate table={table} />}
             </div>
-            <Modal open={modalOpen} onClose={handleClose}>
-                <Box sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 300,
-                    bgcolor: 'background.paper',
-                    boxShadow: 24,
-                    p: 4,
-                }}>
-                    <Typography variant="h6" component="h2">
-                        客户类型转换
-                    </Typography>
-                    <Select size='small'
-                        value={labels?.find(label => label == currentCellData) ? labels.indexOf(currentRowData?.customerType) : ''}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {labels.map((label, i) => (
-                            <MenuItem key={i} value={i}>
-                                {label}
-                            </MenuItem>
-                        ))}
-
-                    </Select>
-
-
-                </Box>
-            </Modal>
         </DndProvider>
     );
 }
