@@ -52,7 +52,7 @@ function getDynamicColumns(viewId) {
             id: 'assemblyPlan',
             header: `北醒光子${year}年${month}月组装生产计划`,
             columns: dateColumns,
-            size: 70 * (daysInMonth) + 220,
+            size: 1213,
         }),
     ];
 

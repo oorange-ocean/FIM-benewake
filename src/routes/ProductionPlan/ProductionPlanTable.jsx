@@ -22,6 +22,9 @@ const getCommonPinningStyles = (column, columns) => {
     const isLastLeftPinnedColumn = column.columnDef.header === '物料名称';
     const isFirstRightPinnedColumn = false;
 
+    // 检查是否是标题行
+    const isTitleColumn = column.columnDef.header.includes('北醒光子');
+
     // 计算左偏移量
     let leftOffset = 0;
     if (isPinned === 'left') {
@@ -32,6 +35,7 @@ const getCommonPinningStyles = (column, columns) => {
         }
     }
 
+    // 样式设置
     return {
         boxShadow: isLastLeftPinnedColumn
             ? '-4px 0 4px -4px gray inset'
@@ -40,11 +44,21 @@ const getCommonPinningStyles = (column, columns) => {
                 : undefined,
         left: isPinned === 'left' ? `${leftOffset}px` : undefined,
         right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+        opacity: isPinned ? 0.95 : 1,
         position: isPinned ? 'sticky' : 'relative',
         width: column.getSize(),
         zIndex: isPinned ? 1 : 0,
+        ...(isTitleColumn && {
+            //将标题固定，即便滚动也不会消失，不用sticky
+            position: 'fixed',
+            top: 197,
+            zIndex: 1,
+
+
+        }),
     }
 };
+
 
 
 
@@ -145,7 +159,6 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                     </div>
                                     {headerGroup.headers.map(header => {
                                         const { column } = header
-                                        console.log("column", column)
                                         return (
                                             <DraggableHeader
                                                 key={header.id}
@@ -174,7 +187,6 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                     </div>
                                     {row.getVisibleCells().map(cell => {
                                         const { column } = cell
-                                        console.log("column", column)
 
                                         return (
                                             <div
