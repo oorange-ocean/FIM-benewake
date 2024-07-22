@@ -30,16 +30,39 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     useEffect(() => setRowSelection({}), [data]);
     useEffect(() => updateTableStates({ type: "SET_ROW_SELECTION", rowSelection }), [rowSelection]);
 
-    // Find the index of the last top row
     const lastTopRowIndex = useMemo(() => {
         for (let i = data.length - 1; i >= 0; i--) {
             if (data[i].isTop === 1) {
-                console.log("i", i)
                 return i;
             }
         }
         return -1;
     }, [data]);
+
+    const getCellStyle = (cell) => {
+        const columnId = cell.column.id;
+        const value = cell.getValue();
+
+        // 检查 "可用"、"即时库存" 和 "预计可用" 列
+        if (columnId === 'todayAvailable' || columnId === 'inventoryCount' ||
+            columnId === 'firstAvailable' || columnId === 'secondAvailable') {
+            if (value < 0) {
+                return { backgroundColor: '#ffa19f' };
+            } else {
+                return { backgroundColor: '#e5ffe2' };
+            }
+        }
+
+        // 其他列的样式规则保持不变
+        if (columnId === 'firstStorageCount' || columnId === 'secondStorageCount') {
+            return { backgroundColor: '#fff9c4' };
+        }
+        if (columnId === 'firstStorageTime' || columnId === 'secondStorageTime') {
+            return { backgroundColor: '#eaeaea' };
+        }
+        return {};
+    };
+
 
     const table = useReactTable({
         data,
@@ -132,7 +155,10 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                     {row.getVisibleCells().map(cell => (
                                         <div
                                             key={cell.id}
-                                            style={{ width: cell.column.getSize() }}
+                                            style={{
+                                                width: cell.column.getSize(),
+                                                ...getCellStyle(cell)
+                                            }}
                                             className={`td ${cell.column.columnDef.id}`}
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
