@@ -1,18 +1,78 @@
-  .inventoryOccupy .toolbar {
+/* CSS */
+.inventoryOccupy .toolbar {
     margin-bottom: 2rem;
-  }
-  .tr.last-top-row {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  .table .td {
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-    border-color: var(--blue30);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: table-cell;
-    text-align: center;
+}
+
+.inventoryOccupy .table-container .td {
+    background-color: transparent ;
+}
+
+
+.tr.last-top-row {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 新增的样式类 */
+.cell-negative {
+    position: relative;
+}
+
+.cell-negative::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ffa19f;
+    z-index: -1;
+}
+
+.cell-positive {
+    position: relative;
+}
+
+.cell-positive::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e5ffe2;
+    z-index: -1;
+}
+
+.cell-storage-count {
+    position: relative;
+}
+
+.cell-storage-count::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff9c4;
+    z-index: -1;
+}
+
+.cell-storage-time {
+    position: relative;
+}
+
+.cell-storage-time::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #eaeaea;
+    z-index: -1;
+}
+
+.cell-default {
     background-color: transparent;
-  }
-  
-  
+}

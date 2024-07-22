@@ -8,7 +8,7 @@ import transformData from './transformData';
 import { getProductionPlan } from '../../api/productionPlan';
 import mockProductionPlanData from './mockProductionPlanData';
 import getDynamicColumns from "./getDynamicColumns";
-
+import './ProductionPlan.css';
 export default function ProductionPlan() {
     const features = ["export", "refresh"];
     const { pageSize, setPageSize, filters, setFilters } = usePageState("productionPlan");
@@ -23,7 +23,7 @@ export default function ProductionPlan() {
         const titleWidth = document.querySelector('.table-wrapper').offsetWidth;
         setTitleWidth(titleWidth);
         setColumns(getDynamicColumns(viewId, titleWidth));
-    }, []);
+    }, [pageSize, viewId]);
 
     useEffect(() => {
         fetchData(1, pageSize, viewId);
@@ -49,7 +49,7 @@ export default function ProductionPlan() {
     };
 
     return (
-        <div className='col full-screen inventoryOccupy'>
+        <div className='col full-screen ProductionPlan'>
             <Toolbar features={features} />
             <ProductionPlanSecTabs
                 viewId={viewId}

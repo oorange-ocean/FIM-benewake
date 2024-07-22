@@ -15,6 +15,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTableStatesContext, useUpdateTableStatesContext } from '../../hooks/useCustomContext';
 import DraggableHeader from '../../components/table/DraggableHeader';
+import './inventoryOccupy.css';
 
 export default function Table({ data, columns, noPagination, setNewInquiryData, handleRefresh }) {
     const states = useTableStatesContext();
@@ -39,30 +40,36 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
         return -1;
     }, [data]);
 
-    const getCellStyle = (cell) => {
+    const getCellStyleClass = (cell) => {
         const columnId = cell.column.id;
         const value = cell.getValue();
 
-        // 检查 "可用"、"即时库存" 和 "预计可用" 列
-        if (columnId === 'todayAvailable' || columnId === 'inventoryCount' ||
-            columnId === 'firstAvailable' || columnId === 'secondAvailable') {
-            if (value < 0) {
-                return { backgroundColor: '#ffa19f' };
-            } else {
-                return { backgroundColor: '#e5ffe2' };
-            }
+        // 返回相应的样式类名
+        if (['todayAvailable', 'inventoryCount', 'firstAvailable', 'secondAvailable'].includes(columnId)) {
+            return value < 0 ? 'cell-negative' : 'cell-positive';
         }
-
-        // 其他列的样式规则保持不变
-        if (columnId === 'firstStorageCount' || columnId === 'secondStorageCount') {
-            return { backgroundColor: '#fff9c4' };
+        if (['firstStorageCount', 'secondStorageCount'].includes(columnId)) {
+            return 'cell-storage-count';
         }
-        if (columnId === 'firstStorageTime' || columnId === 'secondStorageTime') {
-            return { backgroundColor: '#eaeaea' };
+        if (['firstStorageTime', 'secondStorageTime'].includes(columnId)) {
+            return 'cell-storage-time';
         }
-        return {};
+        return 'cell-default';
     };
 
+    const getCellContent = (cell) => {
+        const columnId = cell.column.id;
+        const value = cell.getValue();
+
+        // 检查特定列的值是否为0，如果是则返回空字符串
+        if (['todayPOOccupy', 'todayPROccupy', 'todayYGOccupy',
+            'firstPOOccupy', 'firstPROccupy', 'firstYGOccupy',
+            'secondPOOccupy', 'secondPROccupy', 'secondYGOccupy'].includes(columnId) && value === 0) {
+            return '';
+        }
+
+        return flexRender(cell.column.columnDef.cell, cell.getContext());
+    };
 
     const table = useReactTable({
         data,
@@ -156,12 +163,11 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                         <div
                                             key={cell.id}
                                             style={{
-                                                width: cell.column.getSize(),
-                                                ...getCellStyle(cell)
+                                                width: cell.column.getSize()
                                             }}
-                                            className={`td ${cell.column.columnDef.id}`}
+                                            className={`td ${cell.column.columnDef.id} ${getCellStyleClass(cell)}`}
                                         >
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {getCellContent(cell)}
                                         </div>
                                     ))}
                                 </div>
