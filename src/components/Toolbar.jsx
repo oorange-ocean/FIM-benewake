@@ -19,7 +19,7 @@ import { EDIT_INQUIRY_TAB, NEW_INQUIRY_TAB } from '../constants/Global';
 import api from '../api/axios';
 import { setTop, cancelTop } from '../api/inventory';
 
-export default function Toolbar({ features, handleInventoryRefresh }) {
+export default function Toolbar({ features, handleInventoryRefresh, handleProductionPlanRefresh }) {
 
     const updateTabs = useUpdateTabContext()
     const updateTableData = useUpdateTableDataContext()
@@ -77,6 +77,10 @@ export default function Toolbar({ features, handleInventoryRefresh }) {
         updateTableData({ type: "CLEAR_TABLE_DATA" })
         if (features.includes("pin")) {
             handleInventoryRefresh()
+            return;
+        }
+        if (tableId === 8) {
+            handleProductionPlanRefresh()
             return;
         }
         const res = await fetchData(selectedQuery[tableId])

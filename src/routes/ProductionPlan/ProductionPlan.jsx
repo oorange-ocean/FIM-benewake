@@ -48,9 +48,16 @@ export default function ProductionPlan() {
         fetchData(1, pageSize, id);
     };
 
+    const handleRefresh = () => {
+        fetchData(current, pageSize, viewId);
+    };
+
     return (
         <div className='col full-screen ProductionPlan'>
-            <Toolbar features={features} />
+            <Toolbar
+                features={features}
+                handleProductionPlanRefresh={handleRefresh}
+            />
             <ProductionPlanSecTabs
                 viewId={viewId}
                 setViewId={handleViewIdChange}
