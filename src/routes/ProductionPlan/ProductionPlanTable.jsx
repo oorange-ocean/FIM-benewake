@@ -72,7 +72,6 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     const [columnResizeMode] = useState('onChange');
     const updateTableStates = useUpdateTableStatesContext();
     const [columnOrder, setColumnOrder] = useState(columns.map(column => column.id));
-
     const [currentRowData, setCurrentRowData] = useState(null);
     const initialColumnPinningState = {
         columnPinning: {

@@ -10,7 +10,7 @@ const currentYear = currentDate.getFullYear();
 const currentMonth = currentDate.getMonth() + 1; // getMonth() 返回的月份是从0开始的，所以加1
 
 // 辅助函数，根据viewId返回动态列
-function getDynamicColumns(viewId) {
+function getDynamicColumns(viewId, titleWidth) {
     const newDate = new Date(currentYear, currentMonth - 1 + viewId, 1);
     const year = newDate.getFullYear();
     const month = newDate.getMonth() + 1; // getMonth() 返回的月份是从0开始的，所以加1
@@ -52,7 +52,7 @@ function getDynamicColumns(viewId) {
             id: 'assemblyPlan',
             header: `北醒光子${year}年${month}月组装生产计划`,
             columns: dateColumns,
-            size: 1213,
+            size: titleWidth,
         }),
     ];
 

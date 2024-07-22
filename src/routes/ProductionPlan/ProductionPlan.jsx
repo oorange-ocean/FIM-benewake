@@ -16,7 +16,15 @@ export default function ProductionPlan() {
     const [total, setTotal] = useState(0);
     const [records, setRecords] = useState([]);
     const [viewId, setViewId] = useState(0);
-    const [columns, setColumns] = useState(getDynamicColumns(viewId));
+    const [titleWidth, setTitleWidth] = useState(0);
+    const [columns, setColumns] = useState(([]));
+
+    useEffect(() => {
+        const titleWidth = document.querySelector('.table-wrapper').offsetWidth;
+        console.log('titleWidth:', titleWidth);
+        setTitleWidth(titleWidth);
+        setColumns(getDynamicColumns(viewId, titleWidth));
+    }, []);
 
     useEffect(() => {
         fetchData(1, pageSize, viewId);
