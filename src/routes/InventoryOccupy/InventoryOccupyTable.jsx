@@ -34,6 +34,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     const lastTopRowIndex = useMemo(() => {
         for (let i = data.length - 1; i >= 0; i--) {
             if (data[i].isTop === 1) {
+                console.log("i", i)
                 return i;
             }
         }

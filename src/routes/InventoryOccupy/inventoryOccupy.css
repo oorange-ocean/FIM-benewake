@@ -4,3 +4,15 @@
   .tr.last-top-row {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+  .table .td {
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+    border-color: var(--blue30);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: table-cell;
+    text-align: center;
+    background-color: transparent;
+  }
+  
+  

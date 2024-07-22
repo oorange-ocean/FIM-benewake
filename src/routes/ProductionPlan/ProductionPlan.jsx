@@ -21,7 +21,6 @@ export default function ProductionPlan() {
 
     useEffect(() => {
         const titleWidth = document.querySelector('.table-wrapper').offsetWidth;
-        console.log('titleWidth:', titleWidth);
         setTitleWidth(titleWidth);
         setColumns(getDynamicColumns(viewId, titleWidth));
     }, []);
