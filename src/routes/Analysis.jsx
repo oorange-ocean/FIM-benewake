@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import { Button } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import Table from '../components/table/Table';
 import Loader from '../components/Loader';
@@ -15,6 +14,8 @@ import CommonPagination from '../components/table/commonPaginate';
 import { Checkbox, FormGroup, FormControlLabel } from '@mui/material';
 import usePageState from '../hooks/useAnalysisPageState';
 import { ParamsToString, StringToParams } from '../utils/handleCustomerType';
+import { Modal, Box, Button, Typography } from '@mui/material';
+import SeasonalMarket from "../charts/SeasonalMarket/SeasonalMarket"
 
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 
@@ -69,7 +70,9 @@ const Analysis = ({ schema }) => {
     const [current, setCurrent] = useState(1);
     const { pageSize, setPageSize, filters, setFilters } = usePageState(schema.select);
     const isUnlikelyData = schema.select === "getAnalysisUnlikelyData";
+    const isSeasonalMarket = schema.select === "getAllQuarterlySellingCondition";
     const prevTypeRef = useRef();
+    const [isSeasonalMarketOpen, setIsSeasonalMarketOpen] = useState(false);
 
     const setParams = (newParams) => {
         setFilters([...filters, { key: 'customerType', condition: 'like', value: ParamsToString(newParams) }]);
@@ -218,6 +221,10 @@ const Analysis = ({ schema }) => {
         handleSearch(newFilters);
     };
 
+    const closeModal = () => {
+        setIsSeasonalMarketOpen(false);
+    };
+
     return (
         <div className='col full-screen analysis'>
             <div className="col flex-center">
@@ -231,11 +238,14 @@ const Analysis = ({ schema }) => {
             </div>
             <div className='row toolbar'>
                 <div className='row flex-center'>
-                    <Button type="text" onClick={() => handleRefresh(current, pageSize)}>刷新</Button>
-                    <Button type="text" onClick={handleExport}>导出</Button>
+                    <button type="text" onClick={() => handleRefresh(current, pageSize)}>刷新</button>
+                    <button type="text" onClick={handleExport}>导出</button>
                     {/* 确认更新客户类型,仅当schema.select === "getAnalysisUnlikelyData"出现 */}
                     {isUnlikelyData && (
                         <button type="text" onClick={() => handleRevise()} > 确认更新客户类型 </button>)}
+                    {isSeasonalMarket && (
+                        <button type="text" onClick={() => { setIsSeasonalMarketOpen(true) }} >展示图表 </button>
+                    )}
                 </div>
             </div>
             {rows?.length > 0 &&
@@ -276,6 +286,27 @@ const Analysis = ({ schema }) => {
                     )}
                 </>
             )}
+            <Modal
+                open={isSeasonalMarketOpen}
+                onClose={closeModal}
+                aria-labelledby="seasonal-market-modal-title"
+            >
+                <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '80%',
+                    bgcolor: 'background.paper',
+                    boxShadow: 24,
+                    p: 4,
+                }}>
+                    <Typography id="seasonal-market-modal-title" variant="h6" component="h2">
+                        季节性销售数据分析
+                    </Typography>
+                    <SeasonalMarket rows={rows} />
+                </Box>
+            </Modal>
         </div>
     );
 };
