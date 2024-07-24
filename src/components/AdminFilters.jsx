@@ -90,12 +90,18 @@ const Filter = ({ index, filter, setFilters, schema, handleSearch, filters, tabl
                 </select>
                 <ArrowIcon />
             </div>
-            {/* 如果tableId==="analysis" ,那么筛洗条件就是固定的，只能是等于，不接受选择 */}
+            {/* 如果tableId==="analysis" ,那么筛洗条件就是等于：eq  不等于：neq   小于：gt   小于等于：lte  大于：lt  大于等于：gte  包含：like */}
             {tableId && tableId === "analysis"
                 ? (
                     <div className='filter-select-wrapper'>
-                        <select value="=" >
-                            <option value="=">等于</option>
+                        <select value={filter.condition} onChange={(e) => handleChange("condition", e.target.value)}>
+                            <option value="eq" key={0}>等于</option>
+                            <option value="neq" key={1}>不等于</option>
+                            <option value="gt" key={2}>大于</option>
+                            <option value="lt" key={3}>小于</option>
+                            <option value="gte" key={4}>大于等于</option>
+                            <option value="lte" key={5}>小于等于</option>
+                            <option value="like" key={6}>包含</option>
                         </select>
                         <ArrowIcon />
                     </div>

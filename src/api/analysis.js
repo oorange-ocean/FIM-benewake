@@ -1,8 +1,34 @@
 import axios from "./axios";
 import { StringToParams } from "../utils/handleCustomerType";
+
+const specialUrls = [
+    'getAllCustomerTypeOrdersReplaced',
+    'getAllCustomerTypeOrdersBack',
+    'getAllCustomerTypeordersMonthlyReplaced',
+    'getAllCustomerTypeordersMonthlyBack'
+];
 export async function filterAnalysisDate(url, params = {}, setFilters) {
     //params包括pageNum,pageSize,filters，其中前两个拼接到url里，最后一个放到请求体里
     const { pageNum, pageSize, filters } = params;
+
+    if (!specialUrls.includes(url)) {
+        // 在filters中剔除这个字段
+        const pagination = `pageNum=${pageNum}&pageSize=${pageSize}`;
+        let response;
+        if (filters.length > 0) {
+            // 将filter转为values,一个对象，键为filter的key，值为filter的{condition, value}
+            const values = filters.reduce((acc, filter) => {
+                acc[filter.key] = {
+                    condition: filter.condition || 'eq', // 默认条件为 'eq'
+                    value: filter.value
+                };
+                return acc;
+            }, {});
+            response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
+        }
+        return response.data;
+    }
+
     if (url !== 'getAllCustomerTypeOrdersReplaced' && url !== 'getAllCustomerTypeOrdersBack') {
         // 将filter的customerType属性转为params，并将其中的字段拼接到url里
         const customerType = filters.find(filter => filter.key === 'customerType');
@@ -60,14 +86,6 @@ export async function fetchAnalysisData(url, params = {}) {
             temporaryCustomer: 1,
             daily: 1
         };
-
-        // 特定的 URL 列表
-        const specialUrls = [
-            'getAllCustomerTypeOrdersReplaced',
-            'getAllCustomerTypeOrdersBack',
-            'getAllCustomerTypeordersMonthlyReplaced',
-            'getAllCustomerTypeordersMonthlyBack'
-        ];
 
         // 设置分页参数
         const paginationParams = {

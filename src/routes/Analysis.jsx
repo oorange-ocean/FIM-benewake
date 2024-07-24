@@ -193,10 +193,13 @@ const Analysis = ({ schema }) => {
         if (!dataSource || !dataSource.records || dataSource.records.length === 0) {
             alertWarning("查询结果为空");
             //将customertype改回全部
-            const index = filters.findIndex(filter => filter.key === 'customerType');
-            const newFilters = index !== -1
-                ? filters.map((filter, i) => i === index ? { ...filter, value: "年度,月度,代理商,新增,临时,日常" } : filter)
-                : [...filters, { key: 'customerType', condition: 'like', value: "年度,月度,代理商,新增,临时,日常" }];
+            let newFilters = filters
+            if (ContainCustomerType.includes(schema.select)) {
+                const index = filters.findIndex(filter => filter.key === 'customerType');
+                newFilters = index !== -1
+                    ? filters.map((filter, i) => i === index ? { ...filter, value: "年度,月度,代理商,新增,临时,日常" } : filter)
+                    : [...filters, { key: 'customerType', condition: 'like', value: "年度,月度,代理商,新增,临时,日常" }];
+            }
             setFilters(newFilters);
             setRows([]);
             setLoading(false);
