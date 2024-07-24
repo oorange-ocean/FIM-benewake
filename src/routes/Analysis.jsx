@@ -22,8 +22,8 @@ const labels = ['年度', '月度', '代理商', '新增', '临时', '日常'];
 const ContainCustomerType = [
     'getAllCustomerTypeOrdersReplaced',
     'getAllCustomerTypeOrdersBack',
-    'getAllCustomerTypeordersMonthlyReplaced',
-    'getAllCustomerTypeordersMonthlyBack'
+    'getAllCustomerTypeOrdersMonthlyReplaced',
+    'getAllCustomerTypeOrdersMonthlyBack'
 ];
 
 function EngToCn(col_name_ENG) {

@@ -4,8 +4,8 @@ import { StringToParams } from "../utils/handleCustomerType";
 const specialUrls = [
     'getAllCustomerTypeOrdersReplaced',
     'getAllCustomerTypeOrdersBack',
-    'getAllCustomerTypeordersMonthlyReplaced',
-    'getAllCustomerTypeordersMonthlyBack'
+    'getAllCustomerTypeOrdersMonthlyReplaced',
+    'getAllCustomerTypeOrdersMonthlyBack'
 ];
 export async function filterAnalysisDate(url, params = {}, setFilters) {
     //params包括pageNum,pageSize,filters，其中前两个拼接到url里，最后一个放到请求体里
@@ -29,7 +29,7 @@ export async function filterAnalysisDate(url, params = {}, setFilters) {
         return response.data;
     }
 
-    if (url !== 'getAllCustomerTypeOrdersReplaced' && url !== 'getAllCustomerTypeOrdersBack') {
+    else if (url !== 'getAllCustomerTypeOrdersReplaced' && url !== 'getAllCustomerTypeOrdersBack') {
         // 将filter的customerType属性转为params，并将其中的字段拼接到url里
         const customerType = filters.find(filter => filter.key === 'customerType');
         if (customerType) {
@@ -45,9 +45,12 @@ export async function filterAnalysisDate(url, params = {}, setFilters) {
 
         let response;
         if (newfilters.length > 0) {
-            // 将filter转为values,一个对象，键为filter的key，值为filter的value
+            // 将filter转为values,一个对象，键为filter的key，值为filter的value和condition
             const values = newfilters.reduce((acc, filter) => {
-                acc[filter.key] = filter.value;
+                acc[filter.key] = {
+                    condition: filter.condition || 'eq', // 默认条件为 'eq'
+                    value: filter.value
+                };
                 return acc;
             }, {});
             response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
@@ -58,14 +61,26 @@ export async function filterAnalysisDate(url, params = {}, setFilters) {
         return response.data;
     }
 
-    const pagination = `pageNum=${pageNum}&pageSize=${pageSize}`;
-    //将filter转为values,一个对象，键为filter的key，值为filter的value
-    const values = filters.reduce((acc, filter) => {
-        acc[filter.key] = filter.value;
-        return acc;
-    }, {});
-    const response = await axios.post(`/past-analysis/${url}?${pagination}`, values);
-    return response.data;
+    else {
+        const pagination = `pageNum=${pageNum}&pageSize=${pageSize}`;
+        const customerType = filters.find(filter => filter.key === 'customerType');
+        if (customerType) {
+            //将其拼接到url上，例如?customerType=日常,月度
+            url += `${url.includes('?') ? '&' : '?'}customerType=${customerType.value}`;
+        }
+        // 在filters中剔除这个字段
+        const newfilters = filters.filter(filter => filter.key !== 'customerType');
+        //将filter转为values,一个对象，键为filter的key，值为filter的value
+        const values = newfilters.reduce((acc, filter) => {
+            acc[filter.key] = {
+                condition: filter.condition || 'eq', // 默认条件为 'eq'
+                value: filter.value
+            };
+            return acc;
+        }, {});
+        const response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
+        return response.data;
+    }
 }
 //接收一个对象， { "customerType": str }，
 
@@ -101,8 +116,8 @@ export async function fetchAnalysisData(url, params = {}) {
         // 从请求参数中剔除分页参数
         const { pageNum, pageSize, ...restParams } = params;
 
-        // 如果 URL 是 'getAllCustomerTypeordersMonthlyReplaced' 或 'getAllCustomerTypeordersMonthlyBack'
-        if (url === 'getAllCustomerTypeordersMonthlyReplaced' || url === 'getAllCustomerTypeordersMonthlyBack') {
+        // 如果 URL 是 'getAllCustomerTypeOrdersMonthlyReplaced' 或 'getAllCustomerTypeOrdersMonthlyBack'
+        if (url === 'getAllCustomerTypeOrdersMonthlyReplaced' || url === 'getAllCustomerTypeOrdersMonthlyBack') {
             // 将所有参数拼接到 URL 中
             const queryString = new URLSearchParams({
                 ...paginationParams,

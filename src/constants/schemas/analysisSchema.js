@@ -14,8 +14,8 @@ const analysisSchema = {
     allRetailQuarterlySellingCondition: createSchemaEntry("散户季度现况", "getAllRetailQuarterlySellingCondition"),
     allCustomerTypeOrdersReplaced: createSchemaEntry("客户类型分类-订单版（替换后）", "getAllCustomerTypeOrdersReplaced"),
     allCustomerTypeOrdersBack: createSchemaEntry("客户类型分类-订单版（已还原）", "getAllCustomerTypeOrdersBack"),
-    allCustomerTypeordersMonthlyReplaced: createSchemaEntry("客户类型分类-月份版（替换后）", "getAllCustomerTypeordersMonthlyReplaced"),
-    allCustomerTypeordersMonthlyBack: createSchemaEntry("客户类型分类-月份版（已还原）", "getAllCustomerTypeordersMonthlyBack"),
+    allCustomerTypeordersMonthlyReplaced: createSchemaEntry("客户类型分类-月份版（替换后）", "getAllCustomerTypeOrdersMonthlyReplaced"),
+    allCustomerTypeordersMonthlyBack: createSchemaEntry("客户类型分类-月份版（已还原）", "getAllCustomerTypeOrdersMonthlyBack"),
     AnalysisUnlikelyData: createSchemaEntry("可疑数据", "getAnalysisUnlikelyData"),
 };
 

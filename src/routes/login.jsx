@@ -53,6 +53,8 @@ export default function Login() {
                 username: cookies.find(item => item.startsWith("benewakeusername=")).split("=")[1],
                 userType: cookies.find(item => item.startsWith("benewakeuserType=")).split("=")[1]
             })
+            //清除url中的code
+            window.history.replaceState({}, document.title, window.location.pathname);
             navigate("/user")
         }
         const browserInfo = detectBrowserInfo();
@@ -60,7 +62,7 @@ export default function Login() {
             // 如果是飞书浏览器，触发自动跳转到飞书登录
             window.location.href = `https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=cli_a5e56060a07ad00c&amp;redirect_uri=${baseUrl}/#/callback/feishuLogin`;
         }
-        else if (code) {
+        else if (code && !AreCookiesValid(cookies)) {
             // 重定向到 FeishuLogin 路由
             navigate(`/callback/feishuLogin?code=${code}`);
             return;
