@@ -142,7 +142,7 @@ const Analysis = ({ schema }) => {
             setCurrent(pageNum);
         }
         else {
-            handleRefresh(pageNum, pageSize, params);
+            handleRefresh(pageNum, pageSize);
             setPageSize(pageSize);
             setCurrent(pageNum);
         }
