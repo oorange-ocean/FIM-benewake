@@ -4,7 +4,6 @@ import EChartsReact from "echarts-for-react";
 import benewake from '../../echarts-theme/benewake.json';
 
 const getSeasonalMarketData = (rows) => {
-    console.log("11111")
     const { rowSelection } = useTableStatesContext();
 
     // 过滤出选中的行

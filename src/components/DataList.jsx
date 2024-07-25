@@ -21,7 +21,7 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
     const handleDocumentClick = (e) => {
         if (containerRef.current && !containerRef.current.contains(e.target)) {
             setShowDropdown(false);
-            clearData();
+            // clearData();
             document.removeEventListener('mousedown', handleDocumentClick);
         }
     };
@@ -38,8 +38,9 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
     useEffect(() => { setValue(initialValue) }, [initialValue])
 
     const onChange = async (e) => {
+        console.log("e.target.value", e.target.value)
         setValue(e.target.value)
-        handleChange([identifier], [e.target.value])
+        await handleChange([identifier], [e.target.value])
         if (identifier === "inquiryType") {
             setOptions(inquiryTypeOptions)
         }
