@@ -24,9 +24,15 @@ export async function filterAnalysisDate(url, params = {}, setFilters) {
                 };
                 return acc;
             }, {});
-            response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
+            //如果values非空
+            if (Object.keys(values).length > 0) {
+                response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
+            }
+            else {
+                response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`);
+            }
+            return response.data;
         }
-        return response.data;
     }
 
     else if (url !== 'getAllCustomerTypeOrdersReplaced' && url !== 'getAllCustomerTypeOrdersBack') {
@@ -78,7 +84,13 @@ export async function filterAnalysisDate(url, params = {}, setFilters) {
             };
             return acc;
         }, {});
-        const response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
+        let response;
+        if (Object.keys(values).length > 0) {
+            response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, values);
+        }
+        else {
+            response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`);
+        }
         return response.data;
     }
 }
@@ -129,6 +141,20 @@ export async function fetchAnalysisData(url, params = {}) {
             const response = await axios.post(finalUrl);
             return response.data;
         }
+        else if (url === 'getAllCustomerTypeOrdersReplaced' || url === 'getAllCustomerTypeOrdersBack') {
+            //url中拼接加入?customerType=年度,月度,代理商,新增,临时,日常
+            const customerType = { key: 'customerType', condition: 'like', value: "年度,月度,代理商,新增,临时,日常" }
+            url += `?${customerType.key}=${customerType.value}`;
+            // 将分页参数拼接到 URL 中,剩余参数放到请求体里
+            const pagination = `pageNum=${paginationParams.pageNum}&pageSize=${paginationParams.pageSize}`;
+            let response;
+            if (Object.keys(restParams).every(key => !restParams[key])) {
+                response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`, restParams);
+            } else {
+                response = await axios.post(`/past-analysis/${url}${url.includes('?') ? '&' : '?'}${pagination}`);
+            }
+            return response.data;
+        }
 
         else {
             // 将分页参数拼接到 URL 中
@@ -139,8 +165,16 @@ export async function fetchAnalysisData(url, params = {}) {
 
             // 拼接最终的请求 URL
             const finalUrl = `/past-analysis/${url}?${queryString}`;
-            const response = await axios.post(finalUrl, restParams); // 使用 POST 请求
-            return response.data;
+            //如果restParams所有的键值对都是空的，那么不传递restParams
+            if (Object.keys(restParams).every(key => !restParams[key])) {
+                const response = await axios.post(finalUrl);
+                return response.data;
+            }
+            //否则传递restParams
+            else {
+                const response = await axios.post(finalUrl, restParams);
+                return response.data;
+            }
         }
     } catch (err) {
         console.log(err);
