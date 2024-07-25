@@ -67,7 +67,10 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
             'secondPOOccupy', 'secondPROccupy', 'secondYGOccupy'].includes(columnId) && value === 0) {
             return '';
         }
-
+        //如果todayAvailable、firstAvailable、secondAvailable的值为null，返回0
+        if (['todayAvailable', 'firstAvailable', 'secondAvailable'].includes(columnId) && value === null) {
+            return 0;
+        }
         return flexRender(cell.column.columnDef.cell, cell.getContext());
     };
 

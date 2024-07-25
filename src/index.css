@@ -482,6 +482,11 @@ button svg {
   text-align: center;
 }
 
+.cell-yellow{
+    background-color: #fff9c4;
+
+}
+
 .table .th {
   position: relative;
   border-bottom: 1px solid;

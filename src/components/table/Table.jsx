@@ -46,6 +46,25 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
         setModalOpen(false);
     };
 
+    const getCellContent = (cell) => {
+        // {cell.column.columnDef.id === 'monthAvg' ?
+        //     cell.getContext().getValue() ? parseFloat(cell.getContext().getValue()).toFixed(2) : ''
+        //     : flexRender(cell.column.columnDef.cell, cell.getContext())}
+        if (cell.column.columnDef.id === 'monthAvg') {
+            return cell.getContext().getValue() ? parseFloat(cell.getContext().getValue()).toFixed(2) : '';
+        }
+        return flexRender(cell.column.columnDef.cell, cell.getContext());
+    };
+
+    const getCellStyleClass = (cell) => {
+        console.log(cell.row.original.isYellow)
+        //如果所在行的is_yellow列是1，则返回cell-yellow
+        if (cell.row.original.isYellow === 1) {
+            return 'cell-yellow';
+        }
+    }
+
+
     const table = useReactTable({
         data,
         columns,
@@ -138,7 +157,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                         <div
                                             key={cell.id}
                                             style={{ width: cell.column.getSize() }}
-                                            className={`td ${cell.column.columnDef.id}`}
+                                            className={`td ${cell.column.columnDef.id} ${getCellStyleClass(cell)}`}
                                             onDoubleClick={() => {
                                                 if (cell.column.columnDef.id === "customerTypeRevise") {
                                                     setCurrentCellData(cell.getContext().getValue() ?? '');
@@ -147,10 +166,7 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
                                                 }
                                             }}
                                         >
-                                            {/* 如果当前列是monthAvg，且内容是数值，则只保留两位小数 */}
-                                            {cell.column.columnDef.id === 'monthAvg' ?
-                                                cell.getContext().getValue() ? parseFloat(cell.getContext().getValue()).toFixed(2) : ''
-                                                : flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {getCellContent(cell)}
                                         </div>
                                     ))}
                                 </div>
