@@ -274,6 +274,15 @@ div.read-only>* {
 .bar3 {
   grid-row: span 2;
 }
+.bar4 {
+  grid-row: span 3;
+}
+.bar5 {
+  grid-row: span 4;
+}
+.bar6 {
+  grid-row: span 5;
+}
 
 .data-point {
   display: flex;
@@ -1339,20 +1348,6 @@ datalist {
   position: relative;
 }
 
-.data-list-dropdown {
-  position: absolute;
-  left: 0;
-  max-height: 200px;
-  width: max-content;
-  overflow-y: auto;
-  background: white;
-  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-  text-align: left;
-  border-radius: 0.5rem;
-  z-index: 3;
-}
-
-
 .data-list li {
   cursor: pointer;
   padding: 1rem 1.5rem
@@ -1472,6 +1467,23 @@ input[type=number] {
     flex: 1 0 8rem;
     min-width: 13rem; /* 额外的宽度 */
   }
+
+  .data-list-dropdown {
+    position: absolute;
+    left: 0;
+    max-height: 200px;
+    width: max-content;
+    overflow-y: auto;
+    background: white;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    border-radius: 0.5rem;
+    z-index: 3;
+  }
+  .seasonalMarket .data-list-dropdown{
+    background-color: #000000;
+  }
+
 .data-list-dropdown li.row {
   display: grid;
   gap: 10px;
@@ -1483,6 +1495,9 @@ input[type=number] {
   top: 0;
   background-color: var(--blue5);
   z-index: 6;
+}
+.seasonalMarket .data-list-dropdown .sticky{
+  background-color: #000000;
 }
 
 .sidebar .user-info-container {
