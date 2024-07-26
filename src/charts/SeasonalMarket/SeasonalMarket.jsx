@@ -6,6 +6,11 @@ import DataList from '../../components/DataList';
 import { ArrowDropDown, ShowChart, BarChart, Numbers } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 
+const formatNumber = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+
 const getSeasonalMarketData = (rows, targetItemCode, showNumbers, chartType) => {
     if (!targetItemCode) {
         targetItemCode = "13.01.02.023";
@@ -15,6 +20,7 @@ const getSeasonalMarketData = (rows, targetItemCode, showNumbers, chartType) => 
 
     const xAxisData = sortedData.map(item => `${item.saleYear}Q${item.saleQuarter}`);
     const seriesData = sortedData.map(item => item.quarterItemSaleNum);
+
 
     const option = {
         title: {
@@ -61,6 +67,9 @@ const getSeasonalMarketData = (rows, targetItemCode, showNumbers, chartType) => 
                     position: 'top',
                     textStyle: {
                         color: '#ffffff'
+                    },
+                    formatter: function (params) {
+                        return formatNumber(params.value);
                     }
                 }
             }
