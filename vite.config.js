@@ -6,11 +6,11 @@ import svgr from 'vite-plugin-svgr'
 export default defineConfig(({ mode }) => {
     let outputDir = 'dist';
 
-    if (mode === 'server') {
-        outputDir = 'dist-test';
-    } else if (mode === 'production') {
-        outputDir = 'dist-production';
-    }
+    // if (mode === 'server') {
+    //     outputDir = 'dist-test';
+    // } else if (mode === 'production') {
+    //     outputDir = 'dist-production';
+    // }
 
     return {
         plugins: [react(), svgr()],

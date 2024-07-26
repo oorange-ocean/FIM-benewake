@@ -3,18 +3,16 @@ import EChartsReact from "echarts-for-react";
 import benewake from '../../echarts-theme/benewake.json';
 import { fetchAnalysisData } from "../../api/analysis";
 import DataList from '../../components/DataList';
+import { ArrowDropDown, ShowChart, BarChart, Numbers } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
-const getSeasonalMarketData = (rows, targetItemCode) => {
-    // 如果没有选中的行，返回默认物料编码
+const getSeasonalMarketData = (rows, targetItemCode, showNumbers, chartType) => {
     if (!targetItemCode) {
         targetItemCode = "13.01.02.023";
     }
-    // 过滤出所有与目标物料编码相同的行
     const targetRows = rows.filter(row => row.itemCode === targetItemCode);
-    // 整理数据：按年度和季度排序
     const sortedData = targetRows.sort((a, b) => (a.saleYear - b.saleYear) || (a.saleQuarter - b.saleQuarter));
 
-    // 准备图表数据
     const xAxisData = sortedData.map(item => `${item.saleYear}Q${item.saleQuarter}`);
     const seriesData = sortedData.map(item => item.quarterItemSaleNum);
 
@@ -25,7 +23,7 @@ const getSeasonalMarketData = (rows, targetItemCode) => {
                 '暂无数据',
             left: 'center',
             textStyle: {
-                color: '#ffffff'  // 设置标题文字颜色为白色
+                color: '#ffffff'
             }
         },
         tooltip: {
@@ -39,25 +37,32 @@ const getSeasonalMarketData = (rows, targetItemCode) => {
                 alignWithLabel: true
             },
             axisLabel: {
-                color: '#ffffff'  // 设置x轴标签文字颜色为白色
+                color: '#ffffff'
             }
         },
         yAxis: {
             type: 'value',
             name: '季度销售量',
             axisLabel: {
-                color: '#ffffff'  // 设置y轴标签文字颜色为白色
+                color: '#ffffff'
             },
             nameTextStyle: {
-                color: '#ffffff'  // 设置y轴名称文字颜色为白色
+                color: '#ffffff'
             }
         },
         series: [
             {
                 name: '季度销售量',
-                type: 'bar',
+                type: chartType,
                 data: seriesData.length > 0 ? seriesData : [],
-                barWidth: '60%'
+                barWidth: '60%',
+                label: {
+                    show: showNumbers,
+                    position: 'top',
+                    textStyle: {
+                        color: '#ffffff'
+                    }
+                }
             }
         ]
     };
@@ -66,7 +71,9 @@ const getSeasonalMarketData = (rows, targetItemCode) => {
 
 const SeasonalMarketChart = ({ rows }) => {
     const [data, setData] = useState([]);
-    const [targetItemCode, setTargetItemCode] = useState("13.01.02.023")
+    const [targetItemCode, setTargetItemCode] = useState("13.01.02.023");
+    const [showNumbers, setShowNumbers] = useState(false);
+    const [chartType, setChartType] = useState('bar');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -84,23 +91,69 @@ const SeasonalMarketChart = ({ rows }) => {
         setTargetItemCode(value[0] || "")
     }
 
-    const option = getSeasonalMarketData(data, targetItemCode);
+    const toggleShowNumbers = () => {
+        setShowNumbers(!showNumbers);
+    }
 
+    const toggleChartType = () => {
+        setChartType(chartType === 'bar' ? 'line' : 'bar');
+    }
+
+    const option = getSeasonalMarketData(data, targetItemCode, showNumbers, chartType);
     return (
         <div className='bar3 span4 seasonalMarket'>
-            <DataList
-                type="item"
-                searchKey="itemCode"
-                initialValue={"13.01.02.023"}
-                handleChange={handleChange}
-                identifier="materialCode"
-                style={{
-                    backgroundColor: '#000000',
-                    padding: '10px',
-                    borderRadius: '5px',
-                    marginBottom: '10px'
-                }}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <ArrowDropDown
+                    style={{
+                        pointerEvents: 'none',
+                        transform: 'rotate(270deg)'
+                    }}
+                />
+                <DataList
+                    type="item"
+                    searchKey="itemCode"
+                    initialValue={"13.01.02.023"}
+                    handleChange={handleChange}
+                    identifier="materialCode"
+                    style={{
+                        backgroundColor: '#000000',
+                        padding: '10px',
+                        borderRadius: '5px',
+                        marginLeft: '5px'
+                    }}
+                />
+                <Tooltip title="显示/隐藏数值">
+                    <Numbers
+                        onClick={toggleShowNumbers}
+                        style={{
+                            cursor: 'pointer',
+                            marginLeft: '10px',
+                            color: showNumbers ? '#4CAF50' : '#ffffff'
+                        }}
+                    />
+                </Tooltip>
+                <Tooltip title={chartType === 'bar' ? "切换为折线图" : "切换为柱状图"}>
+                    {chartType === 'bar' ? (
+                        <ShowChart
+                            onClick={toggleChartType}
+                            style={{
+                                cursor: 'pointer',
+                                marginLeft: '10px',
+                                color: '#ffffff'
+                            }}
+                        />
+                    ) : (
+                        <BarChart
+                            onClick={toggleChartType}
+                            style={{
+                                cursor: 'pointer',
+                                marginLeft: '10px',
+                                color: '#ffffff'
+                            }}
+                        />
+                    )}
+                </Tooltip>
+            </div>
             <EChartsReact
                 option={option}
                 theme={benewake}
