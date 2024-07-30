@@ -57,7 +57,6 @@ export default function Table({ data, columns, noPagination, setNewInquiryData, 
     };
 
     const getCellStyleClass = (cell) => {
-        console.log("cell.row.original", cell.row.original)
         //如果所在行的isYellow列是1，则返回cell-yellow
         if (cell.row.original?.isYellow === 1) {
             return 'cell-yellow';

@@ -98,7 +98,7 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
     }
 
     return (
-        <div className="data-list" ref={containerRef}>
+        <div className="data-list" ref={containerRef} >
             <input
                 type="text"
                 value={value}

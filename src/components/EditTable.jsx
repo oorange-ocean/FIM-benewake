@@ -25,14 +25,17 @@ const schema = [
         header: "物料编码",
         identifier: "materialCode",
         element:
-            (data, handleChange, handleSearch) => <DataList
-                type="item"
-                searchKey="itemCode"
-                initialValue={data.materialCode || data}
-                handleChange={handleChange}
-                handleSearch={handleSearch}
-                identifier="materialCode"
-            />
+            (data, handleChange, handleSearch) => {
+                return (
+                    < DataList
+                        type="item"
+                        searchKey="itemCode"
+                        initialValue={data.materialCode || data}
+                        handleChange={handleChange}
+                        handleSearch={handleSearch}
+                        identifier="materialCode"
+                    />)
+            }
     },
     {
         header: "数量 *",
@@ -203,13 +206,16 @@ const Row = ({ rowIndex, data, updateCells, colWidths }) => {
         <div className="tr">
             <div className='td fixed' style={{ width: 45 }}>{rowIndex + 1}</div>
 
-            {schema.map((cell, i) =>
-                <div
-                    style={{ width: colWidths?.[i] ?? 70 }}
-                    className='td'
-                    key={cell.identifier}>
-                    {cell.element(data, handleChange)}
-                </div>
+            {schema.map((cell, i) => {
+                if (cell.identifier !== "materialCode") {
+                    return (<div
+                        style={{ width: colWidths?.[i] ?? 70 }}
+                        className='td'
+                        key={cell.identifier}>
+                        {cell.element(data, handleChange)}
+                    </div>)
+                }
+            }
             )}
         </div>
     )
@@ -244,15 +250,22 @@ const EditTable = ({ rows, setRows }) => {
                         <div className="tr">
                             <div className='th fixed' >序号 </div>
 
-                            {schema.map((item, i) =>
-                                <ResizableHeader
-                                    key={i}
-                                    width={colWidths?.[i]}
-                                    onResize={handleResize}
-                                    index={i}
-                                >
-                                    {item.header}
-                                </ResizableHeader>)
+                            {schema.map((item, i) => {
+                                if (item.header !== "物料编码") {
+                                    return (
+                                        <ResizableHeader
+                                            key={i}
+                                            width={colWidths?.[i]}
+                                            onResize={handleResize}
+                                            index={i}
+                                        >
+                                            {item.header}
+                                        </ResizableHeader>
+                                    )
+                                }
+
+                            }
+                            )
                             }
                         </div>
                     </div>

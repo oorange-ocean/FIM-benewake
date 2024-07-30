@@ -1346,8 +1346,13 @@ datalist {
 
 .data-list {
   position: relative;
+  box-sizing: border-box;
+  width:100%;
 }
-
+.table .td, .data-list {
+    box-sizing: border-box;
+  }
+  
 .data-list li {
   cursor: pointer;
   padding: 1rem 1.5rem
