@@ -1,5 +1,18 @@
 import axios from "./axios";
 import adminSchema from '../constants/schemas/adminSchema'
+///admin/updateSalesmanChange
+//接收两个参数，salesmanNameOld,salesmanNameNew，form-data格式
+export async function updateSalesmanChange(salesmanNameOld, salesmanNameNew) {
+    try {
+        const formData = new FormData();
+        formData.append('salesmanNameOld', salesmanNameOld);
+        formData.append('salesmanNameNew', salesmanNameNew);
+        const response = await axios.post('/admin/updateSalesmanChange', formData);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 export async function fetchAdminData(url, filters = null) {
     try {

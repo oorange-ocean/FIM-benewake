@@ -2,14 +2,54 @@ import { useState, useEffect } from 'react';
 import Checkbox from '../Checkbox';
 import moment from 'moment';
 import { Select, MenuItem, Modal, Box, Typography, Button } from '@mui/material';
+import { updateSalesmanChange } from '../../api/admin';
+import { useAlertContext } from '../../hooks/useCustomContext';
 
-const Row = ({ type, schema, data, colWidths, addRow, removeRow, isSelected, onTypeChange, customerTypes }) => {
+const Row = ({ type, schema, data, colWidths, addRow, removeRow, isSelected, onTypeChange, customerTypes, handleRefresh }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleDoubleClick = () => {
-        setIsModalOpen(true);
+    //销售员替换表格的编辑状态
+    const [editable, setEditable] = useState(false);
+    const [editedSalesmanNameNew, setEditedSalesmanNameNew] = useState(data.salesmanNameNew);
+    const { alertSuccess, alertWarning } = useAlertContext();
+    const handleDoubleClick = (cell) => {
+        // onDoubleClick={cell.eng === "customerType" && type !== "customerType" ? handleDoubleClick : null}
+        if (cell.eng === "customerType" && type !== "customerType") {
+            setIsModalOpen(true);
+        }
+        //如果type为销售员替换包，则设置editable为true
+        if (type === "salesmanChange") {
+            setEditable(true);
+        }
     };
 
+    const getCellContent = (cell) => {
+        if (cell.eng === "startMonth") {
+            return <span>{moment(data.startMonth).format('YYYY/MM/DD')}</span>;
+        }
+        //如果销售员替换表
+        else if (cell.eng === "salesmanNameNew" && editable) {
+            return (
+                <input
+                    type="text"
+                    defaultValue={data[cell.eng]}
+                    onBlur={(e) => {
+                        setEditedSalesmanNameNew(e.target.value);
+                        setEditable(false);
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            setEditedSalesmanNameNew(e.target.value);
+                            setEditable(false);
+                        }
+                    }}
+                    autoFocus
+                />
+            )
+        }
+        else {
+            return <span>{data[cell.eng]}</span>;
+        }
+    };
 
     const handleChange = (event) => {
         const value = event.target.value;
@@ -35,6 +75,20 @@ const Row = ({ type, schema, data, colWidths, addRow, removeRow, isSelected, onT
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+    //检测到editedSalesmanNameNew变化并且editable为false时，发送请求
+    useEffect(() => {
+        if (editedSalesmanNameNew && !editable && editedSalesmanNameNew !== data.salesmanNameNew) {
+            updateSalesmanChange(data.salesmanNameOld, editedSalesmanNameNew).then(res => {
+                if (res.message === "修改成功！") {
+                    alertSuccess("修改成功");
+                    //刷新
+                    handleRefresh();
+                } else {
+                    alertWarning("修改失败");
+                }
+            });
+        }
+    }, [editedSalesmanNameNew, editable]);
 
     return (
         <div className="tr">
@@ -43,18 +97,23 @@ const Row = ({ type, schema, data, colWidths, addRow, removeRow, isSelected, onT
             </div>
             {schema.map((cell, i) => (
                 <div
-                    style={{ width: colWidths[i] }}
+                    style={{
+                        width: colWidths[i],
+                        cursor: cell.eng === "salesmanNameNew" ? 'pointer' : 'default',
+                    }}
+                    title={cell.eng === "salesmanNameNew" ? "双击修改" : ""}
                     className='td'
                     key={i}
-                    // 如果cell.eng === "customerType"并且type!=='customerType',那么双击之后执行handleDoubleClick函数，弹窗修改客户类型
-                    // 如果cell.eng !== "customerType"，那么双击之后执行null
-                    onDoubleClick={cell.eng === "customerType" && type !== "customerType" ? handleDoubleClick : null}
-                >
-                    {cell.eng === "startMonth" ? (
-                        <span>{moment(data.startMonth).format('YYYY/MM/DD')}</span>
-                    ) :
-                        <span>{data[cell.eng]}</span>
-                    }
+                    onDoubleClick={(e) => {
+                        e.preventDefault(); // 防止默认的双击选中文本
+                        handleDoubleClick(cell);
+                    }}                >
+                    {/* {cell.eng === "startMonth" ? (
+                            <span>{moment(data.startMonth).format('YYYY/MM/DD')}</span>
+                        ) :
+                            <span>{data[cell.eng]}</span>
+                        } */}
+                    {getCellContent(cell)}
                 </div>
             ))}
             <Modal

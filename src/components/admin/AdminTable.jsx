@@ -284,6 +284,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                                     removeRow={() => removeSelectedRow(i)}
                                     onTypeChange={handleTypeChange}
                                     customerTypes={customerTypes}
+                                    handleRefresh={handleRefresh}
                                 />
                             )
                             )}
