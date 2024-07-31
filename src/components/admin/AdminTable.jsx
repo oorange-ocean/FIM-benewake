@@ -29,6 +29,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
     const [openExportPopup, setOpenExportPopup] = useState(false)
     const toggleImportPopup = () => setOpenImportPopup(!openImportPopup)
     const toggleExportPopup = () => setOpenExportPopup(!openExportPopup)
+    const [editableRowIndex, setEditableRowIndex] = useState(null);
 
     useEffect(() => {
         const fetchCustomerTypes = async () => {
@@ -199,7 +200,13 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
             alertError('客户类型更新失败');
         }
     };
-
+    const handleChangeRow = () => {
+        if (selectedRows.length !== 1) {
+            alertWarning("请选择一行数据！");
+        } else {
+            setEditableRowIndex(selectedRows[0]);
+        }
+    };
     return (
         <div className='col table-container'>
             {showPopup &&
@@ -213,6 +220,7 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                     }}
                 />}
             <div className='row new-table-controls'>
+                <button onClick={handleChangeRow}>修改行</button>
                 <button onClick={handleAddRow}>新增行</button>
                 <button onClick={handleDeleteRow}>删除行</button>
                 <button onClick={() => {
@@ -285,6 +293,8 @@ const AdminTable = ({ schema, type, rows, setRows, handleRefresh, handleSort, da
                                     onTypeChange={handleTypeChange}
                                     customerTypes={customerTypes}
                                     handleRefresh={handleRefresh}
+                                    editable={editableRowIndex === i}
+                                    setEditable={(value) => setEditableRowIndex(value ? i : null)}
                                 />
                             )
                             )}

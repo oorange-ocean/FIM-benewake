@@ -5,10 +5,8 @@ import { Select, MenuItem, Modal, Box, Typography, Button } from '@mui/material'
 import { updateSalesmanChange } from '../../api/admin';
 import { useAlertContext } from '../../hooks/useCustomContext';
 
-const Row = ({ type, schema, data, colWidths, addRow, removeRow, isSelected, onTypeChange, customerTypes, handleRefresh }) => {
+const Row = ({ type, schema, data, colWidths, addRow, removeRow, isSelected, onTypeChange, customerTypes, handleRefresh, editable, setEditable }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    //销售员替换表格的编辑状态
-    const [editable, setEditable] = useState(false);
     const [editedSalesmanNameNew, setEditedSalesmanNameNew] = useState(data.salesmanNameNew);
     const { alertSuccess, alertWarning } = useAlertContext();
     const handleDoubleClick = (cell) => {
