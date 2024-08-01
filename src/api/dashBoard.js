@@ -8,3 +8,7 @@ export const getSalesDetailByItemAndQuarter = (itemCode, quarter, year) => {
 export const getSalesNumSumByItemAndQuarterGroupBySalesman = (itemCode, quarter, year) => {
     return axios.get(`/dashboard/getSalesNumSumByItemAndQuarterGroupBySalesman?itemCode=${itemCode}&quarter=${quarter}&year=${year}`);
 }
+///dashboard/getSalesNumSumByItemGroupBySalesman?itemCode=13.01.02.023
+export const getSalesNumSumByItemGroupBySalesman = (itemCode) => {
+    return axios.get(`/dashboard/getSalesNumSumByItemGroupBySalesman?itemCode=${itemCode}`);
+}

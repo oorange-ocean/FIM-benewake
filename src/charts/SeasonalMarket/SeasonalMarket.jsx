@@ -4,16 +4,15 @@ import EChartsReact from "echarts-for-react";
 import benewake from '../../echarts-theme/benewake.json';
 import { fetchAnalysisData } from "../../api/analysis";
 import DataList from '../../components/DataList';
-// import { ArrowDropDown, ShowChart, BarChart, Numbers } from '@mui/icons-material';
 import { Tooltip, Button } from '@mui/material';
 import SeasonalMarketDetailOrder from './SeasonalMarketDetailOrder';
-import SalesmanShare from './SalesmanShare';
-// import { ArrowDropDown, ShowChart, BarChart, Numbers, ArrowBack } from '@mui/icons-material';
+import SalesmanShare from './QuarterSalesmanShare';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import NumbersIcon from '@mui/icons-material/Numbers';
+import SalesmanShareOverview from './SalesmanShareOverview';
 
 const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -204,6 +203,12 @@ const SeasonalMarketChart = ({ rows }) => {
                         'click': handleBarClick
                     }}
                 />
+                    <Button 
+                    onClick={() => navigateTo('salesmanShareOverview')} 
+                    style={{ marginTop: '10px' }}
+                >
+                    查看销售员占比
+                </Button>
             </>
         );
     };
@@ -224,6 +229,12 @@ const SeasonalMarketChart = ({ rows }) => {
         />
     );
 
+    const renderSalesmanShareOverviewPage = () => (
+        <SalesmanShareOverview
+            itemCode={targetItemCode}
+        />
+    );
+
     return (
         <div className='bar3 span4 seasonalMarket'>
             {getCurrentPage() !== 'main' && (
@@ -241,6 +252,7 @@ const SeasonalMarketChart = ({ rows }) => {
                 </>
             )}
             {getCurrentPage() === 'salesmanShare' && renderSalesmanSharePage()}
+            {getCurrentPage() === 'salesmanShareOverview' && renderSalesmanShareOverviewPage()}
         </div>
     );
 };
