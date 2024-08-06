@@ -22,7 +22,10 @@ export async function fetchAdminData(url, filters = null) {
 
         if (hasFilters || hasSortingOrPagination) {
             // Use POST method for filtering, sorting, or pagination
-            response = await axios.post(url, filters);
+            if(url === "materialType"){
+                response = await axios.post('/item/filter/itemType',filters)
+            }
+            else{response = await axios.post(url, filters);}
         }
         else if (url === "suspiciousData") {
             response = await axios.get('/past-analysis/getAllStandards');
@@ -55,6 +58,22 @@ export async function addAdminData(type, payload) {
             const formData = new FormData();
             formData.append('itemTypeName', payload.itemTypeName.toString());
             response = await axios.post('/admin/insertItemType', formData);
+        }
+        else if(type === "materialType"){
+            //传参格式为form-data
+            const formData = new FormData();
+            //遍历payload，将每个值添加到formData中
+            //itemType和quantitative是字符串，需要转换为int
+            for (const key in payload) {
+                if (key === "itemType" || key === "quantitative") {
+                    formData.append(key, parseInt(payload[key]));
+                }
+                else {
+                    formData.append(key, payload[key]);
+                }
+            }
+            response = await axios.post(`/admin/${addUrl}`, formData);
+
         }
         else {
             response = await axios.post(`/admin/${addUrl}`, null, { params: payload })

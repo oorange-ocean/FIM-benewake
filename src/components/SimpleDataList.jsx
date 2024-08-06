@@ -67,10 +67,10 @@ const SimpleDataList = ({ name, initialValue, handleChange, searchKey, url }) =>
 
             setOptions(fuzzyMatchResults)
         }
-        else if (name === "salesman_name") {
-            const res = await fetchUser(e.target.value, "2")
-            setOptions(res)
-        }
+        // else if (name === "salesman_name") {
+        //     const res = await fetchUser(e.target.value, "2")
+        //     setOptions(res)
+        // }
         else {
             const res = (await api.post(url, { [searchKey]: e.target.value }))
             setOptions(res?.data?.data)

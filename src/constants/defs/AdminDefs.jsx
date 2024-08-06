@@ -9,6 +9,7 @@ const adminDefs = [
     createColumn("订单状态名称", "inquiryTypeName", 140),
     // createColumn("产品类型", "itemType", 80),
     createColumn("产品类型名称", "itemTypeName", 140),
+    createColumn("产品类型名称", "itemType", 140),
     createColumn("客户ID", "customerId", 80),
     createColumn("客户名称", "customerName", 460),
     createColumn("客户名称（替换前）", "customerNameOld", 460),

@@ -17,7 +17,8 @@ const getLabels = (array) => {
 
 const getInitialValues = (array) => {
     return array.reduce((acc, key) => {
-        acc[key] = ''
+        // acc[key] = ''
+        acc[key] = key === "itemType" ? "1" : ""
         return acc
     }, {})
 }
@@ -30,6 +31,7 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
     const labels = action !== "delete" && getLabels(keys)
 
     const handleAdd = async (e) => {
+        console.log(values)
         e.preventDefault()
         const res = await addAdminData(type, values)
         console.log(res)
@@ -51,7 +53,7 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
 
     const addForm = <form className='col flex-center g1' onSubmit={handleAdd}>
         {labels?.length > 0 && labels.map((label, index) =>
-            label === "产品类型" ? (
+            label === "产品类型名称" ? (
                 <label key={index} htmlFor={label} className='row'>
                     {label}
                     <select
@@ -60,11 +62,11 @@ const AdminPopup = ({ type, action, closePopup, handleRefresh }) => {
                         value={values[keys[index]]}
                         onChange={(e) => setValues(prev => ({ ...prev, [keys[index]]: e.target.value }))}
                     >
-                        <option value="已有标品">已有标品</option>
-                        <option value="已有定制">已有定制</option>
-                        <option value="新增软件定制">新增软件定制</option>
-                        <option value="新增原材料定制">新增原材料定制</option>
-                        <option value="新增原材料+软件定制">新增原材料+软件定制</option>
+                        <option value="1">已有标品</option>
+                        <option value="2">已有定制</option>
+                        <option value="3">新增软件定制</option>
+                        <option value="4">新增原材料定制</option>
+                        <option value="5">新增原材料+软件定制</option>
                     </select>
                 </label>
             ) : (

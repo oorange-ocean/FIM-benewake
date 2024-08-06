@@ -198,6 +198,9 @@ const adminSchema = {
             bodyKeys: ["itemCode", "itemName", "itemType", "quantitative", "itemId"]
         },
         "select": "materialType",
+        "filter":{
+            url:"/item/filter/itemType"
+        }
     },
 }
 

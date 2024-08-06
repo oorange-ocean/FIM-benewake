@@ -16,10 +16,9 @@ const camelToSnake = (str) => {
 };
 
 const Manage = ({ type }) => {
-    let data = useLoaderData();
-    if (type === "materialType") {
-        data = data.data.records
-    }
+    let res = useLoaderData();
+    let data = type=== "materialType" ? res.data.records : res;
+    
     const { alertWarning } = useAlertContext();
     const { pagination, setPagination } = usePagination();
     const [rows, setRows] = useState(data);
@@ -28,7 +27,7 @@ const Manage = ({ type }) => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const { pageSize, setPageSize, filters, setFilters } = usePageState(type);
-    const [total, setTotal] = useState(pagination.total);
+    const [total, setTotal] = useState(null);
 
     const [schema, setSchema] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // 新增加载状态
@@ -112,8 +111,15 @@ const Manage = ({ type }) => {
     };
 
     useEffect(() => {
-        setRows(data);
-        setTotal(data.length);
+        if(type === "materialType"){
+            setRows(res.data.records)
+            setTotal(res.data.total)
+        }
+        else{
+            setRows(data);
+            setTotal(data.length);
+        }
+
         setCurrentPage(1);
         setPagination({ ...pagination, total: data.length });
 
@@ -132,7 +138,6 @@ const Manage = ({ type }) => {
     const handlePageChange = async (page, size) => {
         setCurrentPage(page);
         setPageSize(size);
-        setPagination({ ...pagination, pageSize: size });
 
         if (isFiltered) {
             setIsLoading(true); // 开始加载
@@ -142,10 +147,15 @@ const Manage = ({ type }) => {
             setRows(res.data.records ?? []);
             setTotal(res.data.total);
         }
+        else if(type ==="materialType"){
+            const data = await fetchAdminData(adminSchema[type].select, { page, size });
+            setRows(data.data.records);
+            setTotal(data.data.total);
+        }
     };
 
     const currentData = useMemo(() => {
-        if (isFiltered) {
+        if (isFiltered || type === "materialType") {
             return rows;
         }
         const start = (currentPage - 1) * pageSize;
