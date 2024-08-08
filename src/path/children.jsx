@@ -17,23 +17,19 @@ import InventoryOccupy from '../routes/InventoryOccupy/InventoryOccupy.jsx';
 import ProductionPlan from '../routes/ProductionPlan/ProductionPlan.jsx';
 import { fetchNewViews } from '../api/fetch';
 import { findMessages, findTodos, findPODelay } from '../api/message'
-
+import api from '../api/axios';
 const children = [
     {
         name: "全部订单", path: "all", id: 1,
         element: <All />,
-        // loader: async ({ signal }) => {
-        //     try {
-        //         const res = await fetchNewViews("1", { signal });
-        //         if (res?.code !== 200) {
-        //             return [];
-        //         } else {
-        //             return res.data;
-        //         }
-        //     } catch (err) {
-        //         console.error(err);
-        //     }
-        // }
+        loader: async () => {
+            try {
+                await api.get('/delivery/update');
+                return null
+            } catch (err) {
+                console.error(err);
+            }
+        }
 
     },
     { name: "订单类型列表", path: "order", element: <Order />, id: 2 },

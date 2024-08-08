@@ -18,13 +18,12 @@ import { getTableId } from '../js/getData';
 import { EDIT_INQUIRY_TAB, NEW_INQUIRY_TAB } from '../constants/Global';
 import api from '../api/axios';
 import { setTop, cancelTop } from '../api/inventory';
-
-export default function Toolbar({ features, handleInventoryRefresh, handleProductionPlanRefresh }) {
+import Loader from './Loader';
+export default function Toolbar({ features, handleInventoryRefresh, handleProductionPlanRefresh,setLoading }) {
 
     const updateTabs = useUpdateTabContext()
     const updateTableData = useUpdateTableDataContext()
     const updateTableStates = useUpdateTableStatesContext()
-
     const tableData = useTableDataContext()
     const { alertSuccess, alertError, alertConfirm, alertWarning } = useAlertContext()
 
@@ -41,7 +40,6 @@ export default function Toolbar({ features, handleInventoryRefresh, handleProduc
     const { auth } = useAuthContext()
 
     const toggleImportPopup = () => setOpenImportPopup(!openImportPopup)
-
     function noRowSelected() {
         if (!tableData || tableData.length === 0 || isObjectEmpty(rowSelection)) {
             alertWarning("未选择数据！")
@@ -85,13 +83,16 @@ export default function Toolbar({ features, handleInventoryRefresh, handleProduc
         }
         const res = await fetchData(selectedQuery[tableId])
         updateTableData({ type: "SET_TABLE_DATA", tableData: res.lists })
+
     }
     const handleReload = async () => {
+        setLoading(true)
         // 如果 tableId 是 6，先请求 /delivery/update
         if (tableId === 1 || tableId === 6) {
             await api.get('/delivery/update');
         }
         handleRefresh();
+        setLoading(false)
     }
 
     const handleAllowInquiry = async () => {
@@ -246,6 +247,7 @@ export default function Toolbar({ features, handleInventoryRefresh, handleProduc
     }
 
     return (
+     <>
         <div className='row toolbar'>
             <div className='row flex-center'>
                 <ToolbarButton feature="new" handler={handleNew} text="新增" additionalCondition={auth.userType != "3"} />
@@ -267,5 +269,6 @@ export default function Toolbar({ features, handleInventoryRefresh, handleProduc
                 </div>
             )}
         </div>
+     </>
     );
 }
