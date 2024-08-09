@@ -17,20 +17,34 @@ import InventoryOccupy from '../routes/InventoryOccupy/InventoryOccupy.jsx';
 import ProductionPlan from '../routes/ProductionPlan/ProductionPlan.jsx';
 import { fetchNewViews } from '../api/fetch';
 import { findMessages, findTodos, findPODelay } from '../api/message'
+import {
+    defer
+  } from "react-router-dom";
 import api from '../api/axios';
 const children = [
     {
-        name: "全部订单", path: "all", id: 1,
+        name: "全部订单",
+        path: "all",
+        id: 1,
         element: <All />,
         loader: async () => {
-            try {
-                await api.get('/delivery/update');
-                return null
-            } catch (err) {
-                console.error(err);
-            }
+            const updateDataPromise = api.get('/delivery/update')
+                .then(response => {
+                    if (response.data.code === 200) {
+                        return response.data;
+                    } else {
+                        throw new Error(response.data.message || '请求失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in loader:', error);
+                    throw error; // 重新抛出错误，让 errorElement 捕获
+                });
+    
+            return defer({
+                updateData: updateDataPromise,
+            });
         }
-
     },
     { name: "订单类型列表", path: "order", element: <Order />, id: 2 },
     { name: "客户类型列表", path: "customer", element: <Customer />, id: 3 },

@@ -1,4 +1,5 @@
-import { memo, useMemo, useState, useEffect } from 'react';
+import { memo, useMemo, useState, useTransition } from 'react';
+import { useLoaderData, Await } from 'react-router-dom';
 import SecTabs from '../components/SecTabs'
 import Table from '../components/table/Table';
 import Views from '../components/Views';
@@ -6,23 +7,35 @@ import Toolbar from '../components/Toolbar';
 import { useTableDataContext } from '../hooks/useCustomContext';
 import { allViews } from '../constants/Views';
 import AllDefs from '../constants/defs/AllDefs';
-import { useLoaderData } from 'react-router-dom';
 import Loader from '../components/Loader';
+
 const All = () => {
-    useLoaderData();
+    const { updateData } = useLoaderData();
     const tableData = useTableDataContext()
     const columns = useMemo(() => AllDefs, [])
     const features = ["new", "delete", "import", "export", "edit", "startInquiry", "refresh", 'allowInquiry', 'visibility']
     const [views, setViews] = useState(allViews)
     const [loading, setLoading] = useState(false)
+    const [isPending, startTransition] = useTransition();
+
+    const handleSetLoading = (value) => {
+        startTransition(() => {
+            setLoading(value);
+        });
+    };
+
     return (
-       <>
-        {
-            loading ? <Loader /> : (
+        <Await
+            resolve={updateData}
+            errorElement={<div>加载出错</div>}
+            fallback={<Loader />}
+        >
+            {() => (
                 <div className='col full-screen'>
                     <div className="tab-contents">
-                        <Toolbar features={features} 
-                        setLoading={setLoading}
+                        <Toolbar 
+                            features={features} 
+                            setLoading={handleSetLoading}
                         />
                         <SecTabs />
                         <Views
@@ -31,6 +44,7 @@ const All = () => {
                             editable
                         />
                     </div>
+                    {(loading || isPending) && <Loader />}
                     {tableData &&
                         <div className='content-container col'>
                             <Table
@@ -40,9 +54,8 @@ const All = () => {
                         </div>
                     }
                 </div>
-            )
-        }
-       </>
+            )}
+        </Await>
     )
 }
 
