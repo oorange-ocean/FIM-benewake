@@ -35,7 +35,13 @@ const DataList = memo(function DataList({ type, searchKey, initialValue, handleC
         };
     }, [showDropdown]);
 
-    useEffect(() => { setValue(initialValue) }, [initialValue])
+    useEffect(() => { 
+        console.log("initialValue", initialValue)
+        //如果initialValue是String类型，说明是从编辑页面传过来的，直接赋值
+        if (typeof initialValue === "string") {
+            setValue(initialValue)
+        }
+    }, [initialValue])
 
     const onChange = async (e) => {
         console.log("e.target.value", e.target.value)

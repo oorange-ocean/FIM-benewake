@@ -28,21 +28,22 @@ const children = [
         id: 1,
         element: <All />,
         loader: async () => {
-            const updateDataPromise = api.get('/delivery/update')
-                .then(response => {
-                    if (response.data.code === 200) {
-                        return response.data;
-                    } else {
-                        throw new Error(response.data.message || '请求失败');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error in loader:', error);
-                    throw error; // 重新抛出错误，让 errorElement 捕获
-                });
+            // const updateDataPromise = api.get('/delivery/update')
+            //     .then(response => {
+            //         if (response.data.code === 200) {
+            //             return response.data;
+            //         } else {
+            //             throw new Error(response.data.message || '请求失败');
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.error('Error in loader:', error);
+            //         throw error; // 重新抛出错误，让 errorElement 捕获
+            //     });
     
             return defer({
-                updateData: updateDataPromise,
+                // updateData: updateDataPromise,
+                updateData:null
             });
         }
     },
