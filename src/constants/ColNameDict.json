@@ -7,9 +7,9 @@
     },
     {
         "col_id": 2,
-        "col_name_CN": "单据类型",
+        "col_name_CN": "单据初始类型",
         "col_name_ENG": "inquiry_init_type",
-        "size": 82
+        "size": 100
     },
     {
         "col_id": 3,
