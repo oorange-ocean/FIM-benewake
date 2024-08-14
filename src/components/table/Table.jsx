@@ -27,9 +27,11 @@ export default function Table({
     noPagination,
     setNewInquiryData,
     handleRefresh,
-    selected
+    selected,
+    pageSize
 }) {
     const states = useTableStatesContext()
+    console.log('data', data)
     const [rowSelection, setRowSelection] = useState({})
     const columnVisibility = states.columnVisibility
     const [sorting, setSorting] = useState([])
@@ -80,7 +82,6 @@ export default function Table({
                 .getValue()
                 .match(/-?\d+/)?.[0]
             const n = parseInt(matchedValue || '-1', 10)
-            console.log(n)
             switch (n) {
                 case -1:
                     return '已删除'
@@ -122,7 +123,7 @@ export default function Table({
         initialState: {
             columnVisibility: columnVisibility,
             pagination: {
-                pageSize: 100
+                pageSize: pageSize
             }
         },
         getCoreRowModel: getCoreRowModel(),
