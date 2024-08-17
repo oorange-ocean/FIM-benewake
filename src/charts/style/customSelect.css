@@ -1,0 +1,90 @@
+.custom-select {
+    background-color: #022859;
+    /* border: 1px solid #0cf2f2; */
+    border-radius: 5px;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
+
+.custom-select .MuiInputBase-root {
+    color: #ffffff;
+}
+
+.custom-select .MuiOutlinedInput-notchedOutline {
+    border-color: #0cf2f2;
+}
+
+.custom-select .MuiInputLabel-root {
+    color: #9db9d6;
+}
+
+.custom-select .MuiMenuItem-root {
+    color: #ffffff;
+    background-color: #022859;
+}
+
+.custom-select .MuiMenuItem-root:hover {
+    background-color: #0053b5;
+}
+
+.custom-select .MuiCheckbox-root {
+    color: #0cf2f2;
+}
+
+.custom-select .MuiList-root {
+    background-color: #022859;
+    border: 1px solid #0cf2f2;
+    border-radius: 0 0 5px 5px;
+}
+
+.custom-select .MuiFormControlLabel-root {
+    color: #ffffff;
+}
+
+.custom-select .MuiTextField-root {
+    margin-bottom: 10px;
+}
+
+.custom-select .MuiTextField-root .MuiOutlinedInput-root {
+    background-color: #0053b5;
+}
+
+.custom-select .MuiTextField-root .MuiOutlinedInput-input {
+    color: #ffffff;
+}
+
+.custom-select .MuiTextField-root .MuiOutlinedInput-input::placeholder {
+    color: #9db9d6;
+}
+
+.custom-select .MuiList-root::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-select .MuiList-root::-webkit-scrollbar-track {
+    background: #022859;
+}
+
+.custom-select .MuiList-root::-webkit-scrollbar-thumb {
+    background-color: #0cf2f2;
+    border-radius: 4px;
+    border: 2px solid #022859;
+}
+
+.custom-select .MuiList-root::-webkit-scrollbar-thumb:hover {
+    background-color: #9db9d6;
+}
+
+.custom-select-item-text .MuiListItemText-primary {
+    font-size: 16px; /* 调整主要文本的大小 */
+}
+
+.custom-select-item-text .MuiListItemText-secondary {
+    font-size: 14px; /* 调整次要文本的大小 */
+}
+
+/* 如果需要调整复选框大小以匹配更大的文本 */
+.custom-select .MuiCheckbox-root {
+    transform: scale(1.2); /* 稍微增大复选框 */
+}

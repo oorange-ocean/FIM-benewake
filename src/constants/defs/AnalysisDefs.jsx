@@ -24,8 +24,10 @@ const analysisDefs = [
     createAnalysisDef('客户名称', 'customer_name', 220),
     createAnalysisDef('销售员', 'salesman_name', 100),
     createAnalysisDef('日期', 'sale_time', 100),
-    createAnalysisDef('订单号码', 'order_code', 120),
-    // createAnalysisDef("1为标黄", "is_yellow"),
+    createAnalysisDef('销售数量', 'sale_num', 100),
+    createAnalysisDef('订单金额', 'order_amount', 100),
+    createAnalysisDef('是否为重要客户', 'is_yellow', 100),
+    createAnalysisDef('是否为重要客户', 'one_is_yellow', 100),
     createAnalysisDef('客户', 'customer'),
     createAnalysisDef('次数', 'sale_times'),
     createAnalysisDef('客户购买总额', 'total_customer_item_num'),
@@ -34,11 +36,11 @@ const analysisDefs = [
     createAnalysisDef('产品销售总额', 'itemSaleNum', 100),
     createAnalysisDef('客户购买占比', 'customer_proporation'),
     createAnalysisDef('大于比值个数', 'over_proportion_num'),
-    // createAnalysisDef("1为标黄", "one_is_yellow"),
     createAnalysisDef('客户类型', 'customer_type'),
     createAnalysisDef('有效月份', 'total_months'),
     createAnalysisDef('最大值', 'max'),
-    createAnalysisDef('客户类型转换', 'customerTypeRevise', 100)
+    createAnalysisDef('客户类型转换', 'customerTypeRevise', 100),
+    createAnalysisDef('订单编码', 'order_code', 150)
 ]
 
 export default analysisDefs

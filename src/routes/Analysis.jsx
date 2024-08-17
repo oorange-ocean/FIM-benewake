@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react'
-import { FilterOutlined } from '@ant-design/icons'
 import Table from '../components/table/Table'
 import Loader from '../components/Loader'
 import { useLoaderData } from 'react-router-dom'
@@ -19,9 +18,12 @@ import CommonPagination from '../components/table/commonPaginate'
 import { Checkbox, FormGroup, FormControlLabel } from '@mui/material'
 import usePageState from '../hooks/useAnalysisPageState'
 import { ParamsToString, StringToParams } from '../utils/handleCustomerType'
-import { Modal, Box, Button, Typography } from '@mui/material'
-import SeasonalMarket from '../charts/SeasonalMarket/SeasonalMarket'
+import { Modal, Box, Typography, IconButton } from '@mui/material'
+import withChart from '../hocs/withChart'
+import FullscreenIcon from '@mui/icons-material/Fullscreen'
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
 
+import CloseIcon from '@mui/icons-material/Close'
 const labels = ['年度', '月度', '代理商', '新增', '临时', '日常']
 
 const ContainCustomerType = [
@@ -64,7 +66,7 @@ const CustomerTypeFilter = ({ params, setParams, onFilterChange }) => {
     )
 }
 
-const Analysis = ({ schema }) => {
+const Analysis = ({ schema, ChartComponent }) => {
     const res = useLoaderData()
     const { alertConfirm } = useAlertContext()
     const [rows, setRows] = useState([])
@@ -77,10 +79,8 @@ const Analysis = ({ schema }) => {
         schema.select
     )
     const isUnlikelyData = schema.select === 'getAnalysisUnlikelyData'
-    const isSeasonalMarket = schema.select === 'getAllQuarterlySellingCondition'
     const prevTypeRef = useRef()
-    const [isSeasonalMarketOpen, setIsSeasonalMarketOpen] = useState(false)
-
+    const [isChartOpen, setIsChartOpen] = useState(false)
     const setParams = (newParams) => {
         setFilters([
             ...filters,
@@ -91,6 +91,9 @@ const Analysis = ({ schema }) => {
             }
         ])
     }
+    const [isFullscreen, setIsFullscreen] = useState(true)
+
+    const toggleFullscreen = () => setIsFullscreen(!isFullscreen)
 
     // 更新状态
     const updateStateWithResponse = (response) => {
@@ -354,14 +357,9 @@ const Analysis = ({ schema }) => {
                             确认更新客户类型{' '}
                         </button>
                     )}
-                    {isSeasonalMarket && (
-                        <button
-                            type="text"
-                            onClick={() => {
-                                setIsSeasonalMarketOpen(true)
-                            }}
-                        >
-                            展示图表{' '}
+                    {ChartComponent && (
+                        <button onClick={() => setIsChartOpen(true)}>
+                            展示图表
                         </button>
                     )}
                 </div>
@@ -413,35 +411,60 @@ const Analysis = ({ schema }) => {
                     )}
                 </>
             )}
-            <Modal
-                open={isSeasonalMarketOpen}
-                onClose={closeModal}
-                aria-labelledby="seasonal-market-modal-title"
-            >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '80%',
-                        bgcolor: 'background.paper',
-                        boxShadow: 24,
-                        p: 4
-                    }}
-                >
-                    <Typography
-                        id="seasonal-market-modal-title"
-                        variant="h6"
-                        component="h2"
+            {ChartComponent && (
+                <Modal open={isChartOpen} onClose={() => setIsChartOpen(false)}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: isFullscreen ? '100%' : '80%',
+                            height: isFullscreen ? '100%' : 'auto',
+                            bgcolor: '#022859',
+                            boxShadow: 24,
+                            p: 4,
+                            color: 'white',
+                            borderRadius: isFullscreen ? 0 : '8px',
+                            overflow: 'auto'
+                        }}
                     >
-                        季节性销售数据分析
-                    </Typography>
-                    <SeasonalMarket rows={rows} />
-                </Box>
-            </Modal>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                mb: 2
+                            }}
+                        >
+                            <Typography variant="h6" component="h2">
+                                {schema.cn}
+                            </Typography>
+                            <Box>
+                                <IconButton
+                                    onClick={toggleFullscreen}
+                                    color="inherit"
+                                >
+                                    {isFullscreen ? (
+                                        <FullscreenExitIcon />
+                                    ) : (
+                                        <FullscreenIcon />
+                                    )}
+                                </IconButton>
+                                <IconButton
+                                    onClick={() => setIsChartOpen(false)}
+                                    color="inherit"
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                            </Box>
+                        </Box>
+                        <ChartComponent rows={rows} />
+                    </Box>
+                </Modal>
+            )}
         </div>
     )
 }
 
-export default Analysis
+export default withChart(Analysis)

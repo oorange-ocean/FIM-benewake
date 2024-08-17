@@ -31,7 +31,6 @@ export default function Table({
     pageSize
 }) {
     const states = useTableStatesContext()
-    console.log('data', data)
     const [rowSelection, setRowSelection] = useState({})
     const columnVisibility = states.columnVisibility
     const [sorting, setSorting] = useState([])
@@ -67,14 +66,7 @@ export default function Table({
     }
 
     const getCellContent = (cell) => {
-        // {cell.column.columnDef.id === 'monthAvg' ?
-        //     cell.getContext().getValue() ? parseFloat(cell.getContext().getValue()).toFixed(2) : ''
-        //     : flexRender(cell.column.columnDef.cell, cell.getContext())}
-        if (cell.column.columnDef.id === 'monthAvg') {
-            return cell.getContext().getValue()
-                ? parseFloat(cell.getContext().getValue()).toFixed(2)
-                : ''
-        } else if (cell.column.columnDef.id === 'state' && selected === 3) {
+        if (cell.column.columnDef.id === 'state' && selected === 3) {
             // 原始数据为询单N次
             // 正则表达式提取n
             const matchedValue = cell
@@ -90,6 +82,11 @@ export default function Table({
                 default:
                     return `询单${n}次`
             }
+        } else if (cell.column.columnDef.id === 'salesShare') {
+            //将小数转换成百分比
+            // 将小数转换成百分比，并保留两位小数
+            const value = cell.getContext().getValue()
+            return `${(value * 100).toFixed(2)}%`
         }
         return flexRender(cell.column.columnDef.cell, cell.getContext())
     }
