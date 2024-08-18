@@ -22,11 +22,6 @@ const CustomSelect = ({
     const [isIndeterminate, setIsIndeterminate] = useState(false)
 
     useEffect(() => {
-        // 组件加载时发送初始请求
-        onSearch('')
-    }, [])
-
-    useEffect(() => {
         const allSelected = selectedOptions.length === options.length
         const someSelected = selectedOptions.length > 0 && !allSelected
 

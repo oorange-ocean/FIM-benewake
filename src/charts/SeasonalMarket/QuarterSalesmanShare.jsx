@@ -1,21 +1,25 @@
 //某个物料一个季度内的销售员销售占比
 // SalesmanShare.jsx
 // export const getSalesNumSumByItemAndQuarterGroupBySalesman = (itemCode, quarter, year)
-import React, { useState, useEffect } from 'react';
-import EChartsReact from "echarts-for-react";
-import benewake from '../../echarts-theme/benewake.json';
-import { getSalesNumSumByItemAndQuarterGroupBySalesman } from "../../api/dashBoard";
+import React, { useState, useEffect } from 'react'
+import EChartsReact from 'echarts-for-react'
+import benewake from '../../echarts-theme/benewake.json'
+import { getSalesNumSumByItemAndQuarterGroupBySalesman } from '../../api/dashBoard'
 
 const SalesmanShare = ({ itemCode, quarter, year }) => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await getSalesNumSumByItemAndQuarterGroupBySalesman(itemCode, quarter, year);
-            setData(res.data);
-        };
-        fetchData();
-    }, [itemCode, quarter, year]);
+            const res = await getSalesNumSumByItemAndQuarterGroupBySalesman(
+                itemCode,
+                quarter,
+                year
+            )
+            setData(res.data)
+        }
+        fetchData()
+    }, [itemCode, quarter, year])
 
     const option = {
         title: {
@@ -41,7 +45,7 @@ const SalesmanShare = ({ itemCode, quarter, year }) => {
                 name: '销售占比',
                 type: 'pie',
                 radius: '50%',
-                data: data.map(item => ({
+                data: data.map((item) => ({
                     value: item.saleNumSum,
                     name: item.salesmanName
                 })),
@@ -57,7 +61,7 @@ const SalesmanShare = ({ itemCode, quarter, year }) => {
                 }
             }
         ]
-    };
+    }
 
     return (
         <div className="salesman-share">
@@ -65,10 +69,10 @@ const SalesmanShare = ({ itemCode, quarter, year }) => {
                 option={option}
                 theme={benewake}
                 style={{ height: '400px', width: '100%' }}
+                opts={{ renderer: 'svg' }}
             />
         </div>
-    );
-};
+    )
+}
 
-export default SalesmanShare;
-
+export default SalesmanShare

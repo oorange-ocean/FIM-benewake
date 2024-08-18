@@ -83,3 +83,17 @@ export const getMonthSaleConditionByItemCodeList = async (itemCodeList) => {
         throw error
     }
 }
+
+//物料的月度销售细节
+// dashboard/getSalesDetailByItemAndMonth?itemCode=13.01.02.023&month=4&year=2021
+export const getSalesDetailByItemAndMonth = async (itemCode, month, year) => {
+    try {
+        const response = await axios.get(
+            `/dashboard/getSalesDetailByItemAndMonth?itemCode=${itemCode}&month=${month}&year=${year}`
+        )
+        return response.data
+    } catch (error) {
+        console.error('Error fetching monthly sale detail data:', error)
+        throw error
+    }
+}

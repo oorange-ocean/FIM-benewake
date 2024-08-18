@@ -25,7 +25,8 @@ import {
 import benewake from '../../echarts-theme/benewake.json'
 import CustomSelect from './CustomSelect'
 import SalesmanShareOverview from '../SalesmanShareOverview'
-import MonthSaleCondition from './MonthSaleCondition'
+import MonthSaleCondition from '../MonthSale'
+import MonthDetailOrder from '../MonthDetailOrder'
 const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
@@ -33,7 +34,6 @@ const formatNumber = (num) => {
 const AllPastAnalysis = () => {
     const [salesmen, setSalesmen] = useState([])
     const [items, setItems] = useState([])
-    const [series, setSeries] = useState([])
     const [selectedSalesmen, setSelectedSalesmen] = useState([])
     const [selectedItems, setSelectedItems] = useState([])
     const [data, setData] = useState([])
@@ -44,9 +44,10 @@ const AllPastAnalysis = () => {
     const [showNumbers, setShowNumbers] = useState(true)
     const [navigationStack, setNavigationStack] = useState(['main'])
     const [selectedOverviewData, setSelectedOverviewData] = useState(null)
-    const [isLoading, setIsLoading] = useState(false)
     const [selectedItemCodes, setSelectedItemCodes] = useState([])
     const [selectedItemNames, setSelectedItemNames] = useState([])
+    const [selectedMonth, setSelectedMonth] = useState(null)
+    const [selectedYear, setSelectedYear] = useState(null)
     //初始化选中的销售员和物料编码
     useEffect(() => {
         const initSalesmen = async () => {
@@ -64,6 +65,8 @@ const AllPastAnalysis = () => {
     //更新数据
     useEffect(() => {
         fetchData()
+        handleItemSearch('')
+        handleSalesmanSearch('')
     }, [selectedSalesmen, selectedItems])
 
     //获取数据
@@ -308,6 +311,7 @@ const AllPastAnalysis = () => {
                             notMerge={true}
                             style={{ height: '400px', width: '100%' }}
                             onEvents={{ click: handleDataClick }}
+                            opts={{ renderer: 'svg' }}
                         />
                     </CardContent>
                 </Card>
@@ -444,6 +448,17 @@ const AllPastAnalysis = () => {
             <MonthSaleCondition
                 itemCodeList={selectedItemCodes}
                 itemNameList={selectedItemNames}
+                setNavigationStack={setNavigationStack}
+                setSelectedMonth={setSelectedMonth}
+                setSelectedYear={setSelectedYear}
+            />
+        ),
+        monthDetailOrder: () => (
+            <MonthDetailOrder
+                itemCode={selectedItemCodes[0]}
+                itemName={selectedItemNames[0]}
+                month={selectedMonth}
+                year={selectedYear}
             />
         )
     }

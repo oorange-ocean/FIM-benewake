@@ -105,6 +105,7 @@ const SalesmanShareOverview = ({ itemCode, itemName }) => {
                 option={getOption()}
                 theme={benewake}
                 style={{ height: '600px', width: '100%' }}
+                opts={{ renderer: 'svg' }}
             />
         </div>
     )

@@ -1,6 +1,6 @@
 //SeasonalMarketDetailOrder.jsx
-//这是季度销售情况分析表的二级下探界面，接收三个参数，分别是itemCode, quarter, year
-///dashboard/getSalesDetailByItemAndQuarter?itemCode=13.01.02.023&quarter=3&year=2021
+//这是季度销售情况分析表的三级下探界面，接收三个参数，分别是itemCode, month, year
+///dashboard/getSalesDetailByItemAndMonth?itemCode=13.01.02.023&month=4&year=2021
 //季度销售的详细情况，横轴为时间，纵轴为销售额，每个点代表一个订单
 //订单数据示例	{
 // 	"salesmanName": "赵璐",
@@ -9,52 +9,59 @@
 // 	"saleNum": 10,
 // 	"customerName": "Mouser Electronics Inc."
 // },
-import React, { useState, useEffect } from 'react';
-import EChartsReact from "echarts-for-react";
-import benewake from '../../echarts-theme/benewake.json';
-import { getSalesDetailByItemAndQuarter } from '../../api/dashBoard';
-import CloseIcon from '@mui/icons-material/Close'; const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-};
+import React, { useState, useEffect } from 'react'
+import EChartsReact from 'echarts-for-react'
+import benewake from '../echarts-theme/benewake.json'
+import { getSalesDetailByItemAndMonth } from '../api/dashBoard'
+const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+        2,
+        '0'
+    )}-${String(date.getDate()).padStart(2, '0')}`
+}
 
-const SeasonalMarketDetailOrder = ({ itemCode, quarter, year }) => {
-    const [data, setData] = useState([]);
+const SeasonalMarketDetailOrder = ({ itemCode, itemName, month, year }) => {
+    const [data, setData] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await getSalesDetailByItemAndQuarter(itemCode, quarter, year);
-            setData(res.data);
-        };
-        fetchData();
-    }, [itemCode, quarter, year]);
+            const res = await getSalesDetailByItemAndMonth(
+                itemCode,
+                month,
+                year
+            )
+            setData(res)
+        }
+        fetchData()
+    }, [itemCode, month, year])
 
     const processData = (rawData) => {
-        const salesmanData = {};
-        const dates = new Set();
-        const detailedData = {};
+        const salesmanData = {}
+        const dates = new Set()
+        const detailedData = {}
 
-        rawData.forEach(item => {
-            const date = formatDate(item.saleTime);
-            dates.add(date);
+        rawData.forEach((item) => {
+            const date = formatDate(item.saleTime)
+            dates.add(date)
 
             if (!salesmanData[item.salesmanName]) {
-                salesmanData[item.salesmanName] = {};
+                salesmanData[item.salesmanName] = {}
             }
 
             if (!salesmanData[item.salesmanName][date]) {
-                salesmanData[item.salesmanName][date] = 0;
+                salesmanData[item.salesmanName][date] = 0
             }
 
-            salesmanData[item.salesmanName][date] += item.saleNum;
+            salesmanData[item.salesmanName][date] += item.saleNum
 
             if (!detailedData[date]) {
-                detailedData[date] = [];
+                detailedData[date] = []
             }
-            detailedData[date].push(item);
-        });
+            detailedData[date].push(item)
+        })
 
-        const sortedDates = Array.from(dates).sort();
+        const sortedDates = Array.from(dates).sort()
 
         return {
             dates: sortedDates,
@@ -66,20 +73,20 @@ const SeasonalMarketDetailOrder = ({ itemCode, quarter, year }) => {
                 emphasis: {
                     focus: 'series'
                 },
-                data: sortedDates.map(date => ({
+                data: sortedDates.map((date) => ({
                     value: sales[date] || 0,
                     itemData: detailedData[date] || []
                 }))
             })),
             detailedData
-        };
-    };
+        }
+    }
 
-    const { dates, series, detailedData } = processData(data);
+    const { dates, series, detailedData } = processData(data)
 
     const option = {
         title: {
-            text: `${year}年Q${quarter} - ${itemCode}销售详情`,
+            text: `${year}年${month}月 - ${itemCode} - ${itemName}销售详情`,
             left: 'center',
             textStyle: {
                 color: '#ffffff'
@@ -94,34 +101,36 @@ const SeasonalMarketDetailOrder = ({ itemCode, quarter, year }) => {
                 }
             },
             formatter: function (params) {
-                const date = params[0].axisValue;
-                const items = detailedData[date] || [];
-                let res = `<strong>${date}</strong><br/>`;
+                const date = params[0].axisValue
+                const items = detailedData[date] || []
+                let res = `<strong>${date}</strong><br/>`
 
-                const salesSummary = {};
-                items.forEach(item => {
+                const salesSummary = {}
+                items.forEach((item) => {
                     if (!salesSummary[item.salesmanName]) {
                         salesSummary[item.salesmanName] = {
                             totalSales: 0,
                             customers: new Set()
-                        };
+                        }
                     }
-                    salesSummary[item.salesmanName].totalSales += item.saleNum;
-                    salesSummary[item.salesmanName].customers.add(item.customerName);
-                });
+                    salesSummary[item.salesmanName].totalSales += item.saleNum
+                    salesSummary[item.salesmanName].customers.add(
+                        item.customerName
+                    )
+                })
 
                 Object.entries(salesSummary).forEach(([salesman, data]) => {
-                    res += `<br/><strong>${salesman}</strong>:<br/>`;
-                    res += `总销售量: ${data.totalSales}<br/>`;
-                    res += `客户数: ${data.customers.size}<br/>`;
-                    res += `客户: ${Array.from(data.customers).join(', ')}<br/>`;
-                });
+                    res += `<br/><strong>${salesman}</strong>:<br/>`
+                    res += `总销售量: ${data.totalSales}<br/>`
+                    res += `客户数: ${data.customers.size}<br/>`
+                    res += `客户: ${Array.from(data.customers).join(', ')}<br/>`
+                })
 
-                return res;
+                return res
             }
         },
         legend: {
-            data: series.map(s => s.name),
+            data: series.map((s) => s.name),
             top: 'bottom',
             textStyle: {
                 color: '#ffffff'
@@ -161,7 +170,7 @@ const SeasonalMarketDetailOrder = ({ itemCode, quarter, year }) => {
             }
         ],
         series: series
-    };
+    }
 
     return (
         <div className="seasonal-market-detail">
@@ -169,10 +178,10 @@ const SeasonalMarketDetailOrder = ({ itemCode, quarter, year }) => {
                 option={option}
                 theme={benewake}
                 style={{ height: '400px', width: '100%' }}
+                opts={{ renderer: 'svg' }}
             />
         </div>
-    );
-};
+    )
+}
 
-export default SeasonalMarketDetailOrder;
-
+export default SeasonalMarketDetailOrder

@@ -5,7 +5,7 @@ import benewake from '../../echarts-theme/benewake.json'
 import { fetchAnalysisData } from '../../api/analysis'
 import DataList from '../../components/DataList'
 import { Tooltip, Button } from '@mui/material'
-import SeasonalMarketDetailOrder from './SeasonalMarketDetailOrder'
+import SeasonalMarketDetailOrder from '../MonthDetailOrder'
 import SalesmanShare from './QuarterSalesmanShare'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ShowChartIcon from '@mui/icons-material/ShowChart'
@@ -13,7 +13,8 @@ import BarChartIcon from '@mui/icons-material/BarChart'
 import NumbersIcon from '@mui/icons-material/Numbers'
 import SalesmanShareOverview from '../SalesmanShareOverview'
 import Navigation from '../Navigation' // 导入新的 Navigation 组件
-import MonthSaleCondition from '../AllPastAnalysis/MonthSaleCondition'
+import MonthSaleCondition from '../MonthSale'
+import MonthDetailOrder from '../MonthDetailOrder'
 const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
@@ -115,7 +116,7 @@ const SeasonalMarketChart = ({ rows }) => {
     const [selectedYear, setSelectedYear] = useState(null)
     const [navigationStack, setNavigationStack] = useState(['main'])
     const [showMonthlyAverage, setShowMonthlyAverage] = useState(true)
-
+    const [selectedMonth, setSelectedMonth] = useState(null)
     useEffect(() => {
         const fetchData = async () => {
             if (!rows) {
@@ -235,6 +236,7 @@ const SeasonalMarketChart = ({ rows }) => {
                         onEvents={{
                             click: handleBarClick
                         }}
+                        opts={{ renderer: 'svg' }}
                     />
                     <Button
                         onClick={() => navigateTo('salesmanShareOverview')}
@@ -282,12 +284,26 @@ const SeasonalMarketChart = ({ rows }) => {
                     data.find((d) => d.itemCode === targetItemCode)?.itemName ||
                         ''
                 ]}
+                setSelectedMonth={setSelectedMonth}
+                setSelectedYear={setSelectedYear}
                 // quartersList={[`${selectedYear}Q${selectedQuarter}`]}
                 quartersList={
                     selectedYear && selectedQuarter
                         ? [`${selectedYear}Q${selectedQuarter}`]
                         : []
                 }
+                setNavigationStack={setNavigationStack}
+            />
+        ),
+        monthDetailOrder: () => (
+            <MonthDetailOrder
+                itemCode={targetItemCode}
+                itemName={
+                    data.find((d) => d.itemCode === targetItemCode)?.itemName ||
+                    ''
+                }
+                month={selectedMonth}
+                year={selectedYear}
             />
         )
     }

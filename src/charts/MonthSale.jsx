@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import EChartsReact from 'echarts-for-react'
-import benewake from '../../echarts-theme/benewake.json'
-import { getMonthSaleConditionByItemCodeList } from '../../api/dashBoard'
+import benewake from '../echarts-theme/benewake.json'
+import { getMonthSaleConditionByItemCodeList } from '../api/dashBoard'
 import NumbersIcon from '@mui/icons-material/Numbers'
 const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -11,7 +11,10 @@ import { Box, Tooltip } from '@mui/material'
 const MonthSaleCondition = ({
     itemCodeList,
     itemNameList,
-    quartersList = []
+    quartersList = [],
+    setSelectedMonth,
+    setSelectedYear,
+    setNavigationStack
 }) => {
     const [data, setData] = useState([])
     const [showNumbers, setShowNumbers] = useState(true)
@@ -24,7 +27,7 @@ const MonthSaleCondition = ({
         fetchData()
     }, [itemCodeList])
 
-    const getOption = useCallback(() => {
+    const xAxisData = useMemo(() => {
         let filteredData = data
         if (quartersList.length > 0) {
             filteredData = data.filter((item) => {
@@ -33,9 +36,36 @@ const MonthSaleCondition = ({
                 return quartersList.includes(quarter)
             })
         }
-        const xAxisData = [
-            ...new Set(filteredData.map((item) => item.saleTime))
-        ]
+        return [...new Set(filteredData.map((item) => item.saleTime))]
+    }, [data, quartersList])
+
+    const handleDataClick = useCallback(
+        (params) => {
+            if (params.componentType === 'series') {
+                let clickedYear, clickedMonthNumber
+
+                if (quartersList.length > 0) {
+                    // 处理 "YYYY年MM月" 格式
+                    const [year, month] = params.name.split('年')
+                    clickedYear = parseInt(year)
+                    clickedMonthNumber = parseInt(month)
+                } else {
+                    // 使用 xAxisData 推断年份和月份
+                    const fullDate = xAxisData[params.dataIndex]
+                    const [year, month] = fullDate.split('-')
+                    clickedYear = parseInt(year)
+                    clickedMonthNumber = parseInt(month)
+                }
+
+                setSelectedMonth(clickedMonthNumber)
+                setSelectedYear(clickedYear)
+                setNavigationStack((prev) => [...prev, 'monthDetailOrder'])
+            }
+        },
+        [setNavigationStack, quartersList, xAxisData]
+    )
+
+    const getOption = useCallback(() => {
         // 处理x轴标签和年份分隔线
         const xAxisLabels = []
         const splitLines = []
@@ -149,6 +179,10 @@ const MonthSaleCondition = ({
                 option={getOption()}
                 theme={benewake}
                 style={{ height: '400px', width: '100%' }}
+                onEvents={{
+                    click: handleDataClick
+                }}
+                opts={{ renderer: 'svg' }}
             />
         </>
     )
