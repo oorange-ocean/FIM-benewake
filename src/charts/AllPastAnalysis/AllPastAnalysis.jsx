@@ -136,8 +136,9 @@ const AllPastAnalysis = () => {
                         d.salesmanName === salesmanName &&
                         d.itemName === itemName
                 )
-                return item ? item.salesmanSaleNum : 0
+                return item ? item.salesmanSaleNum : '-'
             }),
+            barMinHeight: 5,
             label: {
                 show: showNumbers,
                 position: 'top',
@@ -150,11 +151,7 @@ const AllPastAnalysis = () => {
                             d.salesmanName === params.name &&
                             d.itemName === params.seriesName
                     )
-                    return item
-                        ? `${formatNumber(params.value)}\n(${(
-                              item.salesShare * 100
-                          ).toFixed(2)}%)`
-                        : ''
+                    return item ? `${formatNumber(params.value)}` : ''
                 },
                 color: '#ffffff'
             }
