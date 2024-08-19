@@ -1,23 +1,21 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
 const Paginate = ({ table }) => {
     const [pageNum, setPageNum] = useState(1)
 
     const handleInput = (e) => {
-        const newValue = e.target.value;
+        const newValue = e.target.value
 
         if (/^\d+$/.test(newValue)) {
-            setPageNum(newValue);
+            setPageNum(newValue)
             table.setPageIndex(newValue - 1)
-        }
-        else if (newValue === '') {
-            setPageNum(newValue);
+        } else if (newValue === '') {
+            setPageNum(newValue)
             table.setPageIndex(0)
+        } else {
+            setPageNum(pageNum)
         }
-        else {
-            setPageNum(pageNum);
-        }
-    };
+    }
 
     return (
         <div className="pagination-container row flex-center">
@@ -27,8 +25,7 @@ const Paginate = ({ table }) => {
                     onClick={() => {
                         table.setPageIndex(0)
                         setPageNum(1)
-                    }
-                    }
+                    }}
                     disabled={!table.getCanPreviousPage()}
                 >
                     {'<<'}
@@ -37,7 +34,7 @@ const Paginate = ({ table }) => {
                     className="border rounded p-1"
                     onClick={() => {
                         table.previousPage()
-                        setPageNum(prev => prev - 1)
+                        setPageNum((prev) => prev - 1)
                     }}
                     disabled={!table.getCanPreviousPage()}
                 >
@@ -54,7 +51,9 @@ const Paginate = ({ table }) => {
                         onChange={handleInput}
                         step="1"
                         className="page-number"
-                        onBlur={() => { if (pageNum === "") setPageNum(1) }}
+                        onBlur={() => {
+                            if (pageNum === '') setPageNum(1)
+                        }}
                     />
                     页
                 </span>
@@ -63,7 +62,7 @@ const Paginate = ({ table }) => {
                     className="border rounded p-1"
                     onClick={() => {
                         table.nextPage()
-                        setPageNum(prev => prev + 1)
+                        setPageNum((prev) => Number(prev) + 1)
                     }}
                     disabled={!table.getCanNextPage()}
                 >
@@ -74,8 +73,7 @@ const Paginate = ({ table }) => {
                     onClick={() => {
                         table.setPageIndex(table.getPageCount() - 1)
                         setPageNum(table.getPageCount())
-                    }
-                    }
+                    }}
                     disabled={!table.getCanNextPage()}
                 >
                     {'>>'}
@@ -86,11 +84,12 @@ const Paginate = ({ table }) => {
                 <select
                     name="page-size"
                     value={table.getState().pagination.pageSize}
-                    onChange={e => {
+                    onChange={(e) => {
                         table.setPageSize(Number(e.target.value))
+                        setPageNum(1)
                     }}
                 >
-                    {[100, 1000, 5000].map(pageSize => (
+                    {[100, 1000, 5000].map((pageSize) => (
                         <option key={pageSize} value={pageSize}>
                             {pageSize}
                         </option>
@@ -100,7 +99,7 @@ const Paginate = ({ table }) => {
                 <strong>{table.getCoreRowModel().rows.length}</strong>行
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Paginate;
+export default Paginate

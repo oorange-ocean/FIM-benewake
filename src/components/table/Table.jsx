@@ -120,7 +120,7 @@ export default function Table({
         initialState: {
             columnVisibility: columnVisibility,
             pagination: {
-                pageSize: pageSize
+                pageSize: pageSize ? pageSize : 100
             }
         },
         getCoreRowModel: getCoreRowModel(),
