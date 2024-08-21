@@ -25,13 +25,13 @@ const SalesmanShareOverview = ({ itemCode, itemName }) => {
         const salesmen = data.map((item) => item.salesmanName)
         const salesData = data.map((item) => item.saleNumSum)
         const totalSales = salesData.reduce((sum, value) => sum + value, 0)
-        // 占比大于5%的数据
+        // 占比大于3%的数据
         const filteredData = salesmen
             .map((name, index) => ({
                 value: salesData[index],
                 name: name
             }))
-            .filter((item) => item.value / totalSales > 0.05)
+            .filter((item) => item.value / totalSales > 0.03)
         return {
             title: {
                 text: `${itemCode} - ${itemName}`,

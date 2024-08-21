@@ -10,13 +10,13 @@ import {
     Card,
     CardContent,
     Box,
-    IconButton,
     Typography,
     Tooltip
 } from '@mui/material'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import NumbersIcon from '@mui/icons-material/Numbers'
 import Navigation from '../Navigation'
+import NumberDisplay from '../components/Numbers'
 import {
     getAnalysisOneByItemAndSalesmanIn,
     getItemByCodeLike,
@@ -37,7 +37,7 @@ const AllPastAnalysis = () => {
     const [selectedSalesmen, setSelectedSalesmen] = useState([])
     const [selectedItems, setSelectedItems] = useState([])
     const [data, setData] = useState([])
-    const [showTotalSales, setShowTotalSales] = useState(false)
+    const [showTotalSales, setShowTotalSales] = useState(true)
     const [showMonthlyAverage, setShowMonthlyAverage] = useState(true)
     const [openItemModal, setOpenItemModal] = useState(false)
     const [openSalesmanModal, setOpenSalesmanModal] = useState(false)
@@ -48,6 +48,7 @@ const AllPastAnalysis = () => {
     const [selectedItemNames, setSelectedItemNames] = useState([])
     const [selectedMonth, setSelectedMonth] = useState(null)
     const [selectedYear, setSelectedYear] = useState(null)
+    const [numberDisplayData, setNumberDisplayData] = useState([])
     //初始化选中的销售员和物料编码
     useEffect(() => {
         const initSalesmen = async () => {
@@ -82,31 +83,90 @@ const AllPastAnalysis = () => {
         }
     }
 
-    const handleDataClick = useCallback(
-        (params) => {
-            if (params.name === '月平均') {
-                //根据seriesIndex获取itemCode
-                const itemCode = data.find(
-                    (d) => d.itemName === params.seriesName
-                ).itemCode
-                const itemName = data.find(
-                    (d) => d.itemName === params.seriesName
-                ).itemName
-                setSelectedItemCodes([itemCode])
-                setSelectedItemNames([itemName])
-                setNavigationStack((prev) => [...prev, 'monthSaleCondition'])
-            } else if (params.name === '总计' || params.seriesName) {
-                const itemCode = params.seriesName
-                    ? data.find((d) => d.itemName === params.seriesName)
-                          .itemCode
-                    : null
-                const salesmanName = params.name !== '总计' ? params.name : null
-                setSelectedOverviewData({ itemCode, salesmanName })
-                setNavigationStack((prev) => [...prev, 'overview'])
+    useEffect(() => {
+        if (data.length) {
+            const newData = []
+            if (showMonthlyAverage) {
+                const monthlyAverageMap = {}
+                data.forEach((item) => {
+                    if (!monthlyAverageMap[item.itemCode]) {
+                        monthlyAverageMap[item.itemCode] = {
+                            itemCode: item.itemCode,
+                            itemName: item.itemName,
+                            type: '月平均',
+                            value: item.monthAvg
+                        }
+                    }
+                })
+                newData.push(
+                    ...Object.values(monthlyAverageMap).map((item) => ({
+                        ...item,
+                        value: formatNumber(item.value)
+                    }))
+                )
             }
-        },
-        [data]
-    )
+            if (showTotalSales) {
+                const totalSalesMap = {}
+                data.forEach((item) => {
+                    if (!totalSalesMap[item.itemCode]) {
+                        totalSalesMap[item.itemCode] = {
+                            itemCode: item.itemCode,
+                            itemName: item.itemName,
+                            type: '总销售额',
+                            value: item.itemSaleNum
+                        }
+                    }
+                })
+                newData.push(
+                    ...Object.values(totalSalesMap).map((item) => ({
+                        ...item,
+                        value: formatNumber(item.value)
+                    }))
+                )
+            }
+            setNumberDisplayData(newData)
+        }
+    }, [data, showTotalSales, showMonthlyAverage])
+
+    const handleNumberDisplayClick = useCallback((item) => {
+        if (item.type === '月平均') {
+            setSelectedItemCodes([item.itemCode])
+            setSelectedItemNames([item.itemName])
+            setNavigationStack((prev) => [...prev, 'monthSaleCondition'])
+        } else if (item.type === '总销售额') {
+            setSelectedOverviewData({
+                itemCode: item.itemCode,
+                salesmanName: null
+            })
+            setNavigationStack((prev) => [...prev, 'overview'])
+        }
+    }, [])
+
+    // const handleDataClick = useCallback(
+    //     (params) => {
+    //         if (params.name === '月平均') {
+    //             //根据seriesIndex获取itemCode
+    //             const itemCode = data.find(
+    //                 (d) => d.itemName === params.seriesName
+    //             ).itemCode
+    //             const itemName = data.find(
+    //                 (d) => d.itemName === params.seriesName
+    //             ).itemName
+    //             setSelectedItemCodes([itemCode])
+    //             setSelectedItemNames([itemName])
+    //             setNavigationStack((prev) => [...prev, 'monthSaleCondition'])
+    //         } else if (params.name === '总计' || params.seriesName) {
+    //             const itemCode = params.seriesName
+    //                 ? data.find((d) => d.itemName === params.seriesName)
+    //                       .itemCode
+    //                 : null
+    //             const salesmanName = params.name !== '总计' ? params.name : null
+    //             setSelectedOverviewData({ itemCode, salesmanName })
+    //             setNavigationStack((prev) => [...prev, 'overview'])
+    //         }
+    //     },
+    //     [data]
+    // )
 
     const handleSalesmanSearch = async (value) => {
         const result = await getSalesmanByNameLike(value)
@@ -121,11 +181,11 @@ const AllPastAnalysis = () => {
     // 使用 useMemo 来优化图表选项的计算
     const chartOption = useMemo(() => {
         if (!data.length) return {}
-
         const salesmanNames = [
             ...new Set(data.map((item) => item.salesmanName))
         ]
         const itemNames = [...new Set(data.map((item) => item.itemName))]
+        let xAxisData = [...salesmanNames]
 
         let series = itemNames.map((itemName) => ({
             name: itemName,
@@ -139,43 +199,48 @@ const AllPastAnalysis = () => {
                 return item ? item.salesmanSaleNum : '-'
             }),
             barMinHeight: 5,
+            // barMinWidth: 30,
             label: {
                 show: showNumbers,
                 position: 'top',
                 formatter: (params) => {
-                    if (params.name === '总计' || params.name === '月平均') {
-                        return formatNumber(params.value)
-                    }
-                    const item = data.find(
-                        (d) =>
-                            d.salesmanName === params.name &&
-                            d.itemName === params.seriesName
-                    )
-                    return item ? `${formatNumber(params.value)}` : ''
+                    return formatNumber(params.value)
                 },
                 color: '#ffffff'
             }
         }))
 
-        let xAxisData = [...salesmanNames]
-
         if (showTotalSales) {
-            series.forEach((s) => {
-                const totalSales = s.data.reduce((sum, val) => sum + val, 0)
-                s.data.push(totalSales)
-            })
-            xAxisData.push('总计')
+            // series.forEach((s) => {
+            //     const itemData = data.find((d) => d.itemName === s.name)
+            //     if (itemData) {
+            //         // 使用原始数据中的总销售额
+            //         s.data.push(itemData.itemSaleNum)
+            //     } else {
+            //         // 如果没有找到对应的数据，添加 0 或其他默认值
+            //         s.data.push(0)
+            //     }
+            // })
+            // xAxisData.push('总计')
         }
 
         if (showMonthlyAverage) {
-            series.forEach((s, index) => {
-                const monthlyAverage =
-                    data.find((d) => d.itemName === s.name)?.monthAvg || 0
-                s.data.push(monthlyAverage)
-            })
-            xAxisData.push('月平均')
+            // series.forEach((s, index) => {
+            //     const monthlyAverage =
+            //         data.find((d) => d.itemName === s.name)?.monthAvg || 0
+            //     s.data.push(monthlyAverage)
+            // })
+            // xAxisData.push('月平均')
         }
-
+        // 计算初始显示的数据范围
+        const totalDataPoints = xAxisData.length
+        const initialDisplayCount = 10 // 初始显示的数据点数量
+        const endPercentage = Math.min(
+            100,
+            (initialDisplayCount / totalDataPoints) * 100
+        )
+        // 根据选择的物料数量决定是否显示 dataZoom
+        const showDataZoom = itemNames.length > 1
         return {
             legend: {
                 show: true,
@@ -199,6 +264,29 @@ const AllPastAnalysis = () => {
                     nameTextStyle: { color: '#ffffff' }
                 }
             ],
+            dataZoom: showDataZoom
+                ? [
+                      {
+                          type: 'slider',
+                          show: true,
+                          xAxisIndex: [0],
+                          start: 0,
+                          end: endPercentage
+                      },
+                      {
+                          type: 'inside',
+                          xAxisIndex: [0],
+                          start: 0,
+                          end: endPercentage
+                      }
+                  ]
+                : [],
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: showDataZoom ? '15%' : '10%', // 如果显示 dataZoom，底部留更多空间
+                containLabel: true
+            },
             series
         }
     }, [data, showTotalSales, showMonthlyAverage, showNumbers])
@@ -307,9 +395,15 @@ const AllPastAnalysis = () => {
                             theme={benewake}
                             notMerge={true}
                             style={{ height: '400px', width: '100%' }}
-                            onEvents={{ click: handleDataClick }}
+                            // onEvents={{ click: handleDataClick }}
                             opts={{ renderer: 'svg' }}
                         />
+                        {(showTotalSales || showMonthlyAverage) && (
+                            <NumberDisplay
+                                items={numberDisplayData}
+                                onItemClick={handleNumberDisplayClick}
+                            />
+                        )}
                     </CardContent>
                 </Card>
 
