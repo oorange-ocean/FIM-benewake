@@ -103,6 +103,7 @@ export default function InventoryOccupy() {
             />
             <InventoryOccupyTable
                 data={data}
+                setData={setData}
                 columns={columns}
                 noPagination={true}
             />

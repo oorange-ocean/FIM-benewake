@@ -24,8 +24,7 @@ const getCellContent = (column, table) => {
                     style={{
                         fontSize: '0.7em',
                         lineHeight: '1',
-                        marginBottom: '2px',
-                        color: '#666'
+                        marginBottom: '2px'
                     }}
                 >
                     {getWeekday(headerValue)}
