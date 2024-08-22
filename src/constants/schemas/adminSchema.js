@@ -1,207 +1,213 @@
 const adminSchema = {
     customerType: {
-        "cn": "客户类型",
-        "select": "getCustomerTypes",
-        "add": {
-            url: "addCustomerType",
-            bodyKeys: ["customerType"]
+        cn: '客户类型',
+        select: 'getCustomerTypes',
+        add: {
+            url: 'addCustomerType',
+            bodyKeys: ['customerType']
         },
-        "delete": {
-            url: "deleteCustomerType",
-            bodyKeys: ["customerType"]
+        delete: {
+            url: 'deleteCustomerType',
+            bodyKeys: ['customerType']
         }
     },
     inquiryType: {
-        "cn": "订单状态",
-        "select": "selectInquiryTypeDic",
-        "add": {
-            url: "addInquiryType",
-            bodyKeys: ["typeName"]
+        cn: '订单状态',
+        select: 'selectInquiryTypeDic',
+        add: {
+            url: 'addInquiryType',
+            bodyKeys: ['typeName']
         },
-        "delete": {
-            url: "deleteInquiryType",
-            bodyKeys: ["inquiryTypeName"]
+        delete: {
+            url: 'deleteInquiryType',
+            bodyKeys: ['inquiryTypeName']
         }
     },
     itemType: {
-        "cn": "产品类型",
-        "add": {
-            url: "insertItemType",
-            bodyKeys: ["itemTypeName"]
+        cn: '产品类型',
+        add: {
+            url: 'insertItemType',
+            bodyKeys: ['itemTypeName']
         },
-        "delete": {
-            url: "deleteItemType",
-            bodyKeys: ["itemTypeName"]
+        delete: {
+            url: 'deleteItemType',
+            bodyKeys: ['itemTypeName']
         },
-        "select": "selectItemTypeDic"
+        select: 'selectItemTypeDic'
     },
     customerName: {
-        "cn": "客户名称",
-        "add": {
-            url: "addCustomerName",
-            bodyKeys: ["addCustomerName"]
+        cn: '客户名称',
+        add: {
+            url: 'addCustomerName',
+            bodyKeys: ['addCustomerName']
         },
-        "delete": {
-            url: "deleteCustomerName",
-            bodyKeys: ["deleteCustomerName"],
-            bodyValues: ["customerName"]
+        delete: {
+            url: 'deleteCustomerName',
+            bodyKeys: ['deleteCustomerName'],
+            bodyValues: ['customerName']
         },
-        "select": "selectFimCustomerTable",
-        "update": {
-            url: "updateCustomerName",
-            bodyKeys: ["oldCustomerName", "newCustomerName"]
+        select: 'selectFimCustomerTable',
+        update: {
+            url: 'updateCustomerName',
+            bodyKeys: ['oldCustomerName', 'newCustomerName']
         },
         // Added multi-condition filtering URL
-        "filter": {
-            url: "/customer/filter/customer"
+        filter: {
+            url: '/customer/filter/customer'
         },
-        "exportTypeNum": 1
+        exportTypeNum: 1
     },
     customerItem: {
-        "cn": "客户管理",
-        "select": "selectFimCustomerTypeTable",
-        "delete": {
-            url: "deleteCustomerItem",
-            bodyKeys: ["customerType", "customerName", "itemCode"]
+        cn: '客户管理',
+        select: 'selectFimCustomerTypeTable',
+        delete: {
+            url: 'deleteCustomerItem',
+            bodyKeys: ['customerType', 'customerName', 'itemCode']
         },
-        "add": {
-            url: "insertCustomerItem",
-            bodyKeys: ["customerType", "customerName", "itemCode"]
+        add: {
+            url: 'insertCustomerItem',
+            bodyKeys: ['customerType', 'customerName', 'itemCode']
         },
         // Added multi-condition filtering URL
-        "filter": {
-            url: "/customer/filter/customerType"
+        filter: {
+            url: '/customer/filter/customerType'
         },
-        "exportTypeNum": 2
+        exportTypeNum: 2
     },
     customerRename: {
-        "cn": "客户名称替换表",
-        "add": {
-            url: "addCustomerRename",
-            bodyKeys: ["customerNameOld", "customerNameNew"]
+        cn: '客户名称替换表',
+        add: {
+            url: 'addCustomerRename',
+            bodyKeys: ['customerNameOld', 'customerNameNew']
         },
-        "delete": {
-            url: "deleteCustomerRenameByOldName",
-            bodyKeys: ["customerNameOld"]
+        delete: {
+            url: 'deleteCustomerRenameByOldName',
+            bodyKeys: ['customerNameOld']
         },
-        "select": "selectFimPastCustomerRenameTable",
-        "update": {
-            url: "updateCustomerRename",
-            bodyKeys: ["customerNameOld", "customerNameNew"]
+        select: 'selectFimPastCustomerRenameTable',
+        update: {
+            url: 'updateCustomerRename',
+            bodyKeys: ['customerNameOld', 'customerNameNew']
         },
         // Added multi-condition filtering URL
-        "filter": {
-            url: "/customer/filter/customerRename"
+        filter: {
+            url: '/customer/filter/customerRename'
         },
-        "exportTypeNum": 3
+        exportTypeNum: 3
     },
     itemChange: {
-        "cn": "物料替换表",
-        "add": {
-            url: "addItemChange",
-            bodyKeys: ["itemCodeOld", "itemCodeNew"]
+        cn: '物料替换表',
+        add: {
+            url: 'addItemChange',
+            bodyKeys: ['itemCodeOld', 'itemCodeNew']
         },
-        "delete": {
-            url: "deleteItemChangeByOldCode",
-            bodyKeys: ["itemCodeOld"]
+        delete: {
+            url: 'deleteItemChangeByOldCode',
+            bodyKeys: ['itemCodeOld']
         },
-        "update": {
-            url: "updateItemChange",
-            bodyKeys: ["itemCodeOld", "itemCodeNew"]
+        update: {
+            url: 'updateItemChange',
+            bodyKeys: ['itemCodeOld', 'itemCodeNew']
         },
-        "select": "selectFimPastItemChangeTable",
+        select: 'selectFimPastItemChangeTable',
         // Added multi-condition filtering URL
-        "filter": {
-            url: "/item/filter/itemChange"
+        filter: {
+            url: '/item/filter/itemChange'
         },
-        "exportTypeNum": 4
+        exportTypeNum: 4
     },
     salesmanChange: {
-        "cn": "销售员替换表",
-        "add": {
-            url: "addSalesmanChange",
-            bodyKeys: ["salesmanNameOld", "salesmanNameNew"]
+        cn: '销售员替换表',
+        add: {
+            url: 'addSalesmanChange',
+            bodyKeys: ['salesmanNameOld', 'salesmanNameNew']
         },
-        "delete": {
-            url: "deleteSalesmanChangeByOldName",
-            bodyKeys: ["salesmanNameOld"]
+        delete: {
+            url: 'deleteSalesmanChangeByOldName',
+            bodyKeys: ['salesmanNameOld']
         },
-        "update": {
-            url: "updateSalesmanChange",
-            bodyKeys: ["salesmanNameOld", "salesmanNameNew"]
+        update: {
+            url: 'updateSalesmanChange',
+            bodyKeys: ['salesmanNameOld', 'salesmanNameNew']
         },
-        "select": "selectFimPastSalesmanChangingTable",
+        select: 'selectFimPastSalesmanChangingTable',
         // Added multi-condition filtering URL
-        "filter": {
-            url: "/admin/filter/salesmanChanging"
+        filter: {
+            url: '/admin/filter/salesmanChanging'
         },
-        "exportTypeNum": 5
+        exportTypeNum: 5
     },
     customizedItemChange: {
-        "cn": "定制物料替换表",
-        "add": {
-            url: "addCustomizedItemChange",
-            bodyKeys: ["customerName", "itemNameOld", "itemNameNew"]
+        cn: '定制物料替换表',
+        add: {
+            url: 'addCustomizedItemChange',
+            bodyKeys: ['customerName', 'itemNameOld', 'itemNameNew']
         },
-        "delete": {
-            url: "deleteCustomizedItemChange",
-            bodyKeys: ["customerName", "itemNameOld", "itemNameNew"]
+        delete: {
+            url: 'deleteCustomizedItemChange',
+            bodyKeys: ['customerName', 'itemNameOld', 'itemNameNew']
         },
-        "select": "selectFimPastCustomizedItemChangingTable"
+        select: 'selectFimPastCustomizedItemChangingTable'
     },
     pastChooseItem: {
-        "cn": "筛选物料表",
-        "add": {
-            url: "addPastChooseItem",
-            bodyKeys: ["itemCode", "itemName", "startMonth"]
+        cn: '筛选物料表',
+        add: {
+            url: 'addPastChooseItem',
+            bodyKeys: ['itemCode', 'itemName', 'startMonth']
         },
-        "delete": {
-            url: "deletePastChooseItemByItemCode",
-            bodyKeys: ["itemCode", "itemName", "startMonth"]
+        delete: {
+            url: 'deletePastChooseItemByItemCode',
+            bodyKeys: ['itemCode', 'itemName', 'startMonth']
         },
-        "select": "selectFimPastChooseItemTable",
+        select: 'selectFimPastChooseItemTable',
         // Added multi-condition filtering URL
-        "filter": {
-            url: "/item/filter/chooseItem"
+        filter: {
+            url: '/item/filter/chooseItem'
         },
-        "exportTypeNum": 6
+        exportTypeNum: 6
     },
     suspiciousData: {
-        "cn": "可疑数据标准表",
-        "add": {
-            url: "/past-analysis/insertStandard",
-            bodyKeys: ["itemCode", "itemName", "num"]
+        cn: '可疑数据标准表',
+        add: {
+            url: '/past-analysis/insertStandard',
+            bodyKeys: ['itemCode', 'itemName', 'num']
         },
-        "delete": {
-            url: "deletePastChooseItemByItemCode",
-            bodyKeys: ["itemCode", "itemName", "num"]
+        delete: {
+            url: 'deletePastChooseItemByItemCode',
+            bodyKeys: ['itemCode', 'itemName', 'num']
         },
-        "select": "suspiciousData",
+        select: 'suspiciousData',
         // Added multi-condition filtering URL
-        "filter": {
-            url: "/past-analysis/getStandardsBySql"
+        filter: {
+            url: '/past-analysis/getStandardsBySql'
         },
-        "exportTypeNum": 7
+        exportTypeNum: 7
     },
     materialType: {
-        "cn": "物料类型管理",
-        "add": {
-            url: "addFimItemTable",
-            bodyKeys: ["itemCode", "itemName", "itemType", "quantitative"]
+        cn: '物料类型管理',
+        add: {
+            url: 'addFimItemTable',
+            bodyKeys: ['itemCode', 'itemName', 'itemType', 'quantitative']
         },
-        "delete": {
-            url: "batchDeleteItems",
-            bodyKeys: ["itemCode"]
+        delete: {
+            url: 'batchDeleteItems',
+            bodyKeys: ['itemCode']
         },
-        "update": {
-            url: "updateFimItemTable",
-            bodyKeys: ["itemCode", "itemName", "itemType", "quantitative", "itemId"]
+        update: {
+            url: 'item/updateItem',
+            bodyKeys: [
+                'itemCode',
+                'itemName',
+                'itemType',
+                'quantitative',
+                'itemId'
+            ]
         },
-        "select": "materialType",
-        "filter":{
-            url:"/item/filter/itemType"
+        select: 'materialType',
+        filter: {
+            url: '/item/filter/itemType'
         }
-    },
+    }
 }
 
-export default adminSchema;
+export default adminSchema

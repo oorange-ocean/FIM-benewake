@@ -54,10 +54,21 @@ export default function InventoryOccupy() {
         setPageSize(size)
         fetchData({ pageNum: page, pageSize: size })
     }
-
     const handleRefresh = async () => {
         setLoading(true)
-        fetchData({ pageNum: 1, pageSize: 100 })
+
+        const startTime = Date.now()
+        await fetchData({ pageNum: 1, pageSize: 100 })
+
+        const elapsedTime = Date.now() - startTime
+        const minLoadTime = 500 // 最小加载时间（毫秒）
+
+        if (elapsedTime < minLoadTime) {
+            await new Promise((resolve) =>
+                setTimeout(resolve, minLoadTime - elapsedTime)
+            )
+        }
+
         setLoading(false)
     }
 
@@ -101,21 +112,26 @@ export default function InventoryOccupy() {
                 setFilters={setFilters}
                 onSearch={handleSearch}
             />
-            <InventoryOccupyTable
-                data={data}
-                setData={setData}
-                columns={columns}
-                noPagination={true}
-            />
-            <CommonPaginate
-                current={current}
-                total={total}
-                pageSize={pageSize}
-                onChange={handlePageChange}
-                showSizeChanger
-                pageSizeOptions={[10, 100, 500, 1500]}
-            />
-            {loading && <Loader />}
+            {loading ? (
+                <Loader />
+            ) : (
+                <>
+                    <InventoryOccupyTable
+                        data={data}
+                        setData={setData}
+                        columns={columns}
+                        noPagination={true}
+                    />
+                    <CommonPaginate
+                        current={current}
+                        total={total}
+                        pageSize={pageSize}
+                        onChange={handlePageChange}
+                        showSizeChanger
+                        pageSizeOptions={[10, 100, 500, 1500]}
+                    />
+                </>
+            )}
         </div>
     )
 }
