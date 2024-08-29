@@ -175,7 +175,8 @@ const Analysis = ({ schema, ChartComponent }) => {
     const handlePageChange = (pageNum, pageSize) => {
         // handleRefresh(page, size);
         // setPageSize(size);
-        if (filters.length !== 0 && filters[0]?.value !== '') {
+        console.log('handlepagechange', filters)
+        if (filters.length !== 0) {
             handleSearch(filters, pageNum, pageSize)
             setPageSize(pageSize)
             setCurrent(pageNum)
@@ -244,6 +245,7 @@ const Analysis = ({ schema, ChartComponent }) => {
     const handleSearch = async (filters, pageNum = 1, pageSize = 100) => {
         setLoading(true)
         // 剔除filters中所有value为空,customerType除外
+        console.log('filters', filters)
         filters = filters.filter(
             (filter) => filter.value !== '' || filter.key === 'customerType'
         )
@@ -322,10 +324,6 @@ const Analysis = ({ schema, ChartComponent }) => {
                   ]
         setFilters(newFilters)
         handleSearch(newFilters)
-    }
-
-    const closeModal = () => {
-        setIsSeasonalMarketOpen(false)
     }
 
     return (

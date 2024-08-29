@@ -1,3 +1,4 @@
+import api from '../../api/axios'
 const adminSchema = {
     customerType: {
         cn: '客户类型',
@@ -9,7 +10,15 @@ const adminSchema = {
         delete: {
             url: 'deleteCustomerType',
             bodyKeys: ['customerType']
-        }
+        },
+        update: (oldData, newData) => ({
+            url: 'customer/updateCustomerType',
+            body: {
+                oldCustomerType: oldData.customerType,
+                newCustomerType: newData.customerType
+            },
+            type: 'json'
+        })
     },
     inquiryType: {
         cn: '订单状态',
@@ -21,7 +30,15 @@ const adminSchema = {
         delete: {
             url: 'deleteInquiryType',
             bodyKeys: ['inquiryTypeName']
-        }
+        },
+        update: (oldData, newData) => ({
+            url: 'order/updateInquiryTypeDic',
+            body: {
+                inquiryType: newData.inquiryType,
+                inquiryTypeName: newData.inquiryTypeName
+            },
+            type: 'json'
+        })
     },
     itemType: {
         cn: '产品类型',
@@ -33,7 +50,15 @@ const adminSchema = {
             url: 'deleteItemType',
             bodyKeys: ['itemTypeName']
         },
-        select: 'selectItemTypeDic'
+        select: 'selectItemTypeDic',
+        update: (oldData, newData) => ({
+            url: 'item/updateItemTypeDic',
+            body: {
+                itemType: newData.itemType,
+                itemTypeName: newData.itemTypeName
+            },
+            type: 'json'
+        })
     },
     customerName: {
         cn: '客户名称',
@@ -47,11 +72,14 @@ const adminSchema = {
             bodyValues: ['customerName']
         },
         select: 'selectFimCustomerTable',
-        update: {
-            url: 'updateCustomerName',
-            bodyKeys: ['oldCustomerName', 'newCustomerName']
-        },
-        // Added multi-condition filtering URL
+        update: (oldData, newData) => ({
+            url: 'admin/updateCustomerName',
+            body: {
+                oldCustomerName: oldData.customerName,
+                newCustomerName: newData.customerName
+            },
+            type: 'form-data'
+        }),
         filter: {
             url: '/customer/filter/customer'
         },
@@ -72,7 +100,16 @@ const adminSchema = {
         filter: {
             url: '/customer/filter/customerType'
         },
-        exportTypeNum: 2
+        exportTypeNum: 2,
+        update: (oldData, newData) => ({
+            url: 'admin/updateFimCustomerTypeTable',
+            body: {
+                customerName: newData.customerName,
+                itemCode: newData.itemCode,
+                customerType: newData.customerType
+            },
+            type: 'json'
+        })
     },
     customerRename: {
         cn: '客户名称替换表',
@@ -85,10 +122,14 @@ const adminSchema = {
             bodyKeys: ['customerNameOld']
         },
         select: 'selectFimPastCustomerRenameTable',
-        update: {
-            url: 'updateCustomerRename',
-            bodyKeys: ['customerNameOld', 'customerNameNew']
-        },
+        update: (oldData, newData) => ({
+            url: 'admin/updateCustomerRename',
+            body: {
+                customerNameOld: oldData.customerNameOld,
+                customerNameNew: newData.customerNameNew
+            },
+            type: 'form-data'
+        }),
         // Added multi-condition filtering URL
         filter: {
             url: '/customer/filter/customerRename'
@@ -105,10 +146,14 @@ const adminSchema = {
             url: 'deleteItemChangeByOldCode',
             bodyKeys: ['itemCodeOld']
         },
-        update: {
-            url: 'updateItemChange',
-            bodyKeys: ['itemCodeOld', 'itemCodeNew']
-        },
+        update: (oldData, newData) => ({
+            url: 'admin/updateItemChange',
+            body: {
+                itemCodeOld: oldData.itemCodeOld,
+                itemCodeNew: newData.itemCodeNew
+            },
+            type: 'form-data'
+        }),
         select: 'selectFimPastItemChangeTable',
         // Added multi-condition filtering URL
         filter: {
@@ -126,10 +171,14 @@ const adminSchema = {
             url: 'deleteSalesmanChangeByOldName',
             bodyKeys: ['salesmanNameOld']
         },
-        update: {
-            url: 'updateSalesmanChange',
-            bodyKeys: ['salesmanNameOld', 'salesmanNameNew']
-        },
+        update: (oldData, newData) => ({
+            url: 'admin/updateSalesmanChange',
+            body: {
+                salesmanNameOld: oldData.salesmanNameOld,
+                salesmanNameNew: newData.salesmanNameNew
+            },
+            type: 'form-data'
+        }),
         select: 'selectFimPastSalesmanChangingTable',
         // Added multi-condition filtering URL
         filter: {
@@ -164,7 +213,16 @@ const adminSchema = {
         filter: {
             url: '/item/filter/chooseItem'
         },
-        exportTypeNum: 6
+        exportTypeNum: 6,
+        update: (oldData, newData) => ({
+            url: 'admin/updateFimPastChooseItemTable',
+            body: {
+                itemCode: newData.itemCode,
+                itemName: newData.itemName,
+                startMonth: newData.startMonth
+            },
+            type: 'json'
+        })
     },
     suspiciousData: {
         cn: '可疑数据标准表',
@@ -181,7 +239,15 @@ const adminSchema = {
         filter: {
             url: '/past-analysis/getStandardsBySql'
         },
-        exportTypeNum: 7
+        exportTypeNum: 7,
+        update: (oldData, newData) => ({
+            url: 'past-analysis/updateStandards',
+            body: {
+                id: newData.id,
+                standards: newData.num
+            },
+            type: 'form-data'
+        })
     },
     materialType: {
         cn: '物料类型管理',
@@ -193,16 +259,17 @@ const adminSchema = {
             url: 'batchDeleteItems',
             bodyKeys: ['itemCode']
         },
-        update: {
+        update: (oldData, newData) => ({
             url: 'item/updateItem',
-            bodyKeys: [
-                'itemCode',
-                'itemName',
-                'itemType',
-                'quantitative',
-                'itemId'
-            ]
-        },
+            body: {
+                itemCode: newData.itemCode,
+                itemName: newData.itemName,
+                itemTypeName: newData.itemTypeName,
+                quantitative: newData.quantitative,
+                itemId: newData.itemId
+            },
+            type: 'json'
+        }),
         select: 'materialType',
         filter: {
             url: '/item/filter/itemType'

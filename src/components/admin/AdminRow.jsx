@@ -25,62 +25,37 @@ const Row = ({
         data.salesmanNameNew
     )
     const { alertSuccess, alertWarning } = useAlertContext()
+
     const handleDoubleClick = (cell) => {
         // onDoubleClick={cell.eng === "customerType" && type !== "customerType" ? handleDoubleClick : null}
-        if (cell.eng === 'customerType' && type !== 'customerType') {
-            setIsModalOpen(true)
-        }
-        //如果type为销售员替换包，则设置editable为true
-        if (type === 'salesmanChange' || type === 'materialType') {
-            setEditable(true)
-        }
+
+        setEditable(true)
     }
 
     const getCellContent = (cell) => {
-        if (cell.eng === 'startMonth') {
+        const unEditable = ['salesmanNameOld']
+
+        if (cell.eng === 'startMonth' && !editable) {
             return <span>{moment(data.startMonth).format('YYYY/MM/DD')}</span>
-        }
-        //如果销售员替换表
-        else if (cell.eng === 'salesmanNameNew' && editable) {
+        } else if (
+            adminSchema[type]?.update &&
+            typeof adminSchema[type].update === 'function' &&
+            editable &&
+            !unEditable.includes(cell.eng)
+        ) {
             return (
                 <input
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        border: '1px solid #ccc',
+                        padding: '2px'
+                    }}
                     type="text"
                     defaultValue={data[cell.eng]}
-                    onBlur={(e) => {
-                        setEditedSalesmanNameNew(e.target.value)
-                        setEditable(false)
-                    }}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                            setEditedSalesmanNameNew(e.target.value)
-                            setEditable(false)
-                        }
-                    }}
-                    autoFocus
-                />
-            )
-        } else if (adminSchema[type].update.url) {
-            return (
-                <input
-                    type="text"
-                    defaultValue={data[cell.eng]}
-                    onBlur={(e) => {
-                        api.post(adminSchema[type].update.url, {
-                            ...data,
-                            [cell.eng]: e.target.value
-                        }).then((res) => {
-                            console.log(res)
-                        })
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            api.post(adminSchema[type].update.url, {
-                                ...data,
-                                [cell.eng]: e.target.value
-                            }).then((res) => {
-                                console.log(res)
-                                alertSuccess('修改成功')
-                            })
+                            handleInputChange(e, cell.eng)
                         }
                     }}
                     autoFocus
@@ -91,6 +66,42 @@ const Row = ({
         }
     }
 
+    const handleInputChange = (e, fieldName) => {
+        const newValue = e.target.value
+        if (newValue !== data[fieldName]) {
+            const newData = { ...data, [fieldName]: newValue }
+            const updateConfig = adminSchema[type].update(data, newData)
+
+            let requestBody = updateConfig.body
+            let headers = {}
+
+            if (updateConfig.type === 'json') {
+                headers['Content-Type'] = 'application/json'
+                requestBody = JSON.stringify(requestBody)
+            } else if (updateConfig.type === 'form-data') {
+                const formData = new FormData()
+                for (let key in requestBody) {
+                    formData.append(key, requestBody[key])
+                }
+                requestBody = formData
+            }
+
+            api.post(updateConfig.url, requestBody, { headers })
+                .then((res) => {
+                    console.log(res)
+                    if (res.data.code === 200) {
+                        alertSuccess(res.data.message || '修改成功')
+                        handleRefresh()
+                    } else {
+                        alertWarning(res.data.message || '修改失败')
+                    }
+                })
+                .catch((error) => {
+                    console.error('更新失败:', error)
+                    alertWarning(error.response?.data?.message || '修改失败')
+                })
+        }
+    }
     const handleChange = (event) => {
         const value = event.target.value
         setEditedType(value)

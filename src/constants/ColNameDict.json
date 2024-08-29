@@ -6,18 +6,6 @@
         "size": 125
     },
     {
-        "col_id": 2,
-        "col_name_CN": "单据初始类型",
-        "col_name_ENG": "inquiry_init_type",
-        "size": 100
-    },
-    {
-        "col_id": 3,
-        "col_name_CN": "单据状态",
-        "col_name_ENG": "state",
-        "size": 70
-    },
-    {
         "col_id": 4,
         "col_name_CN": "创建人",
         "col_name_ENG": "created_user_name",
@@ -69,7 +57,7 @@
         "col_id": 12,
         "col_name_CN": "期望发货日期",
         "col_name_ENG": "expected_time",
-        "size": 100
+        "size": 140
     },
     {
         "col_id": 13,
@@ -130,6 +118,18 @@
         "col_name_CN": "是否允许询单",
         "col_name_ENG": "allow_inquiry",
         "size": 90
+    },
+    {
+        "col_id": 3,
+        "col_name_CN": "单据状态",
+        "col_name_ENG": "state",
+        "size": 50
+    },
+    {
+        "col_id": 2,
+        "col_name_CN": "单据初始类型",
+        "col_name_ENG": "inquiry_init_type",
+        "size": 80
     },
     {
         "col_id": 23,

@@ -56,6 +56,10 @@ const AdminTable = ({
         fetchCustomerTypes()
     }, [])
 
+    useEffect(() => {
+        setEditableRowIndex(null)
+    }, [type])
+
     const { alertWarning, alertConfirm, alertSuccess, alertError } =
         useAlertContext()
     const [selectedRows, setSelectedRows] = useState([])
@@ -267,7 +271,9 @@ const AdminTable = ({
                 />
             )}
             <div className="row new-table-controls">
-                <button onClick={handleChangeRow}>修改行</button>
+                {adminSchema[type]?.update && (
+                    <button onClick={handleChangeRow}>修改行</button>
+                )}
                 <button onClick={handleAddRow}>新增行</button>
                 <button onClick={handleDeleteRow}>删除行</button>
                 <button
